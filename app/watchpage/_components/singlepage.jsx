@@ -16,6 +16,7 @@ import { ThemedView } from "@/components/ThemedView";
 import VideoPlayer from "./VideoPlayer";
 import { Picker } from "@react-native-picker/picker";
 import { Colors } from "@/constants/Colors";
+
 const SinglePage = () => {
     const route = useRoute();
     const [episodes, setEpisodes] = useState([]);
@@ -25,6 +26,9 @@ const SinglePage = () => {
     const [pageLoading, setPageLoading] = useState(true);
     const [videoLoading, setVideoLoading] = useState(false);
     const [selectedEpisode, setSelectedEpisode] = useState();
+    const [activeTab, setActiveTab] = useState("sub");
+    const [activeSubTab, setActiveSubTab] = useState();
+    const [servers, setServers] = useState();
 
     const getEpisodes = async () => {
         try {
@@ -39,19 +43,42 @@ const SinglePage = () => {
         }
     };
 
-    const startStream = async (id) => {
+    const startStream = async (id, number) => {
         setVideoLoading(true);
         try {
-            const response = await apiConfig.get(
-                `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=hd-1&category=sub`
+            const serverResponse = await apiConfig.get(
+                `/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${number}`
             );
-            setVideoData(response.data.data);
-            setVideoLoading(false);
+            const servers = serverResponse.data.data;
+            setServers(servers);
+
+            // Use the currently selected server (activeSubTab) or default to the first server in the active tab
+            const selectedServer =
+                activeSubTab || servers[activeTab]?.[0]?.serverName;
+            setActiveSubTab(selectedServer);
+
+            const streamResponse = await apiConfig.get(
+                `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${selectedServer}&category=${activeTab}`
+            );
+            setVideoData(streamResponse.data.data);
         } catch (error) {
             console.log(error, "axios error");
+        } finally {
             setVideoLoading(false);
         }
     };
+
+    // Handle server switch
+    useEffect(() => {
+        if (selectedEpisode && activeSubTab) {
+            const episode = episodes.find(
+                (ep) => ep.number === selectedEpisode
+            );
+            if (episode) {
+                startStream(episode.episodeId, episode.number);
+            }
+        }
+    }, [activeSubTab, activeTab]);
 
     useEffect(() => {
         getEpisodes();
@@ -153,6 +180,156 @@ const SinglePage = () => {
                 </ThemedView>
             )}
             <ThemedView style={styles.container}>
+                <ThemedText
+                    type="title"
+                    style={{
+                        color: Colors.light.tabIconSelected,
+                        fontSize: 25,
+                    }}
+                >
+                    {route?.params?.title}
+                </ThemedText>
+                <View style={styles.tabContainer}>
+                    {servers?.sub?.length > 0 && (
+                        <TouchableOpacity
+                            style={[
+                                styles.tabButton,
+                                activeTab === "sub" && styles.activeTab,
+                            ]}
+                            onPress={() => setActiveTab("sub")}
+                        >
+                            <Text
+                                style={[
+                                    styles.tabText,
+                                    activeTab === "sub" && styles.activeText,
+                                ]}
+                            >
+                                Sub
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                    {servers?.dub?.length > 0 && (
+                        <TouchableOpacity
+                            style={[
+                                styles.tabButton,
+                                activeTab === "dub" && styles.activeTab,
+                            ]}
+                            onPress={() => setActiveTab("dub")}
+                        >
+                            <Text
+                                style={[
+                                    styles.tabText,
+                                    activeTab === "dub" && styles.activeText,
+                                ]}
+                            >
+                                Dub
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                    {servers?.raw?.length > 0 && (
+                        <TouchableOpacity
+                            style={[
+                                styles.tabButton,
+                                activeTab === "raw" && styles.activeTab,
+                            ]}
+                            onPress={() => setActiveTab("raw")}
+                        >
+                            <Text
+                                style={[
+                                    styles.tabText,
+                                    activeTab === "raw" && styles.activeText,
+                                ]}
+                            >
+                                Raw
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
+                {activeTab === "sub" && (
+                    <View style={styles.subTabContainer}>
+                        {servers?.sub?.map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[
+                                    styles.subTabButton,
+                                    activeSubTab === item?.serverName &&
+                                        styles.activeSubTab,
+                                ]}
+                                onPress={() =>
+                                    setActiveSubTab(item?.serverName)
+                                }
+                            >
+                                <Text
+                                    style={[
+                                        styles.subTabText,
+                                        activeSubTab === item?.serverName &&
+                                            styles.activeSubText,
+                                    ]}
+                                >
+                                    {item?.serverName}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                )}
+
+                {activeTab === "dub" && (
+                    <View style={styles.subTabContainer}>
+                        {servers?.dub?.map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[
+                                    styles.subTabButton,
+                                    activeSubTab === item?.serverName &&
+                                        styles.activeSubTab,
+                                ]}
+                                onPress={() =>
+                                    setActiveSubTab(item?.serverName)
+                                }
+                            >
+                                <Text
+                                    style={[
+                                        styles.subTabText,
+                                        activeSubTab === item?.serverName &&
+                                            styles.activeSubText,
+                                    ]}
+                                >
+                                    {item?.serverName}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                )}
+
+                {activeTab === "raw" && (
+                    <View style={styles.subTabContainer}>
+                        {servers?.raw?.map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[
+                                    styles.subTabButton,
+                                    activeSubTab === item?.serverName &&
+                                        styles.activeSubTab,
+                                ]}
+                                onPress={() =>
+                                    setActiveSubTab(item?.serverName)
+                                }
+                            >
+                                <Text
+                                    style={[
+                                        styles.subTabText,
+                                        activeSubTab === item?.serverName &&
+                                            styles.activeSubText,
+                                    ]}
+                                >
+                                    {item?.serverName}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                )}
+
                 {/* Picker for episode range selection */}
                 <View
                     style={[
@@ -163,6 +340,7 @@ const SinglePage = () => {
                     ]}
                 >
                     <Picker
+                        dropdownIconColor={Colors.light.tabIconSelected}
                         selectedValue={selectedRange}
                         onValueChange={handleRangeChange}
                         style={[
@@ -204,7 +382,7 @@ const SinglePage = () => {
                             ]}
                             onPress={() => {
                                 setSelectedEpisode(item?.number);
-                                startStream(item?.episodeId);
+                                startStream(item?.episodeId, item?.number);
                             }}
                         >
                             <ThemedText
@@ -239,6 +417,7 @@ const styles = StyleSheet.create({
         borderColor: "#333",
         borderRadius: 8,
         marginBottom: 16,
+        width: "35%",
     },
     picker: {
         width: "100%",
@@ -260,4 +439,38 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+
+    tabContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginBottom: 10,
+    },
+    tabButton: {
+        padding: 10,
+        flex: 1,
+        alignItems: "center",
+        borderBottomWidth: 2,
+        borderColor: "transparent",
+    },
+    activeTab: { borderColor: Colors.light.tabIconSelected },
+    tabText: { fontSize: 18, color: "#333" },
+    activeText: { color: Colors.light.tabIconSelected, fontWeight: "bold" },
+
+    subTabContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        marginBottom: 10,
+    },
+    subTabButton: {
+        padding: 8,
+        borderWidth: 1,
+        borderRadius: 6,
+        borderColor: Colors.light.tabIconSelected,
+    },
+    activeSubTab: { backgroundColor: Colors.light.tabIconSelected },
+    subTabText: { fontSize: 16, color: Colors.light.tabIconSelected },
+    activeSubText: { color: "#fff", fontWeight: "bold" },
+
+    contentContainer: { marginTop: 20, alignItems: "center" },
+    contentText: { fontSize: 18, fontWeight: "bold", color: "#333" },
 });

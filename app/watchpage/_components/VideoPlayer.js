@@ -13,7 +13,6 @@ import { StatusBar } from "expo-status-bar";
 import Video from "react-native-video";
 import Slider from "@react-native-community/slider";
 import { MaterialIcons } from "@expo/vector-icons";
-import Subtitles from "react-native-subtitles";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Colors } from "@/constants/Colors";
 import * as NavigationBar from "expo-navigation-bar";
@@ -25,12 +24,29 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [showSubtitleList, setShowSubtitleList] = useState(false);
-    const [selectedSubtitle, setSelectedSubtitle] = useState(null);
+    const [selectedSubtitle, setSelectedSubtitle] = useState(
+        subtitlesData.find((sub) => sub.label.toLowerCase() === "english") ||
+            subtitlesData[0] ||
+            null
+    );
+
     const [controlsVisible, setControlsVisible] = useState(true);
     let touchStart = 0;
 
+    const videoSource = {
+        uri: videoUrl,
+        textTracks: subtitlesData
+            .filter((sub) => sub.kind === "captions") // Filter out thumbnails
+            .map((sub) => ({
+                title: sub.label, // Use the label as the title
+                language: sub.label.toLowerCase(), // Use the label as the language (e.g., "English" -> "english")
+                type: "text/vtt", // Set the type as VTT
+                uri: sub.file, // Use the file URL
+                default: sub.default || false, // Set default if applicable
+            })),
+    };
+
     useEffect(() => {
-        // Reset orientation when component unmounts
         return () => {
             ScreenOrientation.lockAsync(
                 ScreenOrientation.OrientationLock.PORTRAIT
@@ -51,7 +67,6 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
         }
     };
 
-    // Toggle full-screen mode
     const toggleFullScreen = async () => {
         setIsFullScreen(!isFullScreen);
         if (!isFullScreen) {
@@ -74,7 +89,6 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
         }
     };
     useEffect(() => {
-        // Reset orientation and navigation bar when component unmounts
         return () => {
             ScreenOrientation.lockAsync(
                 ScreenOrientation.OrientationLock.PORTRAIT
@@ -83,34 +97,29 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
             NavigationBar.setBehaviorAsync("default");
         };
     }, []);
-    // Toggle play/pause
+
     const togglePlayPause = () => {
         setIsPlaying(!isPlaying);
     };
 
-    // Skip forward/backward
     const skip = (seconds) => {
         const newTime = currentTime + seconds;
         videoRef.current.seek(Math.max(0, Math.min(newTime, duration)));
     };
 
-    // Handle video progress
     const onProgress = (data) => {
         setCurrentTime(data.currentTime);
     };
 
-    // Handle video load
     const onLoad = (data) => {
         setDuration(data.duration);
     };
 
-    // Handle subtitle selection
     const selectSubtitle = (subtitle) => {
         setSelectedSubtitle(subtitle);
         setShowSubtitleList(false);
     };
 
-    // Format time (mm:ss)
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
@@ -131,7 +140,11 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                     <View style={styles.videoContainer}>
                         <Video
                             ref={videoRef}
-                            source={{ uri: videoUrl }}
+                            source={videoSource}
+                            selectedTextTrack={{
+                                type: "language",
+                                value: selectedSubtitle?.label?.toLowerCase(),
+                            }}
                             style={styles.video}
                             paused={!isPlaying}
                             onLoad={onLoad}
@@ -144,14 +157,6 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                     style={styles.loader}
                                 />
                             )}
-                        />
-                        <Subtitles
-                            textStyle={styles.subtitleText}
-                            containerStyle={styles.subtitleContainer}
-                            currentTime={currentTime}
-                            selectedsubtitle={{
-                                file: selectedSubtitle?.file,
-                            }}
                         />
 
                         {showControls && (
@@ -350,6 +355,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         gap: 40,
         flex: 1,
+        marginTop: 60,
     },
     progressContainer: {
         flexDirection: "row",

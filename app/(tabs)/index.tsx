@@ -78,6 +78,7 @@ export const HomeScreen = () => {
                                     params: {
                                         id: item.id,
                                         poster: item.poster,
+                                        title: item.name,
                                     },
                                 });
                             }}
@@ -136,6 +137,7 @@ export const HomeScreen = () => {
                                     params: {
                                         id: item.id,
                                         poster: item.poster,
+                                        title: item.name,
                                     },
                                 });
                             }}
