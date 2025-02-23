@@ -184,7 +184,7 @@ export const HomeScreen = () => {
             headerImage={
                 <Image
                     resizeMode="cover"
-                    source={require("@/assets/images/AniVerse.png")}
+                    source={require("@/assets/images/AnimPlay.png")}
                     style={styles.reactLogo}
                 />
             }

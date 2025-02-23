@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'Aniwatch'
+rootProject.name = 'AnimPlay'
 
 dependencyResolutionManagement {
   versionCatalogs {

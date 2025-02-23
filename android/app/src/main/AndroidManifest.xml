@@ -29,6 +29,8 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.anonymous.Aniwatch"/>
         <data android:scheme="exp+aniwatch"/>
+        <data android:scheme="com.animplay"/>
+        <data android:scheme="exp+animplay"/>
       </intent-filter>
     </activity>
   </application>

@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.Aniwatch'
+    namespace 'com.animplay'
     defaultConfig {
-        applicationId 'com.anonymous.Aniwatch'
+        applicationId 'com.animplay'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

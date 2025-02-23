@@ -1,4 +1,4 @@
-package com.anonymous.Aniwatch
+package com.animplay
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
