@@ -421,16 +421,16 @@ const styles = StyleSheet.create({
     progressContainer: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: SIZE(10),
         justifyContent: "space-between",
     },
     progressBar: {
         flex: 1,
-        marginHorizontal: SIZE(10),
     },
     timeText: {
         color: Colors.light.tabIconSelected,
         fontSize: SIZE(12),
+        textAlign: "center",
+        width: SIZE(50),
     },
     bottomControls: {
         flexDirection: "row",
