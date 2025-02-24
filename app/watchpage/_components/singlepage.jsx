@@ -32,6 +32,7 @@ const SinglePage = () => {
     const [activeSubTab, setActiveSubTab] = useState();
     const [servers, setServers] = useState();
     const [animeInfo, setAnimeInfo] = useState();
+    const [availableQualities, setAvailableQualities] = useState(["auto"]);
 
     const getEpisodes = async () => {
         try {
@@ -52,6 +53,27 @@ const SinglePage = () => {
             );
             setAnimeInfo(response.data.data);
             setPageLoading(false);
+        } catch (error) {
+            console.log(error, "axios error");
+        }
+    };
+
+    const getQtipInfo = async () => {
+        try {
+            const response = await apiConfig.get(
+                `/api/v2/hianime/qtip/${route?.params?.id}`
+            );
+            const quality = response.data.data.anime.quality; // API response
+
+            let qualityOptions = ["auto"]; // Always include Auto
+
+            if (quality === "SD") {
+                qualityOptions.push(480, 360);
+            } else if (quality === "HD") {
+                qualityOptions.push(1080, 720, 480, 360);
+            }
+
+            setAvailableQualities(qualityOptions);
         } catch (error) {
             console.log(error, "axios error");
         }
@@ -97,6 +119,7 @@ const SinglePage = () => {
     useEffect(() => {
         getEpisodes();
         getAnimeInfo();
+        getQtipInfo();
     }, []);
 
     // Function to handle range selection from the picker
@@ -145,6 +168,8 @@ const SinglePage = () => {
                     subtitlesData={videoData.tracks}
                     onLoadStart={() => setVideoLoading(true)}
                     onReadyForDisplay={() => setVideoLoading(false)}
+                    availableQualities={availableQualities}
+                    title={animeInfo?.anime?.info?.name}
                 />
             ) : (
                 <ThemedView

@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
     FlatList,
     SafeAreaView,
+    BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Video from "react-native-video";
@@ -18,8 +19,14 @@ import { Colors } from "@/constants/Colors";
 import * as NavigationBar from "expo-navigation-bar";
 import Subtitles from "./Subtitles";
 import { SIZE } from "../../../constants/Constants";
+import { router } from "expo-router";
 
-const VideoPlayer = ({ videoUrl, subtitlesData }) => {
+const VideoPlayer = ({
+    videoUrl,
+    subtitlesData,
+    availableQualities,
+    title,
+}) => {
     const videoRef = useRef(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [showControls, setShowControls] = useState(true);
@@ -35,6 +42,8 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
     const [isSeeking, setIsSeeking] = useState(false);
     const [seekPosition, setSeekPosition] = useState(0);
     const [controlsVisible, setControlsVisible] = useState(true);
+    const [selectedQuality, setSelectedQuality] = useState("auto");
+    const [showQualityList, setShowQualityList] = useState(false);
     let touchStart = 0;
 
     useEffect(() => {
@@ -44,6 +53,34 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
             );
         };
     }, []);
+
+    useEffect(() => {
+        const backAction = () => {
+            if (isFullScreen) {
+                toggleFullScreen();
+            } else {
+                router.back();
+            }
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, [isFullScreen]);
+
+    useEffect(() => {
+        if (showControls && !showQualityList && !showSubtitleList) {
+            const timeout = setTimeout(() => {
+                setShowControls(false);
+            }, 2000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [showControls, showQualityList, showSubtitleList]);
 
     const handleTouchStart = (event) => {
         touchStart = event.nativeEvent.pageY;
@@ -130,6 +167,11 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
         }
     };
 
+    const changeQuality = (resolution) => {
+        setSelectedQuality(resolution);
+        setShowQualityList(false);
+    };
+
     return (
         <SafeAreaView
             style={[styles.safeArea, isFullScreen && styles.fullScreenSafeArea]}
@@ -144,19 +186,29 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                     <View style={styles.videoContainer}>
                         <Video
                             ref={videoRef}
-                            source={{ uri: videoUrl }}
+                            source={{ uri: videoUrl, type: "m3u8" }}
                             style={styles.video}
                             paused={!isPlaying}
                             onLoad={onLoad}
                             onProgress={onProgress}
                             resizeMode="contain"
-                            renderLoader={() => (
+                            renderLoader={(item) => (
                                 <ActivityIndicator
                                     size={"large"}
                                     color={Colors.light.tabIconSelected}
                                     style={styles.loader}
                                 />
                             )}
+                            selectedVideoTrack={{
+                                type:
+                                    selectedQuality === "auto"
+                                        ? "auto"
+                                        : "resolution",
+                                value:
+                                    selectedQuality === "auto"
+                                        ? undefined
+                                        : selectedQuality,
+                            }}
                         />
                         <Subtitles
                             textStyle={{
@@ -178,6 +230,67 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                         />
                         {showControls && (
                             <View style={styles.controlsOverlay}>
+                                <View
+                                    style={{
+                                        padding: SIZE(10),
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: SIZE(10),
+                                        }}
+                                    >
+                                        <TouchableOpacity
+                                            hitSlop={10}
+                                            onPress={() => {
+                                                if (isFullScreen) {
+                                                    toggleFullScreen();
+                                                } else {
+                                                    router.back();
+                                                }
+                                            }}
+                                        >
+                                            <MaterialIcons
+                                                name="arrow-back"
+                                                size={24}
+                                                color={
+                                                    Colors.light.tabIconSelected
+                                                }
+                                            />
+                                        </TouchableOpacity>
+                                        <Text
+                                            style={{
+                                                color: Colors.light
+                                                    .tabIconSelected,
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            {title}
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        hitSlop={10}
+                                        onPress={() => {
+                                            if (showQualityList) {
+                                                setShowQualityList(false);
+                                            } else {
+                                                setShowQualityList(true);
+                                            }
+                                            setShowSubtitleList(false);
+                                        }}
+                                    >
+                                        <MaterialIcons
+                                            name="high-quality"
+                                            size={24}
+                                            color={Colors.light.tabIconSelected}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
                                 {/* Play/Pause and Skip Buttons */}
                                 <View style={styles.centerControls}>
                                     <TouchableOpacity
@@ -253,9 +366,14 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                 <View style={styles.bottomControls}>
                                     <TouchableOpacity
                                         hitSlop={10}
-                                        onPress={() =>
-                                            setShowSubtitleList(true)
-                                        }
+                                        onPress={() => {
+                                            if (showSubtitleList) {
+                                                setShowSubtitleList(false);
+                                            } else {
+                                                setShowSubtitleList(true);
+                                            }
+                                            setShowQualityList(false);
+                                        }}
                                     >
                                         <MaterialIcons
                                             name={
@@ -283,6 +401,64 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                         />
                                     </TouchableOpacity>
                                 </View>
+                                {showQualityList && (
+                                    <View style={[styles.modalContainer]}>
+                                        <FlatList
+                                            data={availableQualities}
+                                            keyExtractor={(item, index) =>
+                                                index.toString()
+                                            }
+                                            renderItem={({ item }) => (
+                                                <TouchableOpacity
+                                                    style={[
+                                                        styles.subtitleItem,
+                                                        {
+                                                            backgroundColor:
+                                                                selectedQuality ==
+                                                                item
+                                                                    ? Colors
+                                                                          .light
+                                                                          .tabIconSelected
+                                                                    : "transparent",
+                                                        },
+                                                    ]}
+                                                    onPress={() =>
+                                                        changeQuality(item)
+                                                    }
+                                                >
+                                                    <Text
+                                                        style={[
+                                                            styles.subtitleText,
+                                                            {
+                                                                color:
+                                                                    selectedQuality ==
+                                                                    item
+                                                                        ? "#fff"
+                                                                        : Colors
+                                                                              .light
+                                                                              .tabIconSelected,
+                                                            },
+                                                        ]}
+                                                    >
+                                                        {item}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
+                                        />
+                                        <TouchableOpacity
+                                            style={styles.closeButton}
+                                            onPress={() =>
+                                                setShowQualityList(false)
+                                            }
+                                        >
+                                            <Text
+                                                style={styles.closeButtonText}
+                                            >
+                                                Close
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
 
                                 {showSubtitleList && (
                                     <View style={styles.modalContainer}>
@@ -416,7 +592,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         gap: SIZE(40),
         flex: 1,
-        marginTop: SIZE(60),
+        marginTop: SIZE(20),
     },
     progressContainer: {
         flexDirection: "row",
@@ -440,7 +616,7 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: SIZE(150),
-        height: SIZE(200),
+        maxHeight: SIZE(200),
         backgroundColor: "rgba(0, 0, 0, 0.2)",
         position: "absolute",
         top: SIZE(15),
