@@ -16,6 +16,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Colors } from "@/constants/Colors";
 import * as NavigationBar from "expo-navigation-bar";
+import Subtitles from "./Subtitles";
+import { SIZE } from "../../../constants/Constants";
+
 const VideoPlayer = ({ videoUrl, subtitlesData }) => {
     const videoRef = useRef(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
@@ -32,19 +35,6 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
 
     const [controlsVisible, setControlsVisible] = useState(true);
     let touchStart = 0;
-
-    const videoSource = {
-        uri: videoUrl,
-        textTracks: subtitlesData
-            .filter((sub) => sub.kind === "captions") // Filter out thumbnails
-            .map((sub) => ({
-                title: sub.label, // Use the label as the title
-                language: sub.label.toLowerCase(), // Use the label as the language (e.g., "English" -> "english")
-                type: "text/vtt", // Set the type as VTT
-                uri: sub.file, // Use the file URL
-                default: sub.default || false, // Set default if applicable
-            })),
-    };
 
     useEffect(() => {
         return () => {
@@ -140,11 +130,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                     <View style={styles.videoContainer}>
                         <Video
                             ref={videoRef}
-                            source={videoSource}
-                            selectedTextTrack={{
-                                type: "language",
-                                value: selectedSubtitle?.label?.toLowerCase(),
-                            }}
+                            source={{ uri: videoUrl }}
                             style={styles.video}
                             paused={!isPlaying}
                             onLoad={onLoad}
@@ -158,7 +144,24 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                 />
                             )}
                         />
-
+                        <Subtitles
+                            textStyle={{
+                                fontSize: SIZE(16),
+                                backgroundColor: "transparent",
+                                color: "#fff",
+                            }}
+                            containerStyle={{
+                                position: "absolute",
+                                bottom: SIZE(10),
+                                zIndex: 1000,
+                                alignSelf: "center",
+                                justifyContent: "center",
+                            }}
+                            currentTime={currentTime}
+                            selectedsubtitle={{
+                                file: selectedSubtitle?.file,
+                            }}
+                        />
                         {showControls && (
                             <View style={styles.controlsOverlay}>
                                 {/* Play/Pause and Skip Buttons */}
@@ -166,7 +169,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                     <TouchableOpacity onPress={() => skip(-10)}>
                                         <MaterialIcons
                                             name="replay-10"
-                                            size={30}
+                                            size={SIZE(30)}
                                             color="white"
                                         />
                                     </TouchableOpacity>
@@ -178,7 +181,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                                     ? "pause"
                                                     : "play-arrow"
                                             }
-                                            size={36}
+                                            size={SIZE(36)}
                                             color="white"
                                         />
                                     </TouchableOpacity>
@@ -186,7 +189,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                     <TouchableOpacity onPress={() => skip(10)}>
                                         <MaterialIcons
                                             name="forward-10"
-                                            size={30}
+                                            size={SIZE(30)}
                                             color="white"
                                         />
                                     </TouchableOpacity>
@@ -241,7 +244,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                                     ? "fullscreen-exit"
                                                     : "fullscreen"
                                             }
-                                            size={24}
+                                            size={SIZE(24)}
                                             color="white"
                                         />
                                     </TouchableOpacity>
@@ -312,7 +315,7 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: "#000",
-        height: 250,
+        height: SIZE(250),
         width: "100%",
     },
     fullScreen: {
@@ -353,49 +356,49 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 40,
+        gap: SIZE(40),
         flex: 1,
-        marginTop: 60,
+        marginTop: SIZE(60),
     },
     progressContainer: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 10,
+        paddingHorizontal: SIZE(10),
     },
     progressBar: {
         flex: 1,
-        marginHorizontal: 10,
+        marginHorizontal: SIZE(10),
     },
     timeText: {
         color: "#FFFFFF",
-        fontSize: 12,
+        fontSize: SIZE(12),
     },
     bottomControls: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 10,
+        padding: SIZE(10),
     },
     modalContainer: {
-        width: 150,
-        height: 200,
+        width: SIZE(150),
+        height: SIZE(200),
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.8)",
         position: "absolute",
-        top: 15,
+        top: SIZE(15),
         bottom: 0,
-        left: 10,
+        left: SIZE(10),
         right: 0,
         zIndex: 2000,
     },
     subtitleItem: {
-        padding: 15,
-        borderBottomWidth: 1,
+        padding: SIZE(15),
+        borderBottomWidth: SIZE(1),
         borderBottomColor: "#444",
     },
     subtitleText: {
-        fontSize: 16,
+        fontSize: SIZE(16),
         backgroundColor: "transparent",
         color: "#fff",
     },
@@ -407,14 +410,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     closeButton: {
-        marginVertical: 10,
-        padding: 5,
+        marginVertical: SIZE(10),
+        padding: SIZE(5),
         backgroundColor: "#333",
-        borderRadius: 5,
+        borderRadius: SIZE(50),
     },
     closeButtonText: {
         color: "#FFFFFF",
-        fontSize: 16,
+        fontSize: SIZE(16),
     },
 });
 

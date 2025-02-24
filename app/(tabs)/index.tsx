@@ -15,6 +15,7 @@ import { FlashList } from "@shopify/flash-list";
 import { apiConfig } from "../../AxiosConfig";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import { SIZE } from "@/constants/Constants";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
@@ -68,7 +69,7 @@ export const HomeScreen = () => {
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={50}
                     horizontal
-                    style={{ height: 250 }}
+                    style={{ height: SIZE(250) }}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.animeItem}
@@ -77,8 +78,6 @@ export const HomeScreen = () => {
                                     pathname: "watchpage",
                                     params: {
                                         id: item.id,
-                                        poster: item.poster,
-                                        title: item.name,
                                     },
                                 });
                             }}
@@ -109,17 +108,20 @@ export const HomeScreen = () => {
                 style={[
                     styles.sectionContainer,
                     {
-                        borderWidth: 1,
-                        height: 250,
-                        marginBottom: 10,
-                        borderBottomRightRadius: 8,
-                        borderBottomLeftRadius: 8,
+                        borderWidth: SIZE(1),
+                        height: SIZE(250),
+                        marginBottom: SIZE(10),
+                        borderBottomRightRadius: SIZE(8),
+                        borderBottomLeftRadius: SIZE(8),
                         borderTopWidth: 0,
                         borderColor: Colors.light.tabIconSelected,
                     },
                 ]}
             >
-                <ThemedText type="title" style={styles.sectionTitle}>
+                <ThemedText
+                    type="title"
+                    style={[styles.sectionTitle, { marginLeft: SIZE(10) }]}
+                >
                     Search Results
                 </ThemedText>
                 <FlashList
@@ -127,7 +129,7 @@ export const HomeScreen = () => {
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={50}
                     horizontal
-                    style={{ height: 250 }}
+                    style={{ height: SIZE(250) }}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.animeItem}
@@ -136,8 +138,6 @@ export const HomeScreen = () => {
                                     pathname: "watchpage",
                                     params: {
                                         id: item.id,
-                                        poster: item.poster,
-                                        title: item.name,
                                     },
                                 });
                             }}
@@ -249,65 +249,67 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     reactLogo: {
         width: "100%",
-        height: 150,
+        height: SIZE(150),
     },
     searchContainer: {
         // padding: 16,
     },
     searchInput: {
-        height: 40,
+        height: SIZE(40),
         borderColor: "#333",
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        borderRadius: 8,
+        borderWidth: SIZE(1),
+        paddingHorizontal: SIZE(10),
+        borderRadius: SIZE(8),
         color: "#000",
     },
     sectionContainer: {
-        marginBottom: 30,
-        height: 200,
+        marginBottom: SIZE(30),
+        height: SIZE(200),
     },
     sectionTitle: {
-        fontSize: 20,
+        fontSize: SIZE(20),
         fontWeight: "bold",
-        marginBottom: 10,
+        marginBottom: SIZE(10),
+        color: Colors.light.tabIconSelected,
     },
     animeItem: {
-        marginRight: 10,
+        marginRight: SIZE(10),
         alignItems: "center",
     },
     animePoster: {
-        width: 100,
-        height: 150,
-        borderRadius: 10,
+        width: SIZE(100),
+        height: SIZE(150),
+        borderRadius: SIZE(10),
     },
     animeName: {
-        marginTop: 5,
+        marginTop: SIZE(5),
         textAlign: "center",
-        width: 100,
-        fontSize: 12,
+        width: SIZE(100),
+        fontSize: SIZE(12),
+        color: Colors.light.tabIconSelected,
     },
     animeInfo: {
-        fontSize: 12,
+        fontSize: SIZE(12),
         color: "#666",
         textAlign: "center",
     },
     modalContainer: {
         backgroundColor: "white",
-        padding: 20,
-        borderRadius: 10,
+        padding: SIZE(20),
+        borderRadius: SIZE(10),
         width: "80%",
     },
     modalTitle: {
-        fontSize: 18,
+        fontSize: SIZE(18),
         fontWeight: "bold",
-        marginBottom: 10,
+        marginBottom: SIZE(10),
     },
     confirmButton: {
         backgroundColor: "#007BFF",
-        padding: 10,
-        borderRadius: 5,
+        padding: SIZE(10),
+        borderRadius: SIZE(5),
         alignItems: "center",
-        marginTop: 10,
+        marginTop: SIZE(10),
     },
     buttonText: {
         color: "white",

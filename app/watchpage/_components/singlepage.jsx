@@ -16,6 +16,7 @@ import { ThemedView } from "@/components/ThemedView";
 import VideoPlayer from "./VideoPlayer";
 import { Picker } from "@react-native-picker/picker";
 import { Colors } from "@/constants/Colors";
+import { SIZE } from "@/constants/Constants";
 
 const SinglePage = () => {
     const route = useRoute();
@@ -29,6 +30,7 @@ const SinglePage = () => {
     const [activeTab, setActiveTab] = useState("sub");
     const [activeSubTab, setActiveSubTab] = useState();
     const [servers, setServers] = useState();
+    const [animeInfo, setAnimeInfo] = useState();
 
     const getEpisodes = async () => {
         try {
@@ -40,6 +42,16 @@ const SinglePage = () => {
         } catch (error) {
             console.log(error, "axios error");
             setPageLoading(false);
+        }
+    };
+    const getAnimeInfo = async () => {
+        try {
+            const response = await apiConfig.get(
+                `/api/v2/hianime/anime/${route?.params?.id}`
+            );
+            setAnimeInfo(response.data.data);
+        } catch (error) {
+            console.log(error, "axios error");
         }
     };
 
@@ -82,6 +94,7 @@ const SinglePage = () => {
 
     useEffect(() => {
         getEpisodes();
+        getAnimeInfo();
     }, []);
 
     // Function to handle range selection from the picker
@@ -134,7 +147,7 @@ const SinglePage = () => {
             ) : (
                 <ThemedView
                     style={{
-                        height: 250,
+                        height: SIZE(250),
                         backgroundColor: "#000",
                         justifyContent: "center",
                         alignItems: "center",
@@ -148,7 +161,7 @@ const SinglePage = () => {
                             alignItems: "center",
                             justifyContent: "center",
                         }}
-                        source={{ uri: route?.params?.poster }}
+                        source={{ uri: animeInfo?.anime?.info?.poster }}
                         resizeMode="contain"
                     >
                         {videoLoading && (
@@ -184,10 +197,31 @@ const SinglePage = () => {
                     type="title"
                     style={{
                         color: Colors.light.tabIconSelected,
-                        fontSize: 25,
+                        fontSize: SIZE(25),
+                        marginBottom: SIZE(10),
                     }}
                 >
-                    {route?.params?.title}
+                    {animeInfo?.anime?.info?.name} (
+                    {animeInfo?.anime?.moreInfo?.japanese})
+                </ThemedText>
+                <ThemedText
+                    type="subtitle"
+                    style={{
+                        color: Colors.light.tabIconSelected,
+                        fontSize: SIZE(12),
+                    }}
+                >
+                    {animeInfo?.anime?.info?.description}
+                </ThemedText>
+                <ThemedText
+                    type="subtitle"
+                    style={{
+                        color: Colors.light.tabIconSelected,
+                        fontSize: SIZE(12),
+                        marginVertical: SIZE(10),
+                    }}
+                >
+                    Aired : {animeInfo?.anime?.moreInfo?.aired}
                 </ThemedText>
                 <View style={styles.tabContainer}>
                     {servers?.sub?.length > 0 && (
@@ -405,72 +439,72 @@ export default SinglePage;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: SIZE(16),
     },
     title: {
-        fontSize: 24,
+        fontSize: SIZE(24),
         fontWeight: "bold",
-        marginBottom: 16,
+        marginBottom: SIZE(16),
     },
     pickerContainer: {
-        borderWidth: 1,
+        borderWidth: SIZE(1),
         borderColor: "#333",
-        borderRadius: 8,
-        marginBottom: 16,
+        borderRadius: SIZE(8),
+        marginBottom: SIZE(16),
         width: "35%",
     },
     picker: {
         width: "100%",
     },
     episodeList: {
-        paddingVertical: 16,
+        paddingVertical: SIZE(16),
     },
     episodeButton: {
         width: "90%", // Adjust based on the number of columns
         aspectRatio: 1, // Make the buttons square
         justifyContent: "center",
         alignItems: "center",
-        borderWidth: 1,
+        borderWidth: SIZE(1),
         borderColor: "#333",
-        borderRadius: 8,
-        margin: 4,
+        borderRadius: SIZE(8),
+        margin: SIZE(4),
     },
     episodeText: {
-        fontSize: 16,
+        fontSize: SIZE(16),
         fontWeight: "bold",
     },
 
     tabContainer: {
         flexDirection: "row",
         justifyContent: "space-around",
-        marginBottom: 10,
+        marginBottom: SIZE(10),
     },
     tabButton: {
-        padding: 10,
+        padding: SIZE(10),
         flex: 1,
         alignItems: "center",
-        borderBottomWidth: 2,
+        borderBottomWidth: SIZE(2),
         borderColor: "transparent",
     },
     activeTab: { borderColor: Colors.light.tabIconSelected },
-    tabText: { fontSize: 18, color: "#333" },
+    tabText: { fontSize: SIZE(18), color: "#333" },
     activeText: { color: Colors.light.tabIconSelected, fontWeight: "bold" },
 
     subTabContainer: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        marginBottom: 10,
+        marginBottom: SIZE(10),
     },
     subTabButton: {
-        padding: 8,
-        borderWidth: 1,
-        borderRadius: 6,
+        padding: SIZE(8),
+        borderWidth: SIZE(1),
+        borderRadius: SIZE(6),
         borderColor: Colors.light.tabIconSelected,
     },
     activeSubTab: { backgroundColor: Colors.light.tabIconSelected },
-    subTabText: { fontSize: 16, color: Colors.light.tabIconSelected },
+    subTabText: { fontSize: SIZE(16), color: Colors.light.tabIconSelected },
     activeSubText: { color: "#fff", fontWeight: "bold" },
 
-    contentContainer: { marginTop: 20, alignItems: "center" },
-    contentText: { fontSize: 18, fontWeight: "bold", color: "#333" },
+    contentContainer: { marginTop: SIZE(20), alignItems: "center" },
+    contentText: { fontSize: SIZE(18), fontWeight: "bold", color: "#333" },
 });
