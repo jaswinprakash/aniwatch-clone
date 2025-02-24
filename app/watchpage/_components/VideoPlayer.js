@@ -32,7 +32,8 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
             subtitlesData[0] ||
             null
     );
-
+    const [isSeeking, setIsSeeking] = useState(false);
+    const [seekPosition, setSeekPosition] = useState(0);
     const [controlsVisible, setControlsVisible] = useState(true);
     let touchStart = 0;
 
@@ -97,10 +98,6 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
         videoRef.current.seek(Math.max(0, Math.min(newTime, duration)));
     };
 
-    const onProgress = (data) => {
-        setCurrentTime(data.currentTime);
-    };
-
     const onLoad = (data) => {
         setDuration(data.duration);
     };
@@ -114,6 +111,23 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    };
+
+    const onSlidingStart = (value) => {
+        setIsSeeking(true);
+        setSeekPosition(value);
+    };
+
+    const onSlidingComplete = (value) => {
+        setCurrentTime(value);
+        videoRef.current.seek(value);
+        setIsSeeking(false);
+    };
+
+    const onProgress = (data) => {
+        if (!isSeeking) {
+            setCurrentTime(data.currentTime);
+        }
     };
 
     return (
@@ -212,12 +226,16 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                     <Slider
                                         hitSlop={20}
                                         style={styles.progressBar}
-                                        value={currentTime}
+                                        value={
+                                            isSeeking
+                                                ? seekPosition
+                                                : currentTime
+                                        }
                                         minimumValue={0}
                                         maximumValue={duration}
-                                        onSlidingComplete={(value) =>
-                                            videoRef.current.seek(value)
-                                        }
+                                        onSlidingStart={onSlidingStart}
+                                        onValueChange={setSeekPosition}
+                                        onSlidingComplete={onSlidingComplete}
                                         minimumTrackTintColor={
                                             Colors.light.tabIconSelected
                                         }
