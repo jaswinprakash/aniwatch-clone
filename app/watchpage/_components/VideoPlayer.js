@@ -28,7 +28,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
     const [duration, setDuration] = useState(0);
     const [showSubtitleList, setShowSubtitleList] = useState(false);
     const [selectedSubtitle, setSelectedSubtitle] = useState(
-        subtitlesData.find((sub) => sub.label.toLowerCase() === "english") ||
+        subtitlesData.find((sub) => sub?.label?.toLowerCase() === "english") ||
             subtitlesData[0] ||
             null
     );
