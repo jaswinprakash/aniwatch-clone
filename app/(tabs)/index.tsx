@@ -66,10 +66,9 @@ export const HomeScreen = () => {
                 </ThemedText>
                 <FlashList
                     data={data}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item, index) => index.toString()}
                     estimatedItemSize={50}
                     horizontal
-                    style={{ height: SIZE(250) }}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.animeItem}
@@ -126,10 +125,9 @@ export const HomeScreen = () => {
                 </ThemedText>
                 <FlashList
                     data={searchResults}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item, index) => index.toString()}
                     estimatedItemSize={50}
                     horizontal
-                    style={{ height: SIZE(250) }}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.animeItem}

@@ -270,7 +270,9 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                     <View style={styles.modalContainer}>
                                         <FlatList
                                             data={subtitlesData}
-                                            keyExtractor={(item) => item.label}
+                                            keyExtractor={(item, index) =>
+                                                index.toString()
+                                            }
                                             renderItem={({ item }) => (
                                                 <TouchableOpacity
                                                     style={[
@@ -402,6 +404,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: SIZE(10),
+        justifyContent: "space-between",
     },
     progressBar: {
         flex: 1,

@@ -403,7 +403,7 @@ const SinglePage = () => {
                 {/* FlashList for displaying episodes */}
                 <FlashList
                     data={getEpisodesForCurrentRange()}
-                    keyExtractor={(item) => item.episodeId}
+                    keyExtractor={(item, index) => index.toString()}
                     numColumns={8} // Set the number of columns for the grid
                     estimatedItemSize={50}
                     renderItem={({ item }) => (
