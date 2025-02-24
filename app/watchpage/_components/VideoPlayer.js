@@ -166,15 +166,21 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                             <View style={styles.controlsOverlay}>
                                 {/* Play/Pause and Skip Buttons */}
                                 <View style={styles.centerControls}>
-                                    <TouchableOpacity onPress={() => skip(-10)}>
+                                    <TouchableOpacity
+                                        hitSlop={10}
+                                        onPress={() => skip(-10)}
+                                    >
                                         <MaterialIcons
                                             name="replay-10"
                                             size={SIZE(30)}
-                                            color="white"
+                                            color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={togglePlayPause}>
+                                    <TouchableOpacity
+                                        hitSlop={10}
+                                        onPress={togglePlayPause}
+                                    >
                                         <MaterialIcons
                                             name={
                                                 isPlaying
@@ -182,15 +188,18 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                                     : "play-arrow"
                                             }
                                             size={SIZE(36)}
-                                            color="white"
+                                            color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => skip(10)}>
+                                    <TouchableOpacity
+                                        hitSlop={10}
+                                        onPress={() => skip(10)}
+                                    >
                                         <MaterialIcons
                                             name="forward-10"
                                             size={SIZE(30)}
-                                            color="white"
+                                            color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -201,6 +210,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                         {formatTime(currentTime)}
                                     </Text>
                                     <Slider
+                                        hitSlop={20}
                                         style={styles.progressBar}
                                         value={currentTime}
                                         minimumValue={0}
@@ -208,9 +218,13 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                         onSlidingComplete={(value) =>
                                             videoRef.current.seek(value)
                                         }
-                                        minimumTrackTintColor="#FFFFFF"
+                                        minimumTrackTintColor={
+                                            Colors.light.tabIconSelected
+                                        }
                                         maximumTrackTintColor="#4A4A4A"
-                                        thumbTintColor="#FFFFFF"
+                                        thumbTintColor={
+                                            Colors.light.tabIconSelected
+                                        }
                                     />
                                     <Text style={styles.timeText}>
                                         {formatTime(duration)}
@@ -220,6 +234,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                 {/* Bottom Controls */}
                                 <View style={styles.bottomControls}>
                                     <TouchableOpacity
+                                        hitSlop={10}
                                         onPress={() =>
                                             setShowSubtitleList(true)
                                         }
@@ -231,11 +246,12 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                                     : "closed-caption-off"
                                             }
                                             size={24}
-                                            color="white"
+                                            color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
+                                        hitSlop={10}
                                         onPress={toggleFullScreen}
                                     >
                                         <MaterialIcons
@@ -245,7 +261,7 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                                     : "fullscreen"
                                             }
                                             size={SIZE(24)}
-                                            color="white"
+                                            color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -257,15 +273,35 @@ const VideoPlayer = ({ videoUrl, subtitlesData }) => {
                                             keyExtractor={(item) => item.label}
                                             renderItem={({ item }) => (
                                                 <TouchableOpacity
-                                                    style={styles.subtitleItem}
+                                                    style={[
+                                                        styles.subtitleItem,
+                                                        {
+                                                            backgroundColor:
+                                                                selectedSubtitle?.label ==
+                                                                item.label
+                                                                    ? Colors
+                                                                          .light
+                                                                          .tabIconSelected
+                                                                    : "transparent",
+                                                        },
+                                                    ]}
                                                     onPress={() =>
                                                         selectSubtitle(item)
                                                     }
                                                 >
                                                     <Text
-                                                        style={
-                                                            styles.subtitleText
-                                                        }
+                                                        style={[
+                                                            styles.subtitleText,
+                                                            {
+                                                                color:
+                                                                    selectedSubtitle?.label ==
+                                                                    item.label
+                                                                        ? "#fff"
+                                                                        : Colors
+                                                                              .light
+                                                                              .tabIconSelected,
+                                                            },
+                                                        ]}
                                                     >
                                                         {item.label}
                                                     </Text>
@@ -351,6 +387,8 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         justifyContent: "space-between",
+        padding: SIZE(10),
+        zIndex: 1000,
     },
     centerControls: {
         flexDirection: "row",
@@ -370,7 +408,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SIZE(10),
     },
     timeText: {
-        color: "#FFFFFF",
+        color: Colors.light.tabIconSelected,
         fontSize: SIZE(12),
     },
     bottomControls: {
@@ -382,25 +420,25 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: SIZE(150),
         height: SIZE(200),
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
         position: "absolute",
         top: SIZE(15),
         bottom: 0,
         left: SIZE(10),
         right: 0,
         zIndex: 2000,
+        borderRadius: SIZE(10),
     },
     subtitleItem: {
-        padding: SIZE(15),
+        padding: SIZE(10),
         borderBottomWidth: SIZE(1),
         borderBottomColor: "#444",
+        borderRadius: SIZE(8),
     },
     subtitleText: {
         fontSize: SIZE(16),
         backgroundColor: "transparent",
-        color: "#fff",
+        color: Colors.light.tabIconSelected,
     },
     subtitleContainer: {
         position: "absolute",
@@ -412,8 +450,10 @@ const styles = StyleSheet.create({
     closeButton: {
         marginVertical: SIZE(10),
         padding: SIZE(5),
-        backgroundColor: "#333",
-        borderRadius: SIZE(50),
+        backgroundColor: Colors.light.tabIconSelected,
+        borderRadius: SIZE(8),
+        alignItems: "center",
+        marginHorizontal: SIZE(10),
     },
     closeButtonText: {
         color: "#FFFFFF",

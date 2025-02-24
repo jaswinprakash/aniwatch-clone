@@ -249,7 +249,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     reactLogo: {
         width: "100%",
-        height: SIZE(150),
+        height: SIZE(155),
     },
     searchContainer: {
         // padding: 16,

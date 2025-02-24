@@ -12,11 +12,14 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
+TouchableOpacity.defaultProps = {
+    ...TouchableOpacity.defaultProps,
+    activeOpacity: 0.8,
+};
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({

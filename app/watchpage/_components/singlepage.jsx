@@ -6,6 +6,7 @@ import {
     View,
     Image,
     ImageBackground,
+    ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
@@ -38,10 +39,10 @@ const SinglePage = () => {
                 `/api/v2/hianime/anime/${route?.params?.id}/episodes`
             );
             setEpisodes(response.data.data.episodes);
-            setPageLoading(false);
+            // setPageLoading(false);
         } catch (error) {
             console.log(error, "axios error");
-            setPageLoading(false);
+            // setPageLoading(false);
         }
     };
     const getAnimeInfo = async () => {
@@ -50,6 +51,7 @@ const SinglePage = () => {
                 `/api/v2/hianime/anime/${route?.params?.id}`
             );
             setAnimeInfo(response.data.data);
+            setPageLoading(false);
         } catch (error) {
             console.log(error, "axios error");
         }
@@ -204,15 +206,17 @@ const SinglePage = () => {
                     {animeInfo?.anime?.info?.name} (
                     {animeInfo?.anime?.moreInfo?.japanese})
                 </ThemedText>
-                <ThemedText
-                    type="subtitle"
-                    style={{
-                        color: Colors.light.tabIconSelected,
-                        fontSize: SIZE(12),
-                    }}
-                >
-                    {animeInfo?.anime?.info?.description}
-                </ThemedText>
+                <ScrollView style={{ maxHeight: SIZE(55) }}>
+                    <ThemedText
+                        type="subtitle"
+                        style={{
+                            color: Colors.light.tabIconSelected,
+                            fontSize: SIZE(12),
+                        }}
+                    >
+                        {animeInfo?.anime?.info?.description}
+                    </ThemedText>
+                </ScrollView>
                 <ThemedText
                     type="subtitle"
                     style={{
@@ -383,6 +387,7 @@ const SinglePage = () => {
                                 color: Colors.light.tabIconSelected,
                             },
                         ]}
+                        mode="dropdown"
                     >
                         {generateRangeOptions().map((range, index) => (
                             <Picker.Item
