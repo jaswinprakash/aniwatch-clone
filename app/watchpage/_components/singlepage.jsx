@@ -8,7 +8,7 @@ import {
     ImageBackground,
     ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { apiConfig } from "../../../AxiosConfig";
 import { FlashList } from "@shopify/flash-list";
@@ -87,33 +87,36 @@ const SinglePage = () => {
         }
     };
 
-    const startStream = async (id, number) => {
-        setVideoLoading(true);
-        try {
-            const serverResponse = await apiConfig.get(
-                `/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${number}`
-            );
-            const servers = serverResponse.data.data;
-            setServers(servers);
+    const startStream = useCallback(
+        async (id, number) => {
+            setVideoLoading(true);
+            try {
+                const serverResponse = await apiConfig.get(
+                    `/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${number}`
+                );
+                const servers = serverResponse.data.data;
+                setServers(servers);
 
-            const selectedServer =
-                activeSubTab || servers[activeTab]?.[0]?.serverName;
-            setActiveSubTab(selectedServer);
+                const selectedServer =
+                    activeSubTab || servers[activeTab]?.[0]?.serverName;
+                setActiveSubTab(selectedServer);
 
-            const streamResponse = await apiConfig.get(
-                `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${selectedServer}&category=${activeTab}`
-            );
-            setVideoData(streamResponse.data.data);
-            if (currentPlayingEpisodeId !== id) {
-                setCurrentPlaybackTime(0);
-                setCurrentPlayingEpisodeId(id);
+                const streamResponse = await apiConfig.get(
+                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${selectedServer}&category=${activeTab}`
+                );
+                setVideoData(streamResponse.data.data);
+                if (currentPlayingEpisodeId !== id) {
+                    setCurrentPlaybackTime(0);
+                    setCurrentPlayingEpisodeId(id);
+                }
+            } catch (error) {
+                console.log(error, "axios error");
+            } finally {
+                setVideoLoading(false);
             }
-        } catch (error) {
-            console.log(error, "axios error");
-        } finally {
-            setVideoLoading(false);
-        }
-    };
+        },
+        [activeSubTab, activeTab, currentPlayingEpisodeId]
+    );
 
     useEffect(() => {
         if (selectedEpisode && activeSubTab) {

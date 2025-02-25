@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { View, Text, ViewStyle, TextStyle } from "react-native";
 import axios from "axios";
 import vttToJson from "vtt-to-json";
@@ -68,77 +68,86 @@ interface SubtitlesProps {
 /**
  * Subtitles Component
  */
-const Subtitles: React.FC<SubtitlesProps> = ({
-    selectedsubtitle,
-    currentTime,
-    containerStyle = {},
-    textStyle = {},
-}) => {
-    const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
-    const [text, setText] = useState("");
+const Subtitles: React.FC<SubtitlesProps> = memo(
+    ({
+        selectedsubtitle,
+        currentTime,
+        containerStyle = {},
+        textStyle = {},
+    }) => {
+        const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
+        const [text, setText] = useState("");
 
-    useEffect(() => {
-        const parseSubtitles = async () => {
-            if (selectedsubtitle?.file) {
-                const parsedSubtitles = await subtitleParser(
-                    selectedsubtitle.file
-                );
-                setSubtitles(parsedSubtitles);
+        useEffect(() => {
+            const parseSubtitles = async () => {
+                if (selectedsubtitle?.file) {
+                    const parsedSubtitles = await subtitleParser(
+                        selectedsubtitle.file
+                    );
+                    setSubtitles(parsedSubtitles);
+                }
+            };
+            parseSubtitles();
+        }, [selectedsubtitle]);
+
+        useEffect(() => {
+            let start = 0;
+            let end = subtitles.length - 1;
+            while (start <= end) {
+                const mid = Math.floor((start + end) / 2);
+                const subtitle = subtitles[mid] || {
+                    start: 0,
+                    end: 0,
+                    part: "",
+                };
+                if (
+                    currentTime >= subtitle.start &&
+                    currentTime <= subtitle.end
+                ) {
+                    setText(subtitle.part.trim());
+                    return;
+                } else if (currentTime < subtitle.start) {
+                    end = mid - 1;
+                } else {
+                    start = mid + 1;
+                }
             }
-        };
-        parseSubtitles();
-    }, [selectedsubtitle]);
+            setText("");
+        }, [currentTime, subtitles]);
 
-    useEffect(() => {
-        let start = 0;
-        let end = subtitles.length - 1;
-        while (start <= end) {
-            const mid = Math.floor((start + end) / 2);
-            const subtitle = subtitles[mid] || { start: 0, end: 0, part: "" };
-            if (currentTime >= subtitle.start && currentTime <= subtitle.end) {
-                setText(subtitle.part.trim());
-                return;
-            } else if (currentTime < subtitle.start) {
-                end = mid - 1;
-            } else {
-                start = mid + 1;
-            }
-        }
-        setText("");
-    }, [currentTime, subtitles]);
-
-    return (
-        <View
-            style={[
-                {
-                    position: "absolute",
-                    bottom: 50,
-                    width: "100%",
-                    alignItems: "center",
-                },
-                containerStyle,
-            ]}
-        >
-            {text ? (
-                <Text
-                    testID="react-native-subtitles-text"
-                    style={{
-                        fontSize: 25,
-                        color: "white",
-                        textAlign: "center",
-                        padding: 15,
-                        backgroundColor: "rgba(0,0,0,0.6)",
-                        textShadowColor: "#000",
-                        textShadowOffset: { width: 2, height: 2 },
-                        textShadowRadius: 2,
-                        ...textStyle,
-                    }}
-                >
-                    {text}
-                </Text>
-            ) : null}
-        </View>
-    );
-};
+        return (
+            <View
+                style={[
+                    {
+                        position: "absolute",
+                        bottom: 50,
+                        width: "100%",
+                        alignItems: "center",
+                    },
+                    containerStyle,
+                ]}
+            >
+                {text ? (
+                    <Text
+                        testID="react-native-subtitles-text"
+                        style={{
+                            fontSize: 25,
+                            color: "white",
+                            textAlign: "center",
+                            padding: 15,
+                            backgroundColor: "rgba(0,0,0,0.6)",
+                            textShadowColor: "#000",
+                            textShadowOffset: { width: 2, height: 2 },
+                            textShadowRadius: 2,
+                            ...textStyle,
+                        }}
+                    >
+                        {text}
+                    </Text>
+                ) : null}
+            </View>
+        );
+    }
+);
 
 export default Subtitles;

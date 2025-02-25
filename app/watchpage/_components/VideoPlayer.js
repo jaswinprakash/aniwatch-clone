@@ -21,7 +21,7 @@ import Subtitles from "./Subtitles";
 import { SIZE } from "../../../constants/Constants";
 import { router } from "expo-router";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
-
+import throttle from "lodash.throttle";
 const VideoPlayer = ({
     videoUrl,
     subtitlesData,
@@ -73,7 +73,9 @@ const VideoPlayer = ({
             backAction
         );
 
-        return () => backHandler.remove();
+        return () => {
+            backHandler.remove();
+        };
     }, [isFullScreen]);
 
     useEffect(() => {
@@ -122,6 +124,7 @@ const VideoPlayer = ({
             ]);
         }
     };
+
     useEffect(() => {
         return () => {
             ScreenOrientation.lockAsync(
@@ -164,14 +167,16 @@ const VideoPlayer = ({
         setIsSeeking(false);
     };
 
-    const onProgress = (data) => {
-        if (!isSeeking) {
-            setCurrentTime(data.currentTime);
-            if (onPlaybackTimeUpdate) {
-                onPlaybackTimeUpdate(data.currentTime);
+    const onProgress = useRef(
+        throttle((data) => {
+            if (!isSeeking) {
+                setCurrentTime(data.currentTime);
+                if (onPlaybackTimeUpdate) {
+                    onPlaybackTimeUpdate(data.currentTime);
+                }
             }
-        }
-    };
+        }, 1000)
+    ).current;
 
     const onLoad = (data) => {
         setDuration(data.duration);
@@ -669,4 +674,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default VideoPlayer;
+// export default VideoPlayer;
+export default React.memo(VideoPlayer);
