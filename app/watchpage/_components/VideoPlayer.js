@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
     View,
     StyleSheet,
@@ -22,6 +22,8 @@ import { SIZE } from "../../../constants/Constants";
 import { router } from "expo-router";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import throttle from "lodash.throttle";
+import useDeviceOrientation from "../../../hooks/useDeviceOrientation";
+
 const VideoPlayer = ({
     videoUrl,
     subtitlesData,
@@ -125,6 +127,36 @@ const VideoPlayer = ({
         }
     };
 
+    // const toggleFullScreen2 = useCallback(
+    //     async (forceFullScreen = null) => {
+    //         const newFullScreenState = forceFullScreen ?? !isFullScreen;
+    //         setIsFullScreen(newFullScreenState);
+    //         setIsFullscreenContext(newFullScreenState);
+
+    //         if (newFullScreenState) {
+    //             await Promise.all([
+    //                 ScreenOrientation.lockAsync(
+    //                     ScreenOrientation.OrientationLock.LANDSCAPE
+    //                 ),
+    //                 NavigationBar.setVisibilityAsync("hidden"),
+    //                 NavigationBar.setBehaviorAsync("overlay"),
+    //                 NavigationBar.setBackgroundColorAsync("transparent"),
+    //             ]);
+    //         } else {
+    //             await Promise.all([
+    //                 ScreenOrientation.lockAsync(
+    //                     ScreenOrientation.OrientationLock.PORTRAIT
+    //                 ),
+    //                 NavigationBar.setVisibilityAsync("visible"),
+    //                 NavigationBar.setBehaviorAsync("default"),
+    //                 NavigationBar.setBackgroundColorAsync("#000"),
+    //             ]);
+    //         }
+    //     },
+    //     [isFullScreen]
+    // );
+    // useDeviceOrientation(toggleFullScreen2);
+
     useEffect(() => {
         return () => {
             ScreenOrientation.lockAsync(
@@ -195,7 +227,9 @@ const VideoPlayer = ({
             <StatusBar hidden={isFullScreen} style="auto" />
             <View style={[styles.container, isFullScreen && styles.fullScreen]}>
                 <TouchableWithoutFeedback
-                    onPress={() => setShowControls(!showControls)}
+                    onPress={() => {
+                        setShowControls(!showControls);
+                    }}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                 >
