@@ -12,7 +12,9 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Video from "react-native-video";
-import Slider from "@react-native-community/slider";
+// import Slider from "@react-native-community/slider";
+import { Slider } from "@miblanchard/react-native-slider";
+
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Colors } from "@/constants/Colors";
@@ -50,6 +52,7 @@ const VideoPlayer = ({
     const [controlsVisible, setControlsVisible] = useState(true);
     const [selectedQuality, setSelectedQuality] = useState("auto");
     const [showQualityList, setShowQualityList] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     let touchStart = 0;
 
     useEffect(() => {
@@ -80,15 +83,15 @@ const VideoPlayer = ({
         };
     }, [isFullScreen]);
 
-    useEffect(() => {
-        if (showControls && !showQualityList && !showSubtitleList) {
-            const timeout = setTimeout(() => {
-                setShowControls(false);
-            }, 2000);
+    // useEffect(() => {
+    //     if (showControls && !showQualityList && !showSubtitleList) {
+    //         const timeout = setTimeout(() => {
+    //             setShowControls(false);
+    //         }, 2000);
 
-            return () => clearTimeout(timeout);
-        }
-    }, [showControls, showQualityList, showSubtitleList]);
+    //         return () => clearTimeout(timeout);
+    //     }
+    // }, [showControls, showQualityList, showSubtitleList]);
 
     const handleTouchStart = (event) => {
         touchStart = event.nativeEvent.pageY;
@@ -234,7 +237,21 @@ const VideoPlayer = ({
                     onTouchEnd={handleTouchEnd}
                 >
                     <View style={styles.videoContainer}>
+                        {isLoading && (
+                            <ActivityIndicator
+                                size={"large"}
+                                color={Colors.light.tabIconSelected}
+                                style={styles.loader}
+                            />
+                        )}
                         <Video
+                            onBuffer={(data) => {
+                                if (data.isBuffering) {
+                                    setIsLoading(true);
+                                } else {
+                                    setIsLoading(false);
+                                }
+                            }}
                             ref={videoRef}
                             source={{ uri: videoUrl, type: "m3u8" }}
                             style={styles.video}
@@ -242,7 +259,7 @@ const VideoPlayer = ({
                             onLoad={onLoad}
                             onProgress={onProgress}
                             resizeMode="contain"
-                            renderLoader={(item) => (
+                            renderLoader={() => (
                                 <ActivityIndicator
                                     size={"large"}
                                     color={Colors.light.tabIconSelected}
@@ -278,298 +295,302 @@ const VideoPlayer = ({
                                 file: selectedSubtitle?.file,
                             }}
                         />
-                        {showControls && (
-                            <View style={styles.controlsOverlay}>
+
+                        <View
+                            style={[
+                                styles.controlsOverlay,
+                                {
+                                    top: showControls ? 0 : 1000,
+                                },
+                            ]}
+                        >
+                            <View
+                                style={{
+                                    padding: SIZE(10),
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                }}
+                            >
                                 <View
                                     style={{
-                                        padding: SIZE(10),
                                         flexDirection: "row",
                                         alignItems: "center",
-                                        justifyContent: "space-between",
+                                        gap: SIZE(10),
                                     }}
                                 >
-                                    <View
+                                    <TouchableOpacity
+                                        hitSlop={10}
+                                        onPress={() => {
+                                            if (isFullScreen) {
+                                                toggleFullScreen();
+                                            } else {
+                                                router.back();
+                                            }
+                                        }}
+                                    >
+                                        <MaterialIcons
+                                            name="arrow-back"
+                                            size={24}
+                                            color={Colors.light.tabIconSelected}
+                                        />
+                                    </TouchableOpacity>
+                                    <Text
                                         style={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            gap: SIZE(10),
+                                            color: Colors.light.tabIconSelected,
+                                            fontWeight: "bold",
                                         }}
                                     >
-                                        <TouchableOpacity
-                                            hitSlop={10}
-                                            onPress={() => {
-                                                if (isFullScreen) {
-                                                    toggleFullScreen();
-                                                } else {
-                                                    router.back();
-                                                }
-                                            }}
-                                        >
-                                            <MaterialIcons
-                                                name="arrow-back"
-                                                size={24}
-                                                color={
-                                                    Colors.light.tabIconSelected
-                                                }
-                                            />
-                                        </TouchableOpacity>
-                                        <Text
-                                            style={{
-                                                color: Colors.light
-                                                    .tabIconSelected,
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            {title}
-                                        </Text>
-                                    </View>
-                                    <TouchableOpacity
-                                        hitSlop={10}
-                                        onPress={() => {
-                                            if (showQualityList) {
-                                                setShowQualityList(false);
-                                            } else {
-                                                setShowQualityList(true);
-                                            }
-                                            setShowSubtitleList(false);
-                                        }}
-                                    >
-                                        <MaterialIcons
-                                            name="high-quality"
-                                            size={24}
-                                            color={Colors.light.tabIconSelected}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                {/* Play/Pause and Skip Buttons */}
-                                <View style={styles.centerControls}>
-                                    <TouchableOpacity
-                                        hitSlop={10}
-                                        onPress={() => skip(-10)}
-                                    >
-                                        <MaterialIcons
-                                            name="replay-10"
-                                            size={SIZE(30)}
-                                            color={Colors.light.tabIconSelected}
-                                        />
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        hitSlop={10}
-                                        onPress={togglePlayPause}
-                                    >
-                                        <MaterialIcons
-                                            name={
-                                                isPlaying
-                                                    ? "pause"
-                                                    : "play-arrow"
-                                            }
-                                            size={SIZE(36)}
-                                            color={Colors.light.tabIconSelected}
-                                        />
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        hitSlop={10}
-                                        onPress={() => skip(10)}
-                                    >
-                                        <MaterialIcons
-                                            name="forward-10"
-                                            size={SIZE(30)}
-                                            color={Colors.light.tabIconSelected}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-
-                                {/* Progress Bar and Time */}
-                                <View style={styles.progressContainer}>
-                                    <Text style={styles.timeText}>
-                                        {formatTime(currentTime)}
-                                    </Text>
-                                    <Slider
-                                        hitSlop={20}
-                                        style={styles.progressBar}
-                                        value={
-                                            isSeeking
-                                                ? seekPosition
-                                                : currentTime
-                                        }
-                                        minimumValue={0}
-                                        maximumValue={duration}
-                                        onSlidingStart={onSlidingStart}
-                                        onValueChange={setSeekPosition}
-                                        onSlidingComplete={onSlidingComplete}
-                                        minimumTrackTintColor={
-                                            Colors.light.tabIconSelected
-                                        }
-                                        maximumTrackTintColor="#4A4A4A"
-                                        thumbTintColor={
-                                            Colors.light.tabIconSelected
-                                        }
-                                    />
-                                    <Text style={styles.timeText}>
-                                        {formatTime(duration)}
+                                        {title}
                                     </Text>
                                 </View>
-
-                                {/* Bottom Controls */}
-                                <View style={styles.bottomControls}>
-                                    <TouchableOpacity
-                                        hitSlop={10}
-                                        onPress={() => {
-                                            if (showSubtitleList) {
-                                                setShowSubtitleList(false);
-                                            } else {
-                                                setShowSubtitleList(true);
-                                            }
+                                <TouchableOpacity
+                                    hitSlop={10}
+                                    onPress={() => {
+                                        if (showQualityList) {
                                             setShowQualityList(false);
-                                        }}
-                                    >
-                                        <MaterialIcons
-                                            name={
-                                                selectedSubtitle
-                                                    ? "closed-caption"
-                                                    : "closed-caption-off"
-                                            }
-                                            size={24}
-                                            color={Colors.light.tabIconSelected}
-                                        />
-                                    </TouchableOpacity>
+                                        } else {
+                                            setShowQualityList(true);
+                                        }
+                                        setShowSubtitleList(false);
+                                    }}
+                                >
+                                    <MaterialIcons
+                                        name="high-quality"
+                                        size={24}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            {/* Play/Pause and Skip Buttons */}
+                            <View style={styles.centerControls}>
+                                <TouchableOpacity
+                                    hitSlop={10}
+                                    onPress={() => skip(-10)}
+                                >
+                                    <MaterialIcons
+                                        name="replay-10"
+                                        size={SIZE(30)}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                </TouchableOpacity>
 
-                                    <TouchableOpacity
-                                        hitSlop={10}
-                                        onPress={toggleFullScreen}
-                                    >
-                                        <MaterialIcons
-                                            name={
-                                                isFullScreen
-                                                    ? "fullscreen-exit"
-                                                    : "fullscreen"
-                                            }
-                                            size={SIZE(24)}
-                                            color={Colors.light.tabIconSelected}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                {showQualityList && (
-                                    <View style={[styles.modalContainer]}>
-                                        <FlatList
-                                            data={availableQualities}
-                                            keyExtractor={(item, index) =>
-                                                index.toString()
-                                            }
-                                            renderItem={({ item }) => (
-                                                <TouchableOpacity
+                                <TouchableOpacity
+                                    hitSlop={10}
+                                    onPress={togglePlayPause}
+                                >
+                                    <MaterialIcons
+                                        name={
+                                            isPlaying ? "pause" : "play-arrow"
+                                        }
+                                        size={SIZE(36)}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    hitSlop={10}
+                                    onPress={() => skip(10)}
+                                >
+                                    <MaterialIcons
+                                        name="forward-10"
+                                        size={SIZE(30)}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Progress Bar and Time */}
+                            <View style={styles.progressContainer}>
+                                <Text style={styles.timeText}>
+                                    {formatTime(
+                                        isSeeking ? seekPosition : currentTime
+                                    )}
+                                </Text>
+                                <Slider
+                                    containerStyle={styles.progressBar}
+                                    hitSlop={20}
+                                    value={
+                                        isSeeking ? seekPosition : currentTime
+                                    }
+                                    minimumValue={0}
+                                    maximumValue={duration}
+                                    onSlidingStart={(value) => {
+                                        setIsSeeking(true);
+                                        setSeekPosition(value[0]);
+                                    }}
+                                    onValueChange={(value) => {
+                                        setSeekPosition(value[0]);
+                                    }}
+                                    onSlidingComplete={(value) => {
+                                        setIsSeeking(false);
+                                        videoRef.current.seek(value[0]);
+                                        setCurrentTime(value[0]);
+                                    }}
+                                    minimumTrackTintColor={
+                                        Colors.light.tabIconSelected
+                                    }
+                                    maximumTrackTintColor="#4A4A4A"
+                                    thumbTintColor={
+                                        Colors.light.tabIconSelected
+                                    }
+                                />
+                                <Text style={styles.timeText}>
+                                    {formatTime(duration)}
+                                </Text>
+                            </View>
+
+                            {/* Bottom Controls */}
+                            <View style={styles.bottomControls}>
+                                <TouchableOpacity
+                                    hitSlop={10}
+                                    onPress={() => {
+                                        if (showSubtitleList) {
+                                            setShowSubtitleList(false);
+                                        } else {
+                                            setShowSubtitleList(true);
+                                        }
+                                        setShowQualityList(false);
+                                    }}
+                                >
+                                    <MaterialIcons
+                                        name={
+                                            selectedSubtitle
+                                                ? "closed-caption"
+                                                : "closed-caption-off"
+                                        }
+                                        size={24}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    hitSlop={10}
+                                    onPress={toggleFullScreen}
+                                >
+                                    <MaterialIcons
+                                        name={
+                                            isFullScreen
+                                                ? "fullscreen-exit"
+                                                : "fullscreen"
+                                        }
+                                        size={SIZE(24)}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            {showQualityList && (
+                                <View style={[styles.modalContainer]}>
+                                    <FlatList
+                                        data={availableQualities}
+                                        keyExtractor={(item, index) =>
+                                            index.toString()
+                                        }
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.subtitleItem,
+                                                    {
+                                                        backgroundColor:
+                                                            selectedQuality ==
+                                                            item
+                                                                ? Colors.light
+                                                                      .tabIconSelected
+                                                                : "transparent",
+                                                    },
+                                                ]}
+                                                onPress={() =>
+                                                    changeQuality(item)
+                                                }
+                                            >
+                                                <Text
                                                     style={[
-                                                        styles.subtitleItem,
+                                                        styles.subtitleText,
                                                         {
-                                                            backgroundColor:
+                                                            color:
                                                                 selectedQuality ==
                                                                 item
-                                                                    ? Colors
+                                                                    ? "#fff"
+                                                                    : Colors
                                                                           .light
-                                                                          .tabIconSelected
-                                                                    : "transparent",
+                                                                          .tabIconSelected,
                                                         },
                                                     ]}
-                                                    onPress={() =>
-                                                        changeQuality(item)
-                                                    }
                                                 >
-                                                    <Text
-                                                        style={[
-                                                            styles.subtitleText,
-                                                            {
-                                                                color:
-                                                                    selectedQuality ==
-                                                                    item
-                                                                        ? "#fff"
-                                                                        : Colors
-                                                                              .light
-                                                                              .tabIconSelected,
-                                                            },
-                                                        ]}
-                                                    >
-                                                        {item}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )}
-                                        />
-                                        <TouchableOpacity
-                                            style={styles.closeButton}
-                                            onPress={() =>
-                                                setShowQualityList(false)
-                                            }
-                                        >
-                                            <Text
-                                                style={styles.closeButtonText}
-                                            >
-                                                Close
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
+                                                    {item}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.closeButton}
+                                        onPress={() =>
+                                            setShowQualityList(false)
+                                        }
+                                    >
+                                        <Text style={styles.closeButtonText}>
+                                            Close
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
 
-                                {showSubtitleList && (
-                                    <View style={styles.modalContainer}>
-                                        <FlatList
-                                            data={subtitlesData}
-                                            keyExtractor={(item, index) =>
-                                                index.toString()
-                                            }
-                                            renderItem={({ item }) => (
-                                                <TouchableOpacity
+                            {showSubtitleList && (
+                                <View style={styles.modalContainer}>
+                                    <FlatList
+                                        data={subtitlesData}
+                                        keyExtractor={(item, index) =>
+                                            index.toString()
+                                        }
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.subtitleItem,
+                                                    {
+                                                        backgroundColor:
+                                                            selectedSubtitle?.label ==
+                                                            item.label
+                                                                ? Colors.light
+                                                                      .tabIconSelected
+                                                                : "transparent",
+                                                    },
+                                                ]}
+                                                onPress={() =>
+                                                    selectSubtitle(item)
+                                                }
+                                            >
+                                                <Text
                                                     style={[
-                                                        styles.subtitleItem,
+                                                        styles.subtitleText,
                                                         {
-                                                            backgroundColor:
+                                                            color:
                                                                 selectedSubtitle?.label ==
                                                                 item.label
-                                                                    ? Colors
+                                                                    ? "#fff"
+                                                                    : Colors
                                                                           .light
-                                                                          .tabIconSelected
-                                                                    : "transparent",
+                                                                          .tabIconSelected,
                                                         },
                                                     ]}
-                                                    onPress={() =>
-                                                        selectSubtitle(item)
-                                                    }
                                                 >
-                                                    <Text
-                                                        style={[
-                                                            styles.subtitleText,
-                                                            {
-                                                                color:
-                                                                    selectedSubtitle?.label ==
-                                                                    item.label
-                                                                        ? "#fff"
-                                                                        : Colors
-                                                                              .light
-                                                                              .tabIconSelected,
-                                                            },
-                                                        ]}
-                                                    >
-                                                        {item.label}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )}
-                                        />
-                                        <TouchableOpacity
-                                            style={styles.closeButton}
-                                            onPress={() =>
-                                                setShowSubtitleList(false)
-                                            }
-                                        >
-                                            <Text
-                                                style={styles.closeButtonText}
-                                            >
-                                                Close
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                            </View>
-                        )}
+                                                    {item.label}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.closeButton}
+                                        onPress={() =>
+                                            setShowSubtitleList(false)
+                                        }
+                                    >
+                                        <Text style={styles.closeButtonText}>
+                                            Close
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -624,6 +645,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+        zIndex: 10000000,
     },
     controlsOverlay: {
         position: "absolute",
