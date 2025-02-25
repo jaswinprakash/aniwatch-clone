@@ -20,6 +20,7 @@ import * as NavigationBar from "expo-navigation-bar";
 import Subtitles from "./Subtitles";
 import { SIZE } from "../../../constants/Constants";
 import { router } from "expo-router";
+import { useFullscreen } from "../../../hooks/FullScreenContext";
 
 const VideoPlayer = ({
     videoUrl,
@@ -28,6 +29,7 @@ const VideoPlayer = ({
     title,
 }) => {
     const videoRef = useRef(null);
+    const { setIsFullscreenContext } = useFullscreen();
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -97,6 +99,7 @@ const VideoPlayer = ({
 
     const toggleFullScreen = async () => {
         setIsFullScreen(!isFullScreen);
+        setIsFullscreenContext(!isFullScreen);
         if (!isFullScreen) {
             await Promise.all([
                 ScreenOrientation.lockAsync(
@@ -113,6 +116,7 @@ const VideoPlayer = ({
                 ),
                 NavigationBar.setVisibilityAsync("visible"),
                 NavigationBar.setBehaviorAsync("default"),
+                NavigationBar.setBackgroundColorAsync("#000"),
             ]);
         }
     };
@@ -123,6 +127,7 @@ const VideoPlayer = ({
             );
             NavigationBar.setVisibilityAsync("visible");
             NavigationBar.setBehaviorAsync("default");
+            NavigationBar.setBackgroundColorAsync("#000");
         };
     }, []);
 
@@ -173,9 +178,7 @@ const VideoPlayer = ({
     };
 
     return (
-        <SafeAreaView
-            style={[styles.safeArea, isFullScreen && styles.fullScreenSafeArea]}
-        >
+        <>
             <StatusBar hidden={isFullScreen} style="auto" />
             <View style={[styles.container, isFullScreen && styles.fullScreen]}>
                 <TouchableWithoutFeedback
@@ -523,7 +526,7 @@ const VideoPlayer = ({
                     </View>
                 </TouchableWithoutFeedback>
             </View>
-        </SafeAreaView>
+        </>
     );
 };
 

@@ -19,8 +19,11 @@ import { Picker } from "@react-native-picker/picker";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { TouchableRipple } from "react-native-paper";
+import { useFullscreen } from "../../../hooks/FullScreenContext";
+import Constants from "expo-constants";
 
 const SinglePage = () => {
+    const { isFullscreenContext } = useFullscreen();
     const route = useRoute();
     const [episodes, setEpisodes] = useState([]);
     const [videoData, setVideoData] = useState(null);
@@ -163,7 +166,14 @@ const SinglePage = () => {
     }
 
     return (
-        <>
+        <View
+            style={{
+                flex: 1,
+                paddingTop: isFullscreenContext
+                    ? SIZE(0)
+                    : Constants.statusBarHeight,
+            }}
+        >
             {!videoLoading && videoData ? (
                 <VideoPlayer
                     videoUrl={videoData.sources[0].url}
@@ -491,7 +501,7 @@ const SinglePage = () => {
                     </>
                 )}
             </ThemedView>
-        </>
+        </View>
     );
 };
 
