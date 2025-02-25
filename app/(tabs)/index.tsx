@@ -5,7 +5,7 @@ import {
     TouchableOpacity,
     Image,
     StyleSheet,
-    TextInput,
+    // TextInput,
     ActivityIndicator,
 } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
@@ -16,12 +16,15 @@ import { apiConfig } from "../../AxiosConfig";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
+import { TouchableRipple } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [pageLoading, setPageLoading] = useState(true);
+    const [searchLoading, setSearchLoading] = useState(false);
 
     const getHomeList = async () => {
         setPageLoading(true);
@@ -36,6 +39,7 @@ export const HomeScreen = () => {
     };
 
     const handleSearch = async (query) => {
+        setSearchLoading(true);
         setSearchQuery(query);
         if (query.length > 2) {
             // Only search if the query has more than 2 characters
@@ -44,11 +48,14 @@ export const HomeScreen = () => {
                     `/api/v2/hianime/search/suggestion?q=${query}`
                 );
                 setSearchResults(response.data.data.suggestions);
+                setSearchLoading(false);
             } catch (error) {
                 console.log(error, "axios error");
+                setSearchLoading(false);
             }
         } else {
             setSearchResults([]); // Clear results if the query is too short
+            setSearchLoading(false);
         }
     };
 
@@ -70,21 +77,26 @@ export const HomeScreen = () => {
                     estimatedItemSize={50}
                     horizontal
                     renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.animeItem}
-                            onPress={() => {
-                                router.push({
-                                    pathname: "watchpage",
-                                    params: {
-                                        id: item.id,
-                                    },
-                                });
-                            }}
-                        >
-                            <Image
-                                source={{ uri: item.poster }}
-                                style={styles.animePoster}
-                            />
+                        <View style={styles.animeItem}>
+                            <TouchableRipple
+                                rippleColor="rgba(0, 0, 0, 0.5)"
+                                borderless={true}
+                                style={{ borderRadius: SIZE(10) }}
+                                onPress={() => {
+                                    router.push({
+                                        pathname: "watchpage",
+                                        params: {
+                                            id: item.id,
+                                        },
+                                    });
+                                }}
+                            >
+                                <Image
+                                    source={{ uri: item.poster }}
+                                    style={styles.animePoster}
+                                />
+                            </TouchableRipple>
+
                             <ThemedText
                                 numberOfLines={2}
                                 type="subtitle"
@@ -92,7 +104,7 @@ export const HomeScreen = () => {
                             >
                                 {item.name}
                             </ThemedText>
-                        </TouchableOpacity>
+                        </View>
                     )}
                 />
             </ThemedView>
@@ -107,7 +119,7 @@ export const HomeScreen = () => {
                 style={[
                     styles.sectionContainer,
                     {
-                        borderWidth: SIZE(1),
+                        borderWidth: SIZE(2),
                         height: SIZE(250),
                         marginBottom: SIZE(10),
                         borderBottomRightRadius: SIZE(8),
@@ -129,21 +141,25 @@ export const HomeScreen = () => {
                     estimatedItemSize={50}
                     horizontal
                     renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.animeItem}
-                            onPress={() => {
-                                router.push({
-                                    pathname: "watchpage",
-                                    params: {
-                                        id: item.id,
-                                    },
-                                });
-                            }}
-                        >
-                            <Image
-                                source={{ uri: item.poster }}
-                                style={styles.animePoster}
-                            />
+                        <View style={styles.animeItem}>
+                            <TouchableRipple
+                                rippleColor="rgba(0, 0, 0, 0.5)"
+                                borderless={true}
+                                style={{ borderRadius: SIZE(10) }}
+                                onPress={() => {
+                                    router.push({
+                                        pathname: "watchpage",
+                                        params: {
+                                            id: item.id,
+                                        },
+                                    });
+                                }}
+                            >
+                                <Image
+                                    source={{ uri: item.poster }}
+                                    style={styles.animePoster}
+                                />
+                            </TouchableRipple>
                             <ThemedText
                                 numberOfLines={2}
                                 type="subtitle"
@@ -157,7 +173,7 @@ export const HomeScreen = () => {
                             >
                                 {item.moreInfo.join(" • ")}
                             </ThemedText>
-                        </TouchableOpacity>
+                        </View>
                     )}
                 />
             </ThemedView>
@@ -203,10 +219,42 @@ export const HomeScreen = () => {
                             color: Colors.light.tabIconSelected,
                         },
                     ]}
-                    placeholder="Search for anime..."
+                    mode="outlined"
+                    label="Search for anime..."
+                    placeholder="Search"
                     placeholderTextColor={Colors.light.tabIconSelected}
                     value={searchQuery}
                     onChangeText={handleSearch}
+                    outlineStyle={{
+                        borderColor: Colors.light.tabIconSelected,
+                        borderRadius: SIZE(10),
+                    }}
+                    outlineColor={Colors.light.tabIconSelected}
+                    textColor={Colors.light.tabIconSelected}
+                    theme={{
+                        colors: {
+                            primary: Colors.light.tabIconSelected, // Change this to any color you want for the label
+                            onSurfaceVariant: Colors.light.tabIconSelected,
+                        },
+                    }}
+                    left={
+                        <TextInput.Icon
+                            icon="magnify"
+                            color={Colors.light.tabIconSelected}
+                        />
+                    }
+                    right={
+                        searchLoading ? ( // Show ActivityIndicator only when searching
+                            <TextInput.Icon
+                                icon={() => (
+                                    <ActivityIndicator
+                                        size="small"
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                )}
+                            />
+                        ) : null
+                    }
                 />
                 {/* Display Search Results */}
                 {searchQuery && renderSearchResults()}
@@ -214,20 +262,16 @@ export const HomeScreen = () => {
 
             {/* Display Home Lists */}
             {renderAnimeList(
-                "Completed Animes",
-                animeHomeList?.latestCompletedAnimes
-            )}
-            {renderAnimeList(
                 "Latest Episode Animes",
                 animeHomeList?.latestEpisodeAnimes
             )}
             {renderAnimeList(
-                "Most Favorite Animes",
-                animeHomeList?.mostFavoriteAnimes
-            )}
-            {renderAnimeList(
                 "Most Popular Animes",
                 animeHomeList?.mostPopularAnimes
+            )}
+            {renderAnimeList(
+                "Most Favorite Animes",
+                animeHomeList?.mostFavoriteAnimes
             )}
             {renderAnimeList(
                 "Top Airing Animes",
@@ -238,6 +282,10 @@ export const HomeScreen = () => {
                 animeHomeList?.topUpcomingAnimes
             )}
             {renderAnimeList("Trending Animes", animeHomeList?.trendingAnimes)}
+            {renderAnimeList(
+                "Completed Animes",
+                animeHomeList?.latestCompletedAnimes
+            )}
         </ParallaxScrollView>
     );
 };
@@ -253,12 +301,12 @@ const styles = StyleSheet.create({
         // padding: 16,
     },
     searchInput: {
-        height: SIZE(40),
-        borderColor: "#333",
-        borderWidth: SIZE(1),
-        paddingHorizontal: SIZE(10),
-        borderRadius: SIZE(8),
-        color: "#000",
+        // height: SIZE(40),
+        // borderColor: "#333",
+        // borderWidth: SIZE(1),
+        // paddingHorizontal: SIZE(10),
+        // borderRadius: SIZE(8),
+        // color: "#000",
     },
     sectionContainer: {
         marginBottom: SIZE(30),

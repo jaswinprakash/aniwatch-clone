@@ -1,55 +1,51 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { Platform } from "react-native";
-
-import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
+import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colors } from "@/constants/Colors";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SIZE } from "@/constants/Constants";
+import HomeScreen from "./index"; // Create or import HomeScreen
+import Profile from "./explore"; // Create or import Profile
+
+const MaterialTabs = createMaterialBottomTabNavigator();
+
 export default function TabLayout() {
     const colorScheme = useColorScheme();
 
     return (
-        <Tabs
-            screenOptions={{
-                tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-                headerShown: false,
-                tabBarButton: HapticTab,
-                tabBarBackground: TabBarBackground,
-                tabBarStyle: Platform.select({
-                    ios: {
-                        // Use a transparent background on iOS to show the blur effect
-                        position: "absolute",
-                    },
-                    default: {},
-                }),
+        <MaterialTabs.Navigator
+            shifting={true}
+            activeColor={Colors[colorScheme ?? "light"].tint}
+            inactiveColor="gray"
+            barStyle={{
+                backgroundColor: Colors[colorScheme ?? "light"].background,
+                height: SIZE(65), // Reduce tab height
             }}
+            screenOptions={{ headerShown: false }} // Hide the header
         >
-            <Tabs.Screen
-                name="index"
+            <MaterialTabs.Screen
+                name="Home"
+                component={HomeScreen} // Use your screen component instead of Tabs
                 options={{
-                    title: "Home",
+                    tabBarLabel: "Home",
                     tabBarIcon: ({ color }) => (
-                        <AntDesign size={SIZE(28)} name="home" color={color} />
+                        <AntDesign size={SIZE(24)} name="home" color={color} />
                     ),
                 }}
             />
-            <Tabs.Screen
-                name="explore"
+            <MaterialTabs.Screen
+                name="Settings"
+                component={Profile} // Use your screen component instead of Tabs
                 options={{
-                    title: "Settings",
+                    tabBarLabel: "Settings",
                     tabBarIcon: ({ color }) => (
                         <AntDesign
-                            size={SIZE(28)}
+                            size={SIZE(24)}
                             name="setting"
                             color={color}
                         />
                     ),
                 }}
             />
-        </Tabs>
+        </MaterialTabs.Navigator>
     );
 }

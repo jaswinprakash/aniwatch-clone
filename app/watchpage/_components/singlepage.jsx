@@ -18,6 +18,7 @@ import VideoPlayer from "./VideoPlayer";
 import { Picker } from "@react-native-picker/picker";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
+import { TouchableRipple } from "react-native-paper";
 
 const SinglePage = () => {
     const route = useRoute();
@@ -26,6 +27,7 @@ const SinglePage = () => {
     const [currentRange, setCurrentRange] = useState({ start: 0, end: 50 });
     const [selectedRange, setSelectedRange] = useState("1-50");
     const [pageLoading, setPageLoading] = useState(true);
+    const [episodeLoading, setEpisodeLoading] = useState(true);
     const [videoLoading, setVideoLoading] = useState(false);
     const [selectedEpisode, setSelectedEpisode] = useState();
     const [activeTab, setActiveTab] = useState("sub");
@@ -40,10 +42,10 @@ const SinglePage = () => {
                 `/api/v2/hianime/anime/${route?.params?.id}/episodes`
             );
             setEpisodes(response.data.data.episodes);
-            // setPageLoading(false);
+            setEpisodeLoading(false);
         } catch (error) {
             console.log(error, "axios error");
-            // setPageLoading(false);
+            setEpisodeLoading(false);
         }
     };
     const getAnimeInfo = async () => {
@@ -254,7 +256,9 @@ const SinglePage = () => {
                 </ThemedText>
                 <View style={styles.tabContainer}>
                     {servers?.sub?.length > 0 && (
-                        <TouchableOpacity
+                        <TouchableRipple
+                            rippleColor="rgba(255, 255, 255, 0.5)"
+                            borderless={true}
                             style={[
                                 styles.tabButton,
                                 activeTab === "sub" && styles.activeTab,
@@ -269,10 +273,12 @@ const SinglePage = () => {
                             >
                                 Sub
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableRipple>
                     )}
                     {servers?.dub?.length > 0 && (
-                        <TouchableOpacity
+                        <TouchableRipple
+                            rippleColor="rgba(255, 255, 255, 0.5)"
+                            borderless={true}
                             style={[
                                 styles.tabButton,
                                 activeTab === "dub" && styles.activeTab,
@@ -287,10 +293,12 @@ const SinglePage = () => {
                             >
                                 Dub
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableRipple>
                     )}
                     {servers?.raw?.length > 0 && (
-                        <TouchableOpacity
+                        <TouchableRipple
+                            rippleColor="rgba(255, 255, 255, 0.5)"
+                            borderless={true}
                             style={[
                                 styles.tabButton,
                                 activeTab === "raw" && styles.activeTab,
@@ -305,14 +313,16 @@ const SinglePage = () => {
                             >
                                 Raw
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableRipple>
                     )}
                 </View>
 
                 {activeTab === "sub" && (
                     <View style={styles.subTabContainer}>
                         {servers?.sub?.map((item, index) => (
-                            <TouchableOpacity
+                            <TouchableRipple
+                                rippleColor="rgba(255, 255, 255, 0.5)"
+                                borderless={true}
                                 key={index}
                                 style={[
                                     styles.subTabButton,
@@ -332,7 +342,7 @@ const SinglePage = () => {
                                 >
                                     {item?.serverName}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableRipple>
                         ))}
                     </View>
                 )}
@@ -340,7 +350,9 @@ const SinglePage = () => {
                 {activeTab === "dub" && (
                     <View style={styles.subTabContainer}>
                         {servers?.dub?.map((item, index) => (
-                            <TouchableOpacity
+                            <TouchableRipple
+                                rippleColor="rgba(255, 255, 255, 0.5)"
+                                borderless={true}
                                 key={index}
                                 style={[
                                     styles.subTabButton,
@@ -360,7 +372,7 @@ const SinglePage = () => {
                                 >
                                     {item?.serverName}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableRipple>
                         ))}
                     </View>
                 )}
@@ -368,7 +380,9 @@ const SinglePage = () => {
                 {activeTab === "raw" && (
                     <View style={styles.subTabContainer}>
                         {servers?.raw?.map((item, index) => (
-                            <TouchableOpacity
+                            <TouchableRipple
+                                rippleColor="rgba(255, 255, 255, 0.5)"
+                                borderless={true}
                                 key={index}
                                 style={[
                                     styles.subTabButton,
@@ -388,77 +402,94 @@ const SinglePage = () => {
                                 >
                                     {item?.serverName}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableRipple>
                         ))}
                     </View>
                 )}
-
-                {/* Picker for episode range selection */}
-                <View
-                    style={[
-                        styles.pickerContainer,
-                        {
-                            borderColor: Colors.light.tabIconSelected,
-                        },
-                    ]}
-                >
-                    <Picker
-                        dropdownIconColor={Colors.light.tabIconSelected}
-                        selectedValue={selectedRange}
-                        onValueChange={handleRangeChange}
-                        style={[
-                            styles.picker,
-                            {
-                                color: Colors.light.tabIconSelected,
-                            },
-                        ]}
-                        mode="dropdown"
-                    >
-                        {generateRangeOptions().map((range, index) => (
-                            <Picker.Item
-                                key={index}
-                                label={range}
-                                value={range}
-                                style={{ color: Colors.light.tabIconSelected }}
-                            />
-                        ))}
-                    </Picker>
-                </View>
-
-                {/* FlashList for displaying episodes */}
-                <FlashList
-                    data={getEpisodesForCurrentRange()}
-                    keyExtractor={(item, index) => index.toString()}
-                    numColumns={8} // Set the number of columns for the grid
-                    estimatedItemSize={50}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            disabled={selectedEpisode == item?.number}
+                {episodeLoading ? (
+                    <ActivityIndicator
+                        size={"large"}
+                        color={Colors.light.tabIconSelected}
+                        style={{ flex: 1 }}
+                    />
+                ) : (
+                    <>
+                        {/* Picker for episode range selection */}
+                        <View
                             style={[
-                                styles.episodeButton,
+                                styles.pickerContainer,
                                 {
-                                    backgroundColor:
-                                        selectedEpisode == item?.number
-                                            ? Colors.light.tabIconSelected
-                                            : null,
                                     borderColor: Colors.light.tabIconSelected,
                                 },
                             ]}
-                            onPress={() => {
-                                setSelectedEpisode(item?.number);
-                                startStream(item?.episodeId, item?.number);
-                            }}
                         >
-                            <ThemedText
-                                type="subtitle"
-                                style={[styles.episodeText, {}]}
+                            <Picker
+                                dropdownIconColor={Colors.light.tabIconSelected}
+                                selectedValue={selectedRange}
+                                onValueChange={handleRangeChange}
+                                style={[
+                                    styles.picker,
+                                    {
+                                        color: Colors.light.tabIconSelected,
+                                    },
+                                ]}
+                                mode="dropdown"
                             >
-                                {item?.number}
-                            </ThemedText>
-                        </TouchableOpacity>
-                    )}
-                    contentContainerStyle={styles.episodeList}
-                />
+                                {generateRangeOptions().map((range, index) => (
+                                    <Picker.Item
+                                        key={index}
+                                        label={range}
+                                        value={range}
+                                        style={{
+                                            color: Colors.light.tabIconSelected,
+                                        }}
+                                    />
+                                ))}
+                            </Picker>
+                        </View>
+                        {/* FlashList for displaying episodes */}
+                        <FlashList
+                            data={getEpisodesForCurrentRange()}
+                            keyExtractor={(item, index) => index.toString()}
+                            numColumns={8} // Set the number of columns for the grid
+                            estimatedItemSize={50}
+                            renderItem={({ item }) => (
+                                <TouchableRipple
+                                    rippleColor="rgba(255, 255, 255, 0.5)"
+                                    borderless={true}
+                                    disabled={selectedEpisode == item?.number}
+                                    style={[
+                                        styles.episodeButton,
+                                        {
+                                            backgroundColor:
+                                                selectedEpisode == item?.number
+                                                    ? Colors.light
+                                                          .tabIconSelected
+                                                    : null,
+                                            borderColor:
+                                                Colors.light.tabIconSelected,
+                                        },
+                                    ]}
+                                    onPress={() => {
+                                        setSelectedEpisode(item?.number);
+                                        startStream(
+                                            item?.episodeId,
+                                            item?.number
+                                        );
+                                    }}
+                                >
+                                    <ThemedText
+                                        type="subtitle"
+                                        style={[styles.episodeText, {}]}
+                                    >
+                                        {item?.number}
+                                    </ThemedText>
+                                </TouchableRipple>
+                            )}
+                            contentContainerStyle={styles.episodeList}
+                        />
+                    </>
+                )}
             </ThemedView>
         </>
     );
