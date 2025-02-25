@@ -38,6 +38,9 @@ const SinglePage = () => {
     const [servers, setServers] = useState();
     const [animeInfo, setAnimeInfo] = useState();
     const [availableQualities, setAvailableQualities] = useState(["auto"]);
+    const [currentPlayingEpisodeId, setCurrentPlayingEpisodeId] =
+        useState(null);
+    const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
 
     const getEpisodes = async () => {
         try {
@@ -68,9 +71,9 @@ const SinglePage = () => {
             const response = await apiConfig.get(
                 `/api/v2/hianime/qtip/${route?.params?.id}`
             );
-            const quality = response.data.data.anime.quality; // API response
+            const quality = response.data.data.anime.quality;
 
-            let qualityOptions = ["auto"]; // Always include Auto
+            let qualityOptions = ["auto"];
 
             if (quality === "SD") {
                 qualityOptions.push(480, 360);
@@ -93,7 +96,6 @@ const SinglePage = () => {
             const servers = serverResponse.data.data;
             setServers(servers);
 
-            // Use the currently selected server (activeSubTab) or default to the first server in the active tab
             const selectedServer =
                 activeSubTab || servers[activeTab]?.[0]?.serverName;
             setActiveSubTab(selectedServer);
@@ -102,6 +104,10 @@ const SinglePage = () => {
                 `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${selectedServer}&category=${activeTab}`
             );
             setVideoData(streamResponse.data.data);
+            if (currentPlayingEpisodeId !== id) {
+                setCurrentPlaybackTime(0);
+                setCurrentPlayingEpisodeId(id);
+            }
         } catch (error) {
             console.log(error, "axios error");
         } finally {
@@ -109,7 +115,6 @@ const SinglePage = () => {
         }
     };
 
-    // Handle server switch
     useEffect(() => {
         if (selectedEpisode && activeSubTab) {
             const episode = episodes.find(
@@ -127,14 +132,16 @@ const SinglePage = () => {
         getQtipInfo();
     }, []);
 
-    // Function to handle range selection from the picker
+    const handlePlaybackTimeUpdate = (time) => {
+        setCurrentPlaybackTime(time);
+    };
+
     const handleRangeChange = (range) => {
         const [start, end] = range.split("-").map(Number);
-        setCurrentRange({ start: start - 1, end }); // Adjust for zero-based index
+        setCurrentRange({ start: start - 1, end });
         setSelectedRange(range);
     };
 
-    // Generate range options for the picker
     const generateRangeOptions = () => {
         const totalEpisodes = episodes.length;
         const rangeOptions = [];
@@ -146,7 +153,6 @@ const SinglePage = () => {
         return rangeOptions;
     };
 
-    // Get the episodes for the current range
     const getEpisodesForCurrentRange = () => {
         return episodes.slice(currentRange.start, currentRange.end);
     };
@@ -184,6 +190,8 @@ const SinglePage = () => {
                     onReadyForDisplay={() => setVideoLoading(false)}
                     availableQualities={availableQualities}
                     title={animeInfo?.anime?.info?.name}
+                    initialPlaybackTime={currentPlaybackTime}
+                    onPlaybackTimeUpdate={handlePlaybackTimeUpdate}
                 />
             ) : (
                 <ThemedView
@@ -211,7 +219,7 @@ const SinglePage = () => {
                                     position: "absolute",
                                     height: "100%",
                                     width: "100%",
-                                    backgroundColor: "rgba(0, 0, 0, 0.4)", // Semi-transparent background for contrast
+                                    backgroundColor: "rgba(0, 0, 0, 0.4)",
                                     justifyContent: "center",
                                     alignItems: "center",
                                 }}
@@ -483,6 +491,9 @@ const SinglePage = () => {
                                         },
                                     ]}
                                     onPress={() => {
+                                        setCurrentPlayingEpisodeId(
+                                            item.episodeId
+                                        );
                                         setSelectedEpisode(item?.number);
                                         startStream(
                                             item?.episodeId,

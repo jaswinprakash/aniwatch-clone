@@ -27,6 +27,8 @@ const VideoPlayer = ({
     subtitlesData,
     availableQualities,
     title,
+    initialPlaybackTime = 0,
+    onPlaybackTimeUpdate,
 }) => {
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
@@ -140,10 +142,6 @@ const VideoPlayer = ({
         videoRef.current.seek(Math.max(0, Math.min(newTime, duration)));
     };
 
-    const onLoad = (data) => {
-        setDuration(data.duration);
-    };
-
     const selectSubtitle = (subtitle) => {
         setSelectedSubtitle(subtitle);
         setShowSubtitleList(false);
@@ -169,6 +167,16 @@ const VideoPlayer = ({
     const onProgress = (data) => {
         if (!isSeeking) {
             setCurrentTime(data.currentTime);
+            if (onPlaybackTimeUpdate) {
+                onPlaybackTimeUpdate(data.currentTime);
+            }
+        }
+    };
+
+    const onLoad = (data) => {
+        setDuration(data.duration);
+        if (initialPlaybackTime > 0) {
+            videoRef.current.seek(initialPlaybackTime);
         }
     };
 
