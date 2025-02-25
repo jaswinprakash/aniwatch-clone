@@ -177,7 +177,9 @@ const SinglePage = () => {
             {!videoLoading && videoData ? (
                 <VideoPlayer
                     videoUrl={videoData.sources[0].url}
-                    subtitlesData={videoData.tracks}
+                    subtitlesData={videoData?.tracks?.filter(
+                        (track) => track?.label
+                    )}
                     onLoadStart={() => setVideoLoading(true)}
                     onReadyForDisplay={() => setVideoLoading(false)}
                     availableQualities={availableQualities}
