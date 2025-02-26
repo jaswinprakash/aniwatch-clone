@@ -25,6 +25,7 @@ import { router } from "expo-router";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import throttle from "lodash.throttle";
 import useDeviceOrientation from "../../../hooks/useDeviceOrientation";
+import { ThemedText } from "../../../components/ThemedText";
 
 const VideoPlayer = ({
     videoUrl,
@@ -335,14 +336,15 @@ const VideoPlayer = ({
                                             color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
-                                    <Text
+                                    <ThemedText
+                                        type="title"
                                         style={{
                                             color: Colors.light.tabIconSelected,
-                                            fontWeight: "bold",
+                                            fontSize: SIZE(15),
                                         }}
                                     >
                                         {title}
-                                    </Text>
+                                    </ThemedText>
                                 </View>
                                 <TouchableOpacity
                                     hitSlop={10}
@@ -402,11 +404,14 @@ const VideoPlayer = ({
 
                             {/* Progress Bar and Time */}
                             <View style={styles.progressContainer}>
-                                <Text style={styles.timeText}>
+                                <ThemedText
+                                    type="subtitle"
+                                    style={styles.timeText}
+                                >
                                     {formatTime(
                                         isSeeking ? seekPosition : currentTime
                                     )}
-                                </Text>
+                                </ThemedText>
                                 <Slider
                                     containerStyle={styles.progressBar}
                                     hitSlop={20}
@@ -435,9 +440,12 @@ const VideoPlayer = ({
                                         Colors.light.tabIconSelected
                                     }
                                 />
-                                <Text style={styles.timeText}>
+                                <ThemedText
+                                    type="subtitle"
+                                    style={styles.timeText}
+                                >
                                     {formatTime(duration)}
-                                </Text>
+                                </ThemedText>
                             </View>
 
                             {/* Bottom Controls */}
@@ -503,7 +511,8 @@ const VideoPlayer = ({
                                                     changeQuality(item)
                                                 }
                                             >
-                                                <Text
+                                                <ThemedText
+                                                    type="default"
                                                     style={[
                                                         styles.subtitleText,
                                                         {
@@ -518,7 +527,7 @@ const VideoPlayer = ({
                                                     ]}
                                                 >
                                                     {item}
-                                                </Text>
+                                                </ThemedText>
                                             </TouchableOpacity>
                                         )}
                                     />
@@ -528,9 +537,12 @@ const VideoPlayer = ({
                                             setShowQualityList(false)
                                         }
                                     >
-                                        <Text style={styles.closeButtonText}>
+                                        <ThemedText
+                                            type="default"
+                                            style={styles.closeButtonText}
+                                        >
                                             Close
-                                        </Text>
+                                        </ThemedText>
                                     </TouchableOpacity>
                                 </View>
                             )}
@@ -559,7 +571,8 @@ const VideoPlayer = ({
                                                     selectSubtitle(item)
                                                 }
                                             >
-                                                <Text
+                                                <ThemedText
+                                                    type="default"
                                                     style={[
                                                         styles.subtitleText,
                                                         {
@@ -574,7 +587,7 @@ const VideoPlayer = ({
                                                     ]}
                                                 >
                                                     {item.label}
-                                                </Text>
+                                                </ThemedText>
                                             </TouchableOpacity>
                                         )}
                                     />
@@ -584,9 +597,9 @@ const VideoPlayer = ({
                                             setShowSubtitleList(false)
                                         }
                                     >
-                                        <Text style={styles.closeButtonText}>
+                                        <ThemedText type="default" style={styles.closeButtonText}>
                                             Close
-                                        </Text>
+                                        </ThemedText>
                                     </TouchableOpacity>
                                 </View>
                             )}

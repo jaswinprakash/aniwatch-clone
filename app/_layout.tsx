@@ -25,7 +25,10 @@ TouchableOpacity.defaultProps = {
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+        Exo2Regular: require("../assets/fonts/Exo2-Regular.ttf"),
+        Exo2Medium: require("../assets/fonts/Exo2-Medium.ttf"),
+        Exo2SemiBold: require("../assets/fonts/Exo2-SemiBold.ttf"),
+        Exo2Bold: require("../assets/fonts/Exo2-Bold.ttf"),
     });
 
     useEffect(() => {

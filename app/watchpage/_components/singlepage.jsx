@@ -234,7 +234,7 @@ const SinglePage = () => {
                                 <ThemedText
                                     style={{
                                         color: Colors.light.tabIconSelected,
-                                        fontWeight: "bold",
+                                        // fontWeight: "bold",
                                     }}
                                 >
                                     Loading Episode {selectedEpisode}
@@ -288,14 +288,14 @@ const SinglePage = () => {
                             ]}
                             onPress={() => setActiveTab("sub")}
                         >
-                            <Text
+                            <ThemedText
                                 style={[
                                     styles.tabText,
                                     activeTab === "sub" && styles.activeText,
                                 ]}
                             >
                                 Sub
-                            </Text>
+                            </ThemedText>
                         </TouchableRipple>
                     )}
                     {servers?.dub?.length > 0 && (
@@ -308,14 +308,14 @@ const SinglePage = () => {
                             ]}
                             onPress={() => setActiveTab("dub")}
                         >
-                            <Text
+                            <ThemedText
                                 style={[
                                     styles.tabText,
                                     activeTab === "dub" && styles.activeText,
                                 ]}
                             >
                                 Dub
-                            </Text>
+                            </ThemedText>
                         </TouchableRipple>
                     )}
                     {servers?.raw?.length > 0 && (
@@ -328,14 +328,14 @@ const SinglePage = () => {
                             ]}
                             onPress={() => setActiveTab("raw")}
                         >
-                            <Text
+                            <ThemedText
                                 style={[
                                     styles.tabText,
                                     activeTab === "raw" && styles.activeText,
                                 ]}
                             >
                                 Raw
-                            </Text>
+                            </ThemedText>
                         </TouchableRipple>
                     )}
                 </View>
@@ -356,7 +356,7 @@ const SinglePage = () => {
                                     setActiveSubTab(item?.serverName)
                                 }
                             >
-                                <Text
+                                <ThemedText
                                     style={[
                                         styles.subTabText,
                                         activeSubTab === item?.serverName &&
@@ -364,7 +364,7 @@ const SinglePage = () => {
                                     ]}
                                 >
                                     {item?.serverName}
-                                </Text>
+                                </ThemedText>
                             </TouchableRipple>
                         ))}
                     </View>
@@ -386,7 +386,7 @@ const SinglePage = () => {
                                     setActiveSubTab(item?.serverName)
                                 }
                             >
-                                <Text
+                                <ThemedText
                                     style={[
                                         styles.subTabText,
                                         activeSubTab === item?.serverName &&
@@ -394,7 +394,7 @@ const SinglePage = () => {
                                     ]}
                                 >
                                     {item?.serverName}
-                                </Text>
+                                </ThemedText>
                             </TouchableRipple>
                         ))}
                     </View>
@@ -416,7 +416,7 @@ const SinglePage = () => {
                                     setActiveSubTab(item?.serverName)
                                 }
                             >
-                                <Text
+                                <ThemedText
                                     style={[
                                         styles.subTabText,
                                         activeSubTab === item?.serverName &&
@@ -424,7 +424,7 @@ const SinglePage = () => {
                                     ]}
                                 >
                                     {item?.serverName}
-                                </Text>
+                                </ThemedText>
                             </TouchableRipple>
                         ))}
                     </View>
@@ -450,10 +450,12 @@ const SinglePage = () => {
                                 dropdownIconColor={Colors.light.tabIconSelected}
                                 selectedValue={selectedRange}
                                 onValueChange={handleRangeChange}
+                                itemStyle={{ fontFamily: "Exo2Regular" }}
                                 style={[
                                     styles.picker,
                                     {
                                         color: Colors.light.tabIconSelected,
+                                        fontFamily: "Exo2Regular",
                                     },
                                 ]}
                                 mode="dropdown"
@@ -465,6 +467,7 @@ const SinglePage = () => {
                                         value={range}
                                         style={{
                                             color: Colors.light.tabIconSelected,
+                                            fontFamily: "Exo2Regular",
                                         }}
                                     />
                                 ))}
@@ -530,7 +533,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: SIZE(24),
-        fontWeight: "bold",
+        // fontWeight: "bold",
         marginBottom: SIZE(16),
     },
     pickerContainer: {
@@ -558,7 +561,7 @@ const styles = StyleSheet.create({
     },
     episodeText: {
         fontSize: SIZE(16),
-        fontWeight: "bold",
+        // fontWeight: "bold",
     },
 
     tabContainer: {
@@ -575,7 +578,7 @@ const styles = StyleSheet.create({
     },
     activeTab: { borderColor: Colors.light.tabIconSelected },
     tabText: { fontSize: SIZE(18), color: "#333" },
-    activeText: { color: Colors.light.tabIconSelected, fontWeight: "bold" },
+    activeText: { color: Colors.light.tabIconSelected },
 
     subTabContainer: {
         flexDirection: "row",
@@ -590,8 +593,8 @@ const styles = StyleSheet.create({
     },
     activeSubTab: { backgroundColor: Colors.light.tabIconSelected },
     subTabText: { fontSize: SIZE(16), color: Colors.light.tabIconSelected },
-    activeSubText: { color: "#fff", fontWeight: "bold" },
+    activeSubText: { color: "#fff" },
 
     contentContainer: { marginTop: SIZE(20), alignItems: "center" },
-    contentText: { fontSize: SIZE(18), fontWeight: "bold", color: "#333" },
+    contentText: { fontSize: SIZE(18), color: "#333" },
 });

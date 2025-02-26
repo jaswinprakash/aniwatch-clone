@@ -208,17 +208,7 @@ export const HomeScreen = () => {
             {/* Search Bar */}
             <ThemedView style={styles.searchContainer}>
                 <TextInput
-                    style={[
-                        styles.searchInput,
-                        {
-                            borderBottomRightRadius:
-                                searchQuery && searchResults.length > 0 ? 0 : 8,
-                            borderBottomLeftRadius:
-                                searchQuery && searchResults.length > 0 ? 0 : 8,
-                            borderColor: Colors.light.tabIconSelected,
-                            color: Colors.light.tabIconSelected,
-                        },
-                    ]}
+                    contentStyle={{ fontFamily: "Exo2Medium" }}
                     mode="outlined"
                     label="Search for anime..."
                     placeholder="Search"
@@ -235,6 +225,11 @@ export const HomeScreen = () => {
                         colors: {
                             primary: Colors.light.tabIconSelected, // Change this to any color you want for the label
                             onSurfaceVariant: Colors.light.tabIconSelected,
+                        },
+                        fonts: {
+                            bodyLarge: {
+                                fontFamily: "Exo2Medium",
+                            },
                         },
                     }}
                     left={
@@ -300,21 +295,12 @@ const styles = StyleSheet.create({
     searchContainer: {
         // padding: 16,
     },
-    searchInput: {
-        // height: SIZE(40),
-        // borderColor: "#333",
-        // borderWidth: SIZE(1),
-        // paddingHorizontal: SIZE(10),
-        // borderRadius: SIZE(8),
-        // color: "#000",
-    },
     sectionContainer: {
         marginBottom: SIZE(30),
         height: SIZE(200),
     },
     sectionTitle: {
         fontSize: SIZE(20),
-        fontWeight: "bold",
         marginBottom: SIZE(10),
         color: Colors.light.tabIconSelected,
     },
@@ -338,27 +324,5 @@ const styles = StyleSheet.create({
         fontSize: SIZE(12),
         color: "#666",
         textAlign: "center",
-    },
-    modalContainer: {
-        backgroundColor: "white",
-        padding: SIZE(20),
-        borderRadius: SIZE(10),
-        width: "80%",
-    },
-    modalTitle: {
-        fontSize: SIZE(18),
-        fontWeight: "bold",
-        marginBottom: SIZE(10),
-    },
-    confirmButton: {
-        backgroundColor: "#007BFF",
-        padding: SIZE(10),
-        borderRadius: SIZE(5),
-        alignItems: "center",
-        marginTop: SIZE(10),
-    },
-    buttonText: {
-        color: "white",
-        fontWeight: "bold",
     },
 });
