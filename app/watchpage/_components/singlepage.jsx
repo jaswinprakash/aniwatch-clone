@@ -195,6 +195,7 @@ const SinglePage = () => {
                     title={animeInfo?.anime?.info?.name}
                     initialPlaybackTime={currentPlaybackTime}
                     onPlaybackTimeUpdate={handlePlaybackTimeUpdate}
+                    selectedEpisode={selectedEpisode}
                 />
             ) : (
                 <ThemedView

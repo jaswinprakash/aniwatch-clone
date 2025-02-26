@@ -12,9 +12,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Video from "react-native-video";
-// import Slider from "@react-native-community/slider";
 import { Slider } from "@miblanchard/react-native-slider";
-
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Colors } from "@/constants/Colors";
@@ -26,6 +24,12 @@ import { useFullscreen } from "../../../hooks/FullScreenContext";
 import throttle from "lodash.throttle";
 import useDeviceOrientation from "../../../hooks/useDeviceOrientation";
 import { ThemedText } from "../../../components/ThemedText";
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+    Easing,
+} from "react-native-reanimated";
 
 const VideoPlayer = ({
     videoUrl,
@@ -34,6 +38,7 @@ const VideoPlayer = ({
     title,
     initialPlaybackTime = 0,
     onPlaybackTimeUpdate,
+    selectedEpisode,
 }) => {
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
@@ -55,6 +60,47 @@ const VideoPlayer = ({
     const [showQualityList, setShowQualityList] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     let touchStart = 0;
+    const controlsOpacity = useSharedValue(1);
+    const controlsTop = useSharedValue(0);
+    const controlsBottom = useSharedValue(0);
+
+    const animateControls = (visible) => {
+        controlsOpacity.value = withTiming(visible ? 1 : 0, {
+            duration: 300,
+            easing: Easing.inOut(Easing.ease),
+        });
+        controlsTop.value = withTiming(visible ? 0 : -100, {
+            duration: 300,
+            easing: Easing.inOut(Easing.ease),
+        });
+        controlsBottom.value = withTiming(visible ? 0 : 100, {
+            duration: 300,
+            easing: Easing.inOut(Easing.ease),
+        });
+    };
+
+    useEffect(() => {
+        animateControls(showControls);
+    }, [showControls]);
+
+    const toggleControls = () => {
+        setShowControls((prev) => !prev);
+    };
+
+    // Animated styles
+    const topControlsStyle = useAnimatedStyle(() => ({
+        opacity: controlsOpacity.value,
+        transform: [{ translateY: controlsTop.value }],
+    }));
+
+    const bottomControlsStyle = useAnimatedStyle(() => ({
+        opacity: controlsOpacity.value,
+        transform: [{ translateY: controlsBottom.value }],
+    }));
+
+    const centerControlsStyle = useAnimatedStyle(() => ({
+        opacity: controlsOpacity.value,
+    }));
 
     useEffect(() => {
         return () => {
@@ -84,15 +130,15 @@ const VideoPlayer = ({
         };
     }, [isFullScreen]);
 
-    // useEffect(() => {
-    //     if (showControls && !showQualityList && !showSubtitleList) {
-    //         const timeout = setTimeout(() => {
-    //             setShowControls(false);
-    //         }, 2000);
+    useEffect(() => {
+        if (showControls && !showQualityList && !showSubtitleList) {
+            const timeout = setTimeout(() => {
+                setShowControls(false);
+            }, 3000);
 
-    //         return () => clearTimeout(timeout);
-    //     }
-    // }, [showControls, showQualityList, showSubtitleList]);
+            return () => clearTimeout(timeout);
+        }
+    }, [showControls, showQualityList, showSubtitleList]);
 
     const handleTouchStart = (event) => {
         touchStart = event.nativeEvent.pageY;
@@ -232,7 +278,8 @@ const VideoPlayer = ({
             <View style={[styles.container, isFullScreen && styles.fullScreen]}>
                 <TouchableWithoutFeedback
                     onPress={() => {
-                        setShowControls(!showControls);
+                        // setShowControls(!showControls);
+                        toggleControls();
                     }}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
@@ -301,17 +348,22 @@ const VideoPlayer = ({
                             style={[
                                 styles.controlsOverlay,
                                 {
-                                    top: showControls ? 0 : 1000,
+                                    backgroundColor: showControls
+                                        ? "rgba(0, 0, 0, 0.5)"
+                                        : null,
                                 },
                             ]}
                         >
-                            <View
-                                style={{
-                                    padding: SIZE(10),
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                }}
+                            <Animated.View
+                                style={[
+                                    {
+                                        padding: SIZE(10),
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                    },
+                                    topControlsStyle,
+                                ]}
                             >
                                 <View
                                     style={{
@@ -336,15 +388,28 @@ const VideoPlayer = ({
                                             color={Colors.light.tabIconSelected}
                                         />
                                     </TouchableOpacity>
-                                    <ThemedText
-                                        type="title"
-                                        style={{
-                                            color: Colors.light.tabIconSelected,
-                                            fontSize: SIZE(15),
-                                        }}
-                                    >
-                                        {title}
-                                    </ThemedText>
+                                    <View>
+                                        <ThemedText
+                                            type="title"
+                                            style={{
+                                                color: Colors.light
+                                                    .tabIconSelected,
+                                                fontSize: SIZE(15),
+                                            }}
+                                        >
+                                            {title}
+                                        </ThemedText>
+                                        <ThemedText
+                                            type="title"
+                                            style={{
+                                                color: Colors.light
+                                                    .tabIconSelected,
+                                                fontSize: SIZE(15),
+                                            }}
+                                        >
+                                            Episode - {selectedEpisode}
+                                        </ThemedText>
+                                    </View>
                                 </View>
                                 <TouchableOpacity
                                     hitSlop={10}
@@ -363,9 +428,14 @@ const VideoPlayer = ({
                                         color={Colors.light.tabIconSelected}
                                     />
                                 </TouchableOpacity>
-                            </View>
+                            </Animated.View>
                             {/* Play/Pause and Skip Buttons */}
-                            <View style={styles.centerControls}>
+                            <Animated.View
+                                style={[
+                                    styles.centerControls,
+                                    centerControlsStyle,
+                                ]}
+                            >
                                 <TouchableOpacity
                                     hitSlop={10}
                                     onPress={() => skip(-10)}
@@ -400,10 +470,15 @@ const VideoPlayer = ({
                                         color={Colors.light.tabIconSelected}
                                     />
                                 </TouchableOpacity>
-                            </View>
+                            </Animated.View>
 
                             {/* Progress Bar and Time */}
-                            <View style={styles.progressContainer}>
+                            <Animated.View
+                                style={[
+                                    styles.progressContainer,
+                                    bottomControlsStyle,
+                                ]}
+                            >
                                 <ThemedText
                                     type="subtitle"
                                     style={styles.timeText}
@@ -446,10 +521,15 @@ const VideoPlayer = ({
                                 >
                                     {formatTime(duration)}
                                 </ThemedText>
-                            </View>
+                            </Animated.View>
 
                             {/* Bottom Controls */}
-                            <View style={styles.bottomControls}>
+                            <Animated.View
+                                style={[
+                                    styles.bottomControls,
+                                    bottomControlsStyle,
+                                ]}
+                            >
                                 <TouchableOpacity
                                     hitSlop={10}
                                     onPress={() => {
@@ -486,7 +566,7 @@ const VideoPlayer = ({
                                         color={Colors.light.tabIconSelected}
                                     />
                                 </TouchableOpacity>
-                            </View>
+                            </Animated.View>
                             {showQualityList && (
                                 <View style={[styles.modalContainer]}>
                                     <FlatList
@@ -669,7 +749,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
         justifyContent: "space-between",
         padding: SIZE(10),
         zIndex: 1000,
