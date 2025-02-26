@@ -196,6 +196,9 @@ const SinglePage = () => {
                     initialPlaybackTime={currentPlaybackTime}
                     onPlaybackTimeUpdate={handlePlaybackTimeUpdate}
                     selectedEpisode={selectedEpisode}
+                    episodes={episodes}
+                    setSelectedEpisode={setSelectedEpisode}
+                    startStream={startStream}
                 />
             ) : (
                 <ThemedView
@@ -233,9 +236,9 @@ const SinglePage = () => {
                                     color={Colors.light.tabIconSelected}
                                 />
                                 <ThemedText
+                                    type="subtitle"
                                     style={{
                                         color: Colors.light.tabIconSelected,
-                                        // fontWeight: "bold",
                                     }}
                                 >
                                     Loading Episode {selectedEpisode}
