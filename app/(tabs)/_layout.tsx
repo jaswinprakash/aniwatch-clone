@@ -33,10 +33,10 @@ export default function TabLayout() {
                 }}
             />
             <MaterialTabs.Screen
-                name="Settings"
+                name="History"
                 component={Profile} // Use your screen component instead of Tabs
                 options={{
-                    tabBarLabel: "Settings",
+                    tabBarLabel: "History",
                     tabBarIcon: ({ color }) => (
                         <AntDesign
                             size={SIZE(24)}
