@@ -239,6 +239,12 @@ const SinglePage = () => {
                                     type="subtitle"
                                     style={{
                                         color: Colors.light.tabIconSelected,
+                                        textShadowColor: "#000",
+                                        textShadowOffset: {
+                                            width: 1,
+                                            height: 1,
+                                        },
+                                        textShadowRadius: 2,
                                     }}
                                 >
                                     Loading Episode {selectedEpisode}
