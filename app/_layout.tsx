@@ -9,13 +9,13 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import { FullscreenProvider } from "../hooks/FullScreenContext";
-
+import { Provider } from "react-redux";
+import { store } from "../store/store";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -42,23 +42,25 @@ export default function RootLayout() {
     }
 
     return (
-        <FullscreenProvider>
-            <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-                <PaperProvider>
-                    <View style={{ flex: 1 }}>
-                        <Stack screenOptions={{ headerShown: false }}>
-                            <Stack.Screen
-                                name="(tabs)"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen name="+not-found" />
-                        </Stack>
-                    </View>
-                </PaperProvider>
-                <StatusBar style="auto" />
-            </ThemeProvider>
-        </FullscreenProvider>
+        <Provider store={store}>
+            <FullscreenProvider>
+                <ThemeProvider
+                    value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                >
+                    <PaperProvider>
+                        <View style={{ flex: 1 }}>
+                            <Stack screenOptions={{ headerShown: false }}>
+                                <Stack.Screen
+                                    name="(tabs)"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen name="+not-found" />
+                            </Stack>
+                        </View>
+                    </PaperProvider>
+                    <StatusBar style="auto" />
+                </ThemeProvider>
+            </FullscreenProvider>
+        </Provider>
     );
 }

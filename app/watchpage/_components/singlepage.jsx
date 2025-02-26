@@ -199,6 +199,7 @@ const SinglePage = () => {
                     episodes={episodes}
                     setSelectedEpisode={setSelectedEpisode}
                     startStream={startStream}
+                    animeId={route?.params?.id}
                 />
             ) : (
                 <ThemedView

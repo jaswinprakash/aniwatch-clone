@@ -2,12 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
     View,
     StyleSheet,
-    TouchableOpacity,
-    Text,
     TouchableWithoutFeedback,
     ActivityIndicator,
-    FlatList,
-    SafeAreaView,
     BackHandler,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -21,9 +17,11 @@ import { router } from "expo-router";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import throttle from "lodash.throttle";
 import useDeviceOrientation from "../../../hooks/useDeviceOrientation";
-
 import SubModal from "./SubModal";
 import Controls from "./Controls";
+import { useDispatch, useSelector } from "react-redux";
+import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
+import { getAnimeHistory } from "../../../store/storage";
 
 const VideoPlayer = ({
     videoUrl,
@@ -36,6 +34,7 @@ const VideoPlayer = ({
     episodes,
     setSelectedEpisode,
     startStream,
+    animeId,
 }) => {
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
@@ -57,6 +56,7 @@ const VideoPlayer = ({
     const [showQualityList, setShowQualityList] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     let touchStart = 0;
+    const throttledUpdate = useThrottledPlayback();
 
     const toggleControls = () => {
         setShowControls((prev) => !prev);
@@ -89,16 +89,6 @@ const VideoPlayer = ({
             backHandler.remove();
         };
     }, [isFullScreen]);
-
-    // useEffect(() => {
-    //     if (showControls && !showQualityList && !showSubtitleList) {
-    //         const timeout = setTimeout(() => {
-    //             setShowControls(false);
-    //         }, 3000);
-
-    //         return () => clearTimeout(timeout);
-    //     }
-    // }, [showControls, showQualityList, showSubtitleList]);
 
     const handleTouchStart = (event) => {
         touchStart = event.nativeEvent.pageY;
@@ -137,36 +127,6 @@ const VideoPlayer = ({
         }
     };
 
-    // const toggleFullScreen2 = useCallback(
-    //     async (forceFullScreen = null) => {
-    //         const newFullScreenState = forceFullScreen ?? !isFullScreen;
-    //         setIsFullScreen(newFullScreenState);
-    //         setIsFullscreenContext(newFullScreenState);
-
-    //         if (newFullScreenState) {
-    //             await Promise.all([
-    //                 ScreenOrientation.lockAsync(
-    //                     ScreenOrientation.OrientationLock.LANDSCAPE
-    //                 ),
-    //                 NavigationBar.setVisibilityAsync("hidden"),
-    //                 NavigationBar.setBehaviorAsync("overlay"),
-    //                 NavigationBar.setBackgroundColorAsync("transparent"),
-    //             ]);
-    //         } else {
-    //             await Promise.all([
-    //                 ScreenOrientation.lockAsync(
-    //                     ScreenOrientation.OrientationLock.PORTRAIT
-    //                 ),
-    //                 NavigationBar.setVisibilityAsync("visible"),
-    //                 NavigationBar.setBehaviorAsync("default"),
-    //                 NavigationBar.setBackgroundColorAsync("#000"),
-    //             ]);
-    //         }
-    //     },
-    //     [isFullScreen]
-    // );
-    // useDeviceOrientation(toggleFullScreen2);
-
     useEffect(() => {
         return () => {
             ScreenOrientation.lockAsync(
@@ -198,23 +158,39 @@ const VideoPlayer = ({
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
 
-    const onProgress = useRef(
-        throttle((data) => {
-            if (!isSeeking) {
-                setCurrentTime(data.currentTime);
-                if (onPlaybackTimeUpdate) {
-                    onPlaybackTimeUpdate(data.currentTime);
-                }
-            }
-        }, 1000)
-    ).current;
+    useEffect(() => {
+        const history = getAnimeHistory();
+        const animeData = history.find(
+            (item) =>
+                item.animeId === animeId &&
+                item.episodeNumber === selectedEpisode
+        );
+
+        if (animeData) {
+            setCurrentTime(animeData.currentTime);
+        }
+    }, [animeId, selectedEpisode]);
 
     const onLoad = (data) => {
         setDuration(data.duration);
-        if (initialPlaybackTime > 0) {
+        if (currentTime > 0) {
+            videoRef.current.seek(currentTime);
+        } else if (initialPlaybackTime > 0) {
             videoRef.current.seek(initialPlaybackTime);
         }
     };
+    const onProgress = useRef(
+        throttle((data) => {
+            if (!isSeeking) {
+                const currentTime = data.currentTime;
+                setCurrentTime(currentTime);
+                if (onPlaybackTimeUpdate) {
+                    onPlaybackTimeUpdate(currentTime);
+                }
+                throttledUpdate(animeId, selectedEpisode, currentTime);
+            }
+        }, 1000)
+    ).current;
 
     const changeQuality = (resolution) => {
         setSelectedQuality(resolution);
@@ -246,6 +222,46 @@ const VideoPlayer = ({
             console.log("No previous episode available.");
         }
     };
+
+    // const toggleFullScreen2 = useCallback(
+    //     async (forceFullScreen = null) => {
+    //         const newFullScreenState = forceFullScreen ?? !isFullScreen;
+    //         setIsFullScreen(newFullScreenState);
+    //         setIsFullscreenContext(newFullScreenState);
+
+    //         if (newFullScreenState) {
+    //             await Promise.all([
+    //                 ScreenOrientation.lockAsync(
+    //                     ScreenOrientation.OrientationLock.LANDSCAPE
+    //                 ),
+    //                 NavigationBar.setVisibilityAsync("hidden"),
+    //                 NavigationBar.setBehaviorAsync("overlay"),
+    //                 NavigationBar.setBackgroundColorAsync("transparent"),
+    //             ]);
+    //         } else {
+    //             await Promise.all([
+    //                 ScreenOrientation.lockAsync(
+    //                     ScreenOrientation.OrientationLock.PORTRAIT
+    //                 ),
+    //                 NavigationBar.setVisibilityAsync("visible"),
+    //                 NavigationBar.setBehaviorAsync("default"),
+    //                 NavigationBar.setBackgroundColorAsync("#000"),
+    //             ]);
+    //         }
+    //     },
+    //     [isFullScreen]
+    // );
+    // useDeviceOrientation(toggleFullScreen2);
+
+    // useEffect(() => {
+    //     if (showControls && !showQualityList && !showSubtitleList) {
+    //         const timeout = setTimeout(() => {
+    //             setShowControls(false);
+    //         }, 3000);
+
+    //         return () => clearTimeout(timeout);
+    //     }
+    // }, [showControls, showQualityList, showSubtitleList]);
 
     return (
         <>
