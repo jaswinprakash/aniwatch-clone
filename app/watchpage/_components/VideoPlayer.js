@@ -597,7 +597,10 @@ const VideoPlayer = ({
                                             setShowSubtitleList(false)
                                         }
                                     >
-                                        <ThemedText type="default" style={styles.closeButtonText}>
+                                        <ThemedText
+                                            type="default"
+                                            style={styles.closeButtonText}
+                                        >
                                             Close
                                         </ThemedText>
                                     </TouchableOpacity>
@@ -706,8 +709,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: SIZE(15),
         bottom: 0,
-        left: SIZE(10),
-        right: 0,
+        right: SIZE(80),
         zIndex: 2000,
         borderRadius: SIZE(10),
     },
@@ -743,5 +745,4 @@ const styles = StyleSheet.create({
     },
 });
 
-// export default VideoPlayer;
 export default React.memo(VideoPlayer);
