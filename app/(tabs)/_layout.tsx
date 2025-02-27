@@ -30,9 +30,6 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => (
                         <AntDesign size={SIZE(24)} name="home" color={color} />
                     ),
-                    tabBarLabelStyle: {
-                        borderWidth: 1,
-                    },
                 }}
             />
             <MaterialTabs.Screen

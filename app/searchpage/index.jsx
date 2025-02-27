@@ -46,6 +46,7 @@ const SearchPage = () => {
 
         return (
             <FlashList
+                showsVerticalScrollIndicator={false}
                 data={searchResults}
                 keyExtractor={(item, index) => index.toString()}
                 estimatedItemSize={50}
@@ -101,10 +102,13 @@ const SearchPage = () => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#151718" }}>
             <View style={styles.searchContainer}>
                 <TextInput
-                    contentStyle={{ fontFamily: "Exo2Medium" }}
+                    contentStyle={{
+                        fontFamily: "Exo2Medium",
+                        fontSize: SIZE(14),
+                    }}
                     mode="outlined"
                     label="Search for anime..."
                     placeholder="Search"
@@ -114,6 +118,7 @@ const SearchPage = () => {
                     outlineStyle={{
                         borderColor: Colors.light.tabIconSelected,
                         borderRadius: SIZE(10),
+                        fontSize: SIZE(10),
                     }}
                     outlineColor={Colors.light.tabIconSelected}
                     textColor={Colors.light.tabIconSelected}
@@ -125,6 +130,7 @@ const SearchPage = () => {
                         fonts: {
                             bodyLarge: {
                                 fontFamily: "Exo2Medium",
+                                fontSize: SIZE(10),
                             },
                         },
                     }}
@@ -132,6 +138,7 @@ const SearchPage = () => {
                         <TextInput.Icon
                             icon="magnify"
                             color={Colors.light.tabIconSelected}
+                            size={SIZE(24)}
                         />
                     }
                     right={
@@ -146,6 +153,10 @@ const SearchPage = () => {
                             />
                         ) : null
                     }
+                    style={{
+                        height: SIZE(40),
+                        backgroundColor: "transparent",
+                    }}
                 />
             </View>
             <View style={{ padding: SIZE(16), flex: 1 }}>
@@ -159,7 +170,10 @@ export default SearchPage;
 
 const styles = StyleSheet.create({
     searchContainer: {
-        padding: SIZE(16),
+        paddingHorizontal: SIZE(16),
+        paddingBottom: SIZE(11),
+        borderBottomWidth: SIZE(0.5),
+        borderBottomColor: Colors.light.tabIconSelected,
     },
     sectionContainer: {
         marginBottom: SIZE(30),

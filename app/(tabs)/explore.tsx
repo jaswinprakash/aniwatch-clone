@@ -30,6 +30,7 @@ const Profile = () => {
         <SafeAreaView
             style={{
                 flex: 1,
+                
             }}
         >
             <ThemedView
@@ -39,6 +40,7 @@ const Profile = () => {
                     justifyContent: "center",
                     borderBottomWidth: SIZE(1),
                     borderColor: Colors.light.tabIconSelected,
+                    backgroundColor:"transparent"
                 }}
             >
                 <ThemedText

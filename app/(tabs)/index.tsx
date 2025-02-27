@@ -112,7 +112,7 @@ export const HomeScreen = () => {
                 }}
             >
                 <Image
-                    style={{ height: SIZE(20), width: SIZE(80) }}
+                    style={{ height: SIZE(30), width: SIZE(200) }}
                     source={require("@/assets/images/AnimPlay.png")}
                 />
                 <TouchableRipple
