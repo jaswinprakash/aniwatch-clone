@@ -40,6 +40,7 @@ const StoredVideos = ({ id, episode, time }) => {
                         params: {
                             id: id,
                             history: true,
+                            episode: episode,
                         },
                     });
                 }}

@@ -5,6 +5,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { SIZE } from "@/constants/Constants";
 import HomeScreen from "./index"; // Create or import HomeScreen
 import Profile from "./explore"; // Create or import Profile
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const MaterialTabs = createMaterialBottomTabNavigator();
 
@@ -28,7 +29,11 @@ export default function TabLayout() {
                 options={{
                     tabBarLabel: "Home",
                     tabBarIcon: ({ color }) => (
-                        <AntDesign size={SIZE(24)} name="home" color={color} />
+                        <FontAwesome5
+                            size={SIZE(24)}
+                            name="home"
+                            color={color}
+                        />
                     ),
                 }}
             />
@@ -38,9 +43,9 @@ export default function TabLayout() {
                 options={{
                     tabBarLabel: "History",
                     tabBarIcon: ({ color }) => (
-                        <AntDesign
+                        <FontAwesome5
                             size={SIZE(24)}
-                            name="setting"
+                            name="history"
                             color={color}
                         />
                     ),

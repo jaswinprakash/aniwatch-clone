@@ -135,6 +135,23 @@ const SinglePage = () => {
         getAnimeInfo();
         getQtipInfo();
     }, []);
+    useEffect(() => {
+        if (
+            (route.params?.history === "true" ||
+                route.params?.history === true) &&
+            route.params?.episode &&
+            episodes?.length > 0
+        ) {
+            const episodeToPlay = episodes.find(
+                (ep) => ep.number === Number(route.params.episode)
+            );
+
+            if (episodeToPlay) {
+                setSelectedEpisode(episodeToPlay.number);
+                startStream(episodeToPlay.episodeId, episodeToPlay.number);
+            }
+        }
+    }, [episodes, route.params?.history, route.params?.episode]);
 
     const handlePlaybackTimeUpdate = (time) => {
         setCurrentPlaybackTime(time);
