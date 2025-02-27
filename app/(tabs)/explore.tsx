@@ -1,11 +1,15 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 
 import StoredVideos from "./_components/StoredVideos";
-import Constants from "expo-constants";
 import { getAnimeHistory } from "@/store/storage";
 import { useFocusEffect } from "expo-router";
 import { SIZE } from "@/constants/Constants";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
+
 const Profile = () => {
     const [history, setHistory] = useState([]);
 
@@ -23,13 +27,31 @@ const Profile = () => {
     );
 
     return (
-        <ScrollView
+        <SafeAreaView
             style={{
                 flex: 1,
-                paddingTop: Constants.statusBarHeight,
             }}
         >
-            <View style={{ padding: SIZE(16), gap: SIZE(10) }}>
+            <ThemedView
+                style={{
+                    padding: SIZE(16),
+                    height: SIZE(80),
+                    justifyContent: "center",
+                    borderBottomWidth: SIZE(1),
+                    borderColor: Colors.light.tabIconSelected,
+                }}
+            >
+                <ThemedText
+                    type="title"
+                    style={{
+                        color: Colors.light.tabIconSelected,
+                        fontSize: SIZE(20),
+                    }}
+                >
+                    Continue watching
+                </ThemedText>
+            </ThemedView>
+            <ScrollView style={{ padding: SIZE(16) }}>
                 {history?.map((item, index) => (
                     <StoredVideos
                         key={index}
@@ -38,8 +60,8 @@ const Profile = () => {
                         time={item?.currentTime}
                     />
                 ))}
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 

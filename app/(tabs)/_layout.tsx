@@ -18,7 +18,7 @@ export default function TabLayout() {
             inactiveColor="gray"
             barStyle={{
                 backgroundColor: Colors[colorScheme ?? "light"].background,
-                height: SIZE(65), // Reduce tab height
+                height: SIZE(65),
             }}
             screenOptions={{ headerShown: false }} // Hide the header
         >
@@ -30,6 +30,9 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => (
                         <AntDesign size={SIZE(24)} name="home" color={color} />
                     ),
+                    tabBarLabelStyle: {
+                        borderWidth: 1,
+                    },
                 }}
             />
             <MaterialTabs.Screen

@@ -15,6 +15,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@d11/react-native-fast-image": "^8.9.2",
     "@expo/vector-icons": "^14.0.2",
     "@miblanchard/react-native-slider": "^2.6.0",
     "@react-native-community/slider": "^4.5.6",

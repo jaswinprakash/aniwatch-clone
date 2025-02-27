@@ -16,6 +16,8 @@ import { Provider as PaperProvider } from "react-native-paper";
 import { FullscreenProvider } from "../hooks/FullScreenContext";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -48,15 +50,17 @@ export default function RootLayout() {
                     value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                 >
                     <PaperProvider>
-                        <View style={{ flex: 1 }}>
-                            <Stack screenOptions={{ headerShown: false }}>
-                                <Stack.Screen
-                                    name="(tabs)"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen name="+not-found" />
-                            </Stack>
-                        </View>
+                        <SafeAreaProvider>
+                            <View style={{ flex: 1 }}>
+                                <Stack screenOptions={{ headerShown: false }}>
+                                    <Stack.Screen
+                                        name="(tabs)"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen name="+not-found" />
+                                </Stack>
+                            </View>
+                        </SafeAreaProvider>
                     </PaperProvider>
                     <StatusBar style="auto" />
                 </ThemeProvider>

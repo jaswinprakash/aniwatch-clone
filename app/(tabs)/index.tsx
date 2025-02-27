@@ -1,13 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    Image,
-    StyleSheet,
-    // TextInput,
-    ActivityIndicator,
-} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Image, StyleSheet, ActivityIndicator } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -18,6 +10,8 @@ import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { TouchableRipple } from "react-native-paper";
 import { TextInput } from "react-native-paper";
+import FastImage from "@d11/react-native-fast-image";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
@@ -91,8 +85,11 @@ export const HomeScreen = () => {
                                     });
                                 }}
                             >
-                                <Image
-                                    source={{ uri: item.poster }}
+                                <FastImage
+                                    source={{
+                                        uri: item.poster,
+                                        priority: FastImage.priority.high,
+                                    }}
                                     style={styles.animePoster}
                                 />
                             </TouchableRipple>
@@ -155,8 +152,11 @@ export const HomeScreen = () => {
                                     });
                                 }}
                             >
-                                <Image
-                                    source={{ uri: item.poster }}
+                                <FastImage
+                                    source={{
+                                        uri: item.poster,
+                                        priority: FastImage.priority.normal,
+                                    }}
                                     style={styles.animePoster}
                                 />
                             </TouchableRipple>
@@ -195,18 +195,8 @@ export const HomeScreen = () => {
     }
 
     return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-            headerImage={
-                <Image
-                    resizeMode="cover"
-                    source={require("@/assets/images/AnimPlay.png")}
-                    style={styles.reactLogo}
-                />
-            }
-        >
-            {/* Search Bar */}
-            <ThemedView style={styles.searchContainer}>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={[styles.searchContainer]}>
                 <TextInput
                     contentStyle={{ fontFamily: "Exo2Medium" }}
                     mode="outlined"
@@ -223,7 +213,7 @@ export const HomeScreen = () => {
                     textColor={Colors.light.tabIconSelected}
                     theme={{
                         colors: {
-                            primary: Colors.light.tabIconSelected, // Change this to any color you want for the label
+                            primary: Colors.light.tabIconSelected,
                             onSurfaceVariant: Colors.light.tabIconSelected,
                         },
                         fonts: {
@@ -239,7 +229,7 @@ export const HomeScreen = () => {
                         />
                     }
                     right={
-                        searchLoading ? ( // Show ActivityIndicator only when searching
+                        searchLoading ? (
                             <TextInput.Icon
                                 icon={() => (
                                     <ActivityIndicator
@@ -252,36 +242,62 @@ export const HomeScreen = () => {
                     }
                 />
                 {/* Display Search Results */}
-                {searchQuery && renderSearchResults()}
-            </ThemedView>
-
-            {/* Display Home Lists */}
-            {renderAnimeList(
-                "Latest Episode Animes",
-                animeHomeList?.latestEpisodeAnimes
-            )}
-            {renderAnimeList(
-                "Most Popular Animes",
-                animeHomeList?.mostPopularAnimes
-            )}
-            {renderAnimeList(
-                "Most Favorite Animes",
-                animeHomeList?.mostFavoriteAnimes
-            )}
-            {renderAnimeList(
-                "Top Airing Animes",
-                animeHomeList?.topAiringAnimes
-            )}
-            {renderAnimeList(
-                "Top Upcoming Animes",
-                animeHomeList?.topUpcomingAnimes
-            )}
-            {renderAnimeList("Trending Animes", animeHomeList?.trendingAnimes)}
-            {renderAnimeList(
-                "Completed Animes",
-                animeHomeList?.latestCompletedAnimes
-            )}
-        </ParallaxScrollView>
+                <View
+                    style={{
+                        position: "absolute",
+                        alignSelf: "center",
+                        zIndex: 10000,
+                        top: SIZE(85),
+                        width: "100%",
+                    }}
+                >
+                    {searchQuery && renderSearchResults()}
+                </View>
+            </View>
+            <ParallaxScrollView
+                headerBackgroundColor={{
+                    light: "#A1CEDC",
+                    dark: "#1D3D47",
+                }}
+                headerImage={
+                    <Image
+                        resizeMode="cover"
+                        source={require("@/assets/images/AnimPlay.png")}
+                        style={styles.reactLogo}
+                    />
+                }
+            >
+                {/* Display Home Lists */}
+                {renderAnimeList(
+                    "Latest Episode Animes",
+                    animeHomeList?.latestEpisodeAnimes
+                )}
+                {renderAnimeList(
+                    "Most Popular Animes",
+                    animeHomeList?.mostPopularAnimes
+                )}
+                {renderAnimeList(
+                    "Most Favorite Animes",
+                    animeHomeList?.mostFavoriteAnimes
+                )}
+                {renderAnimeList(
+                    "Top Airing Animes",
+                    animeHomeList?.topAiringAnimes
+                )}
+                {renderAnimeList(
+                    "Top Upcoming Animes",
+                    animeHomeList?.topUpcomingAnimes
+                )}
+                {renderAnimeList(
+                    "Trending Animes",
+                    animeHomeList?.trendingAnimes
+                )}
+                {renderAnimeList(
+                    "Completed Animes",
+                    animeHomeList?.latestCompletedAnimes
+                )}
+            </ParallaxScrollView>
+        </SafeAreaView>
     );
 };
 
@@ -293,7 +309,7 @@ const styles = StyleSheet.create({
         height: SIZE(155),
     },
     searchContainer: {
-        // padding: 16,
+        padding: 16,
     },
     sectionContainer: {
         marginBottom: SIZE(30),

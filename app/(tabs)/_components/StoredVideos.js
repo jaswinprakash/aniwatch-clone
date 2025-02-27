@@ -7,6 +7,7 @@ import { Colors } from "@/constants/Colors";
 import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import FastImage from "@d11/react-native-fast-image";
 
 const StoredVideos = ({ id, episode, time }) => {
     const [animeInfo, setAnimeInfo] = useState();
@@ -31,7 +32,7 @@ const StoredVideos = ({ id, episode, time }) => {
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
     return (
-        <View style={{ width: "100%" }}>
+        <View style={{ width: "100%", marginBottom: SIZE(16) }}>
             <TouchableRipple
                 onPress={() => {
                     router.push({
@@ -53,9 +54,13 @@ const StoredVideos = ({ id, episode, time }) => {
                 <View style={{ width: "100%" }}>
                     <View style={styles.main}>
                         <View style={styles.leftContent}>
-                            <Image
+                            <FastImage
                                 style={styles.imageContainer}
-                                src={animeInfo?.anime?.info?.poster}
+                                source={{
+                                    uri: animeInfo?.anime?.info?.poster,
+                                    headers: { Authorization: "someAuthToken" },
+                                    priority: FastImage.priority.high,
+                                }}
                             />
                         </View>
                         <View
