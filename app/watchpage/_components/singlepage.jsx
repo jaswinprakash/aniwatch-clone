@@ -4,6 +4,7 @@ import {
     View,
     ImageBackground,
     ScrollView,
+    Text,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
@@ -12,7 +13,6 @@ import { FlashList } from "@shopify/flash-list";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import VideoPlayer from "./VideoPlayer";
-import { Picker } from "@react-native-picker/picker";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { TouchableRipple } from "react-native-paper";
@@ -22,6 +22,7 @@ import FastImage from "@d11/react-native-fast-image";
 import VideoLoader from "./VideoLoader";
 import ServerTab from "./ServerTab";
 import DropDownTab from "./DropDownTab";
+import { Dropdown } from "react-native-element-dropdown";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -173,6 +174,15 @@ const SinglePage = () => {
         }
         return rangeOptions;
     };
+
+    useEffect(() => {
+        if (episodes.length > 0) {
+            const totalEpisodes = episodes.length;
+            const defaultRange = `1-${Math.min(50, totalEpisodes)}`;
+            setSelectedRange(defaultRange);
+            setCurrentRange({ start: 0, end: Math.min(50, totalEpisodes) });
+        }
+    }, [episodes]);
 
     const getEpisodesForCurrentRange = () => {
         return episodes.slice(currentRange.start, currentRange.end);
@@ -345,38 +355,53 @@ const SinglePage = () => {
                                 },
                             ]}
                         >
-                            <Picker
-                                dropdownIconColor={Colors.light.tabIconSelected}
-                                selectedValue={selectedRange}
-                                onValueChange={handleRangeChange}
-                                itemStyle={{ fontFamily: "Exo2Regular" }}
-                                style={[
-                                    styles.picker,
-                                    {
-                                        color: Colors.light.tabIconSelected,
-                                        fontFamily: "Exo2Regular",
-                                    },
-                                ]}
-                                mode="dropdown"
-                            >
-                                {generateRangeOptions().map((range, index) => (
-                                    <Picker.Item
-                                        key={index}
-                                        label={range}
-                                        value={range}
-                                        style={{
-                                            color: Colors.light.tabIconSelected,
-                                            fontFamily: "Exo2Regular",
-                                        }}
-                                    />
-                                ))}
-                            </Picker>
+                            <Dropdown
+                                data={generateRangeOptions().map((range) => ({
+                                    label: range,
+                                    value: range,
+                                }))}
+                                labelField="label"
+                                valueField="value"
+                                placeholder={selectedRange}
+                                value={selectedRange}
+                                onChange={(item) =>
+                                    handleRangeChange(item.value)
+                                }
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                containerStyle={styles.dropdownContainer}
+                                renderItem={(item) => {
+                                    const isSelected =
+                                        item.value === selectedRange;
+                                    return (
+                                        <View
+                                            style={[
+                                                styles.itemContainer,
+                                                isSelected &&
+                                                    styles.selectedItemContainer,
+                                            ]}
+                                        >
+                                            <Text
+                                                style={[
+                                                    styles.itemText,
+                                                    isSelected &&
+                                                        styles.selectedItemText,
+                                                ]}
+                                            >
+                                                {item.label}
+                                            </Text>
+                                        </View>
+                                    );
+                                }}
+                                dropdownPosition="auto"
+                            />
                         </View>
                         {/* FlashList for displaying episodes */}
                         <FlashList
                             data={getEpisodesForCurrentRange()}
                             keyExtractor={(item, index) => index.toString()}
-                            numColumns={8} // Set the number of columns for the grid
+                            numColumns={8}
                             estimatedItemSize={50}
                             renderItem={({ item }) => (
                                 <TouchableRipple
@@ -488,4 +513,41 @@ const styles = StyleSheet.create({
 
     contentContainer: { marginTop: SIZE(20), alignItems: "center" },
     contentText: { fontSize: SIZE(18), color: "#333" },
+    dropdown: {
+        width: "100%",
+        height: SIZE(40),
+        borderColor: Colors.light.tabIconSelected,
+        borderWidth: SIZE(1),
+        borderRadius: SIZE(8),
+        paddingHorizontal: SIZE(10),
+    },
+    placeholderStyle: {
+        color: Colors.light.tabIconSelected,
+        fontFamily: "Exo2Regular",
+    },
+    selectedTextStyle: {
+        color: Colors.light.tabIconSelected,
+        fontFamily: "Exo2Regular",
+    },
+    dropdownContainer: {
+        borderColor: Colors.light.tabIconSelected,
+        borderRadius: SIZE(8),
+        overflow: "hidden",
+    },
+    itemContainer: {
+        padding: SIZE(10),
+        backgroundColor: "#151718",
+        overflow: "hidden",
+    },
+    selectedItemContainer: {
+        backgroundColor: Colors.light.tabIconSelected,
+        overflow: "hidden",
+    },
+    itemText: {
+        color: Colors.light.tabIconSelected,
+        fontFamily: "Exo2Regular",
+    },
+    selectedItemText: {
+        color: "#fff",
+    },
 });
