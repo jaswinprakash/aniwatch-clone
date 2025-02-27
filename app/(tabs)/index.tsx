@@ -9,16 +9,13 @@ import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { TouchableRipple } from "react-native-paper";
-import { TextInput } from "react-native-paper";
 import FastImage from "@d11/react-native-fast-image";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
     const [pageLoading, setPageLoading] = useState(true);
-    const [searchLoading, setSearchLoading] = useState(false);
 
     const getHomeList = async () => {
         setPageLoading(true);
@@ -29,27 +26,6 @@ export const HomeScreen = () => {
         } catch (error) {
             console.log(error, "axios error");
             setPageLoading(false);
-        }
-    };
-
-    const handleSearch = async (query) => {
-        setSearchLoading(true);
-        setSearchQuery(query);
-        if (query.length > 2) {
-            // Only search if the query has more than 2 characters
-            try {
-                const response = await apiConfig.get(
-                    `/api/v2/hianime/search/suggestion?q=${query}`
-                );
-                setSearchResults(response.data.data.suggestions);
-                setSearchLoading(false);
-            } catch (error) {
-                console.log(error, "axios error");
-                setSearchLoading(false);
-            }
-        } else {
-            setSearchResults([]); // Clear results if the query is too short
-            setSearchLoading(false);
         }
     };
 
@@ -73,7 +49,7 @@ export const HomeScreen = () => {
                     renderItem={({ item }) => (
                         <View style={styles.animeItem}>
                             <TouchableRipple
-                                rippleColor="rgba(0, 0, 0, 0.5)"
+                                rippleColor="rgba(140, 82, 255, 0.5)"
                                 borderless={true}
                                 style={{ borderRadius: SIZE(10) }}
                                 onPress={() => {
@@ -108,78 +84,6 @@ export const HomeScreen = () => {
         );
     };
 
-    const renderSearchResults = () => {
-        if (searchResults.length === 0) return null;
-
-        return (
-            <ThemedView
-                style={[
-                    styles.sectionContainer,
-                    {
-                        borderWidth: SIZE(2),
-                        height: SIZE(250),
-                        marginBottom: SIZE(10),
-                        borderBottomRightRadius: SIZE(8),
-                        borderBottomLeftRadius: SIZE(8),
-                        borderTopWidth: 0,
-                        borderColor: Colors.light.tabIconSelected,
-                    },
-                ]}
-            >
-                <ThemedText
-                    type="title"
-                    style={[styles.sectionTitle, { marginLeft: SIZE(10) }]}
-                >
-                    Search Results
-                </ThemedText>
-                <FlashList
-                    data={searchResults}
-                    keyExtractor={(item, index) => index.toString()}
-                    estimatedItemSize={50}
-                    horizontal
-                    renderItem={({ item }) => (
-                        <View style={styles.animeItem}>
-                            <TouchableRipple
-                                rippleColor="rgba(0, 0, 0, 0.5)"
-                                borderless={true}
-                                style={{ borderRadius: SIZE(10) }}
-                                onPress={() => {
-                                    router.push({
-                                        pathname: "watchpage",
-                                        params: {
-                                            id: item.id,
-                                        },
-                                    });
-                                }}
-                            >
-                                <FastImage
-                                    source={{
-                                        uri: item.poster,
-                                        priority: FastImage.priority.normal,
-                                    }}
-                                    style={styles.animePoster}
-                                />
-                            </TouchableRipple>
-                            <ThemedText
-                                numberOfLines={2}
-                                type="subtitle"
-                                style={styles.animeName}
-                            >
-                                {item.name}
-                            </ThemedText>
-                            <ThemedText
-                                type="subtitle"
-                                style={styles.animeInfo}
-                            >
-                                {item.moreInfo.join(" • ")}
-                            </ThemedText>
-                        </View>
-                    )}
-                />
-            </ThemedView>
-        );
-    };
-
     if (pageLoading) {
         return (
             <ActivityIndicator
@@ -196,64 +100,40 @@ export const HomeScreen = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={[styles.searchContainer]}>
-                <TextInput
-                    contentStyle={{ fontFamily: "Exo2Medium" }}
-                    mode="outlined"
-                    label="Search for anime..."
-                    placeholder="Search"
-                    placeholderTextColor={Colors.light.tabIconSelected}
-                    value={searchQuery}
-                    onChangeText={handleSearch}
-                    outlineStyle={{
-                        borderColor: Colors.light.tabIconSelected,
-                        borderRadius: SIZE(10),
-                    }}
-                    outlineColor={Colors.light.tabIconSelected}
-                    textColor={Colors.light.tabIconSelected}
-                    theme={{
-                        colors: {
-                            primary: Colors.light.tabIconSelected,
-                            onSurfaceVariant: Colors.light.tabIconSelected,
-                        },
-                        fonts: {
-                            bodyLarge: {
-                                fontFamily: "Exo2Medium",
-                            },
-                        },
-                    }}
-                    left={
-                        <TextInput.Icon
-                            icon="magnify"
-                            color={Colors.light.tabIconSelected}
-                        />
-                    }
-                    right={
-                        searchLoading ? (
-                            <TextInput.Icon
-                                icon={() => (
-                                    <ActivityIndicator
-                                        size="small"
-                                        color={Colors.light.tabIconSelected}
-                                    />
-                                )}
-                            />
-                        ) : null
-                    }
+            <View
+                style={{
+                    borderColor: Colors.light.tabIconSelected,
+                    height: SIZE(60),
+                    borderBottomWidth: SIZE(1),
+                    paddingHorizontal: SIZE(16),
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+            >
+                <Image
+                    style={{ height: SIZE(20), width: SIZE(80) }}
+                    source={require("@/assets/images/AnimPlay.png")}
                 />
-                {/* Display Search Results */}
-                <View
-                    style={{
-                        position: "absolute",
-                        alignSelf: "center",
-                        zIndex: 10000,
-                        top: SIZE(85),
-                        width: "100%",
+                <TouchableRipple
+                    hitSlop={15}
+                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    borderless={true}
+                    onPress={() => {
+                        router.push({
+                            pathname: "searchpage",
+                        });
                     }}
+                    style={{ borderRadius: SIZE(15) }}
                 >
-                    {searchQuery && renderSearchResults()}
-                </View>
+                    <MaterialIcons
+                        name="search"
+                        size={SIZE(30)}
+                        color={Colors.light.tabIconSelected}
+                    />
+                </TouchableRipple>
             </View>
+
             <ParallaxScrollView
                 headerBackgroundColor={{
                     light: "#A1CEDC",
@@ -307,9 +187,6 @@ const styles = StyleSheet.create({
     reactLogo: {
         width: "100%",
         height: SIZE(155),
-    },
-    searchContainer: {
-        padding: 16,
     },
     sectionContainer: {
         marginBottom: SIZE(30),

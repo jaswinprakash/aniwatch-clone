@@ -43,7 +43,7 @@ const StoredVideos = ({ id, episode, time }) => {
                         },
                     });
                 }}
-                rippleColor="rgba(255, 255, 255, 0.2)"
+                rippleColor="rgba(140, 82, 255, 0.5)"
                 borderless={true}
                 style={{
                     borderRadius: SIZE(10),
@@ -58,7 +58,6 @@ const StoredVideos = ({ id, episode, time }) => {
                                 style={styles.imageContainer}
                                 source={{
                                     uri: animeInfo?.anime?.info?.poster,
-                                    headers: { Authorization: "someAuthToken" },
                                     priority: FastImage.priority.high,
                                 }}
                             />
@@ -104,7 +103,7 @@ const StoredVideos = ({ id, episode, time }) => {
                             <TouchableRipple
                                 hitSlop={10}
                                 onPress={() => {}}
-                                rippleColor="rgba(255, 255, 255, 0.2)"
+                                rippleColor="rgba(140, 82, 255, 0.5)"
                                 borderless={true}
                                 style={{
                                     justifyContent: "center",

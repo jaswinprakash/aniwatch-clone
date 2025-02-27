@@ -34,8 +34,8 @@ const Profile = () => {
         >
             <ThemedView
                 style={{
-                    padding: SIZE(16),
-                    height: SIZE(80),
+                    paddingHorizontal: SIZE(16),
+                    height: SIZE(60),
                     justifyContent: "center",
                     borderBottomWidth: SIZE(1),
                     borderColor: Colors.light.tabIconSelected,

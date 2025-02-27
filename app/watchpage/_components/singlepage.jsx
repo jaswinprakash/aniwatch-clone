@@ -21,6 +21,7 @@ import { SIZE } from "@/constants/Constants";
 import { TouchableRipple } from "react-native-paper";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import Constants from "expo-constants";
+import FastImage from "@d11/react-native-fast-image";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -219,8 +220,23 @@ const SinglePage = () => {
                             justifyContent: "center",
                         }}
                         source={{ uri: animeInfo?.anime?.info?.poster }}
-                        resizeMode="contain"
+                        resizeMode="cover"
+                        blurRadius={2}
                     >
+                        <FastImage
+                            style={{
+                                height: "100%",
+                                width: "100%",
+                                position: videoLoading
+                                    ? "absolute"
+                                    : "relative",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            }}
+                            source={{ uri: animeInfo?.anime?.info?.poster }}
+                            resizeMode="contain"
+                        />
                         {videoLoading && (
                             <ThemedView
                                 style={{
@@ -291,7 +307,7 @@ const SinglePage = () => {
                 <View style={styles.tabContainer}>
                     {servers?.sub?.length > 0 && (
                         <TouchableRipple
-                            rippleColor="rgba(255, 255, 255, 0.5)"
+                            rippleColor="rgba(140, 82, 255, 0.5)"
                             borderless={true}
                             style={[
                                 styles.tabButton,
@@ -311,7 +327,7 @@ const SinglePage = () => {
                     )}
                     {servers?.dub?.length > 0 && (
                         <TouchableRipple
-                            rippleColor="rgba(255, 255, 255, 0.5)"
+                            rippleColor="rgba(140, 82, 255, 0.5)"
                             borderless={true}
                             style={[
                                 styles.tabButton,
@@ -331,7 +347,7 @@ const SinglePage = () => {
                     )}
                     {servers?.raw?.length > 0 && (
                         <TouchableRipple
-                            rippleColor="rgba(255, 255, 255, 0.5)"
+                            rippleColor="rgba(140, 82, 255, 0.5)"
                             borderless={true}
                             style={[
                                 styles.tabButton,
@@ -355,7 +371,7 @@ const SinglePage = () => {
                     <View style={styles.subTabContainer}>
                         {servers?.sub?.map((item, index) => (
                             <TouchableRipple
-                                rippleColor="rgba(255, 255, 255, 0.5)"
+                                rippleColor="rgba(140, 82, 255, 0.5)"
                                 borderless={true}
                                 key={index}
                                 style={[
@@ -385,7 +401,7 @@ const SinglePage = () => {
                     <View style={styles.subTabContainer}>
                         {servers?.dub?.map((item, index) => (
                             <TouchableRipple
-                                rippleColor="rgba(255, 255, 255, 0.5)"
+                                rippleColor="rgba(140, 82, 255, 0.5)"
                                 borderless={true}
                                 key={index}
                                 style={[
@@ -415,7 +431,7 @@ const SinglePage = () => {
                     <View style={styles.subTabContainer}>
                         {servers?.raw?.map((item, index) => (
                             <TouchableRipple
-                                rippleColor="rgba(255, 255, 255, 0.5)"
+                                rippleColor="rgba(140, 82, 255, 0.5)"
                                 borderless={true}
                                 key={index}
                                 style={[
@@ -492,7 +508,7 @@ const SinglePage = () => {
                             estimatedItemSize={50}
                             renderItem={({ item }) => (
                                 <TouchableRipple
-                                    rippleColor="rgba(255, 255, 255, 0.5)"
+                                    rippleColor="rgba(140, 82, 255, 0.5)"
                                     borderless={true}
                                     disabled={selectedEpisode == item?.number}
                                     style={[
