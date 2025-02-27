@@ -22,6 +22,7 @@ import { TouchableRipple } from "react-native-paper";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import Constants from "expo-constants";
 import FastImage from "@d11/react-native-fast-image";
+import VideoLoader from "./VideoLoader";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -220,70 +221,34 @@ const SinglePage = () => {
                     animeId={route?.params?.id}
                 />
             ) : (
-                <ThemedView
-                    style={{
-                        height: SIZE(250),
-                        backgroundColor: "#000",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
+                <ThemedView style={styles.imageContainer}>
                     <ImageBackground
-                        style={{
-                            height: "100%",
-                            width: "100%",
-                            position: videoLoading ? "absolute" : "relative",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
+                        style={[
+                            styles.backgroundImage,
+                            {
+                                position: videoLoading
+                                    ? "absolute"
+                                    : "relative",
+                            },
+                        ]}
                         source={{ uri: animeInfo?.anime?.info?.poster }}
                         resizeMode="cover"
                         blurRadius={2}
                     >
                         <FastImage
-                            style={{
-                                height: "100%",
-                                width: "100%",
-                                position: videoLoading
-                                    ? "absolute"
-                                    : "relative",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                            }}
+                            style={[
+                                styles.fastImage,
+                                {
+                                    position: videoLoading
+                                        ? "absolute"
+                                        : "relative",
+                                },
+                            ]}
                             source={{ uri: animeInfo?.anime?.info?.poster }}
                             resizeMode="contain"
                         />
                         {videoLoading && (
-                            <ThemedView
-                                style={{
-                                    position: "absolute",
-                                    height: "100%",
-                                    width: "100%",
-                                    backgroundColor: "rgba(0, 0, 0, 0.4)",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <ActivityIndicator
-                                    size="large"
-                                    color={Colors.light.tabIconSelected}
-                                />
-                                <ThemedText
-                                    type="subtitle"
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                        textShadowColor: "#000",
-                                        textShadowOffset: {
-                                            width: 1,
-                                            height: 1,
-                                        },
-                                        textShadowRadius: 2,
-                                    }}
-                                >
-                                    Loading Episode {selectedEpisode}
-                                </ThemedText>
-                            </ThemedView>
+                            <VideoLoader selectedEpisode={selectedEpisode} />
                         )}
                     </ImageBackground>
                 </ThemedView>
@@ -575,9 +540,27 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: SIZE(16),
     },
+    imageContainer: {
+        height: SIZE(250),
+        backgroundColor: "#000",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    backgroundImage: {
+        height: "100%",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    fastImage: {
+        height: "100%",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
     title: {
         fontSize: SIZE(24),
-        // fontWeight: "bold",
         marginBottom: SIZE(16),
     },
     pickerContainer: {
@@ -594,8 +577,8 @@ const styles = StyleSheet.create({
         paddingVertical: SIZE(16),
     },
     episodeButton: {
-        width: "90%", // Adjust based on the number of columns
-        aspectRatio: 1, // Make the buttons square
+        width: "90%",
+        aspectRatio: 1,
         justifyContent: "center",
         alignItems: "center",
         borderWidth: SIZE(1),
@@ -605,7 +588,6 @@ const styles = StyleSheet.create({
     },
     episodeText: {
         fontSize: SIZE(16),
-        // fontWeight: "bold",
     },
 
     tabContainer: {
