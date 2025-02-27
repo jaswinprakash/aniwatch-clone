@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     },
     sectionContainer: {
         marginBottom: SIZE(30),
-        height: SIZE(200),
+        height: SIZE(260),
     },
     sectionTitle: {
         fontSize: SIZE(20),
@@ -200,16 +200,17 @@ const styles = StyleSheet.create({
     animeItem: {
         marginRight: SIZE(10),
         alignItems: "center",
+        height: SIZE(260),
     },
     animePoster: {
-        width: SIZE(100),
-        height: SIZE(150),
+        width: SIZE(150),
+        height: SIZE(220),
         borderRadius: SIZE(10),
     },
     animeName: {
         marginTop: SIZE(5),
         textAlign: "center",
-        width: SIZE(100),
+        width: SIZE(120),
         fontSize: SIZE(12),
         color: Colors.light.tabIconSelected,
     },
