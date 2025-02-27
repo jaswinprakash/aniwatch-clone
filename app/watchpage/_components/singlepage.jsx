@@ -1,10 +1,7 @@
 import {
     ActivityIndicator,
     StyleSheet,
-    Text,
-    TouchableOpacity,
     View,
-    Image,
     ImageBackground,
     ScrollView,
 } from "react-native";
@@ -23,6 +20,8 @@ import { useFullscreen } from "../../../hooks/FullScreenContext";
 import Constants from "expo-constants";
 import FastImage from "@d11/react-native-fast-image";
 import VideoLoader from "./VideoLoader";
+import ServerTab from "./ServerTab";
+import DropDownTab from "./DropDownTab";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -286,95 +285,20 @@ const SinglePage = () => {
                 >
                     Aired : {animeInfo?.anime?.moreInfo?.aired}
                 </ThemedText>
-                <View style={styles.tabContainer}>
-                    {servers?.sub?.length > 0 && (
-                        <TouchableRipple
-                            rippleColor="rgba(140, 82, 255, 0.5)"
-                            borderless={true}
-                            style={[
-                                styles.tabButton,
-                                activeTab === "sub" && styles.activeTab,
-                            ]}
-                            onPress={() => setActiveTab("sub")}
-                        >
-                            <ThemedText
-                                style={[
-                                    styles.tabText,
-                                    activeTab === "sub" && styles.activeText,
-                                ]}
-                            >
-                                Sub
-                            </ThemedText>
-                        </TouchableRipple>
-                    )}
-                    {servers?.dub?.length > 0 && (
-                        <TouchableRipple
-                            rippleColor="rgba(140, 82, 255, 0.5)"
-                            borderless={true}
-                            style={[
-                                styles.tabButton,
-                                activeTab === "dub" && styles.activeTab,
-                            ]}
-                            onPress={() => setActiveTab("dub")}
-                        >
-                            <ThemedText
-                                style={[
-                                    styles.tabText,
-                                    activeTab === "dub" && styles.activeText,
-                                ]}
-                            >
-                                Dub
-                            </ThemedText>
-                        </TouchableRipple>
-                    )}
-                    {servers?.raw?.length > 0 && (
-                        <TouchableRipple
-                            rippleColor="rgba(140, 82, 255, 0.5)"
-                            borderless={true}
-                            style={[
-                                styles.tabButton,
-                                activeTab === "raw" && styles.activeTab,
-                            ]}
-                            onPress={() => setActiveTab("raw")}
-                        >
-                            <ThemedText
-                                style={[
-                                    styles.tabText,
-                                    activeTab === "raw" && styles.activeText,
-                                ]}
-                            >
-                                Raw
-                            </ThemedText>
-                        </TouchableRipple>
-                    )}
-                </View>
-
+                <ServerTab
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    servers={servers}
+                />
                 {activeTab === "sub" && (
                     <View style={styles.subTabContainer}>
                         {servers?.sub?.map((item, index) => (
-                            <TouchableRipple
-                                rippleColor="rgba(140, 82, 255, 0.5)"
-                                borderless={true}
+                            <DropDownTab
                                 key={index}
-                                style={[
-                                    styles.subTabButton,
-                                    activeSubTab === item?.serverName &&
-                                        styles.activeSubTab,
-                                ]}
-                                onPress={() =>
-                                    setActiveSubTab(item?.serverName)
-                                }
-                            >
-                                <ThemedText
-                                    style={[
-                                        styles.subTabText,
-                                        activeSubTab === item?.serverName &&
-                                            styles.activeSubText,
-                                    ]}
-                                >
-                                    {item?.serverName}
-                                </ThemedText>
-                            </TouchableRipple>
+                                item={item}
+                                activeSubTab={activeSubTab}
+                                setActiveSubTab={setActiveSubTab}
+                            />
                         ))}
                     </View>
                 )}
@@ -382,29 +306,12 @@ const SinglePage = () => {
                 {activeTab === "dub" && (
                     <View style={styles.subTabContainer}>
                         {servers?.dub?.map((item, index) => (
-                            <TouchableRipple
-                                rippleColor="rgba(140, 82, 255, 0.5)"
-                                borderless={true}
+                            <DropDownTab
                                 key={index}
-                                style={[
-                                    styles.subTabButton,
-                                    activeSubTab === item?.serverName &&
-                                        styles.activeSubTab,
-                                ]}
-                                onPress={() =>
-                                    setActiveSubTab(item?.serverName)
-                                }
-                            >
-                                <ThemedText
-                                    style={[
-                                        styles.subTabText,
-                                        activeSubTab === item?.serverName &&
-                                            styles.activeSubText,
-                                    ]}
-                                >
-                                    {item?.serverName}
-                                </ThemedText>
-                            </TouchableRipple>
+                                item={item}
+                                activeSubTab={activeSubTab}
+                                setActiveSubTab={setActiveSubTab}
+                            />
                         ))}
                     </View>
                 )}
@@ -412,29 +319,12 @@ const SinglePage = () => {
                 {activeTab === "raw" && (
                     <View style={styles.subTabContainer}>
                         {servers?.raw?.map((item, index) => (
-                            <TouchableRipple
-                                rippleColor="rgba(140, 82, 255, 0.5)"
-                                borderless={true}
+                            <DropDownTab
                                 key={index}
-                                style={[
-                                    styles.subTabButton,
-                                    activeSubTab === item?.serverName &&
-                                        styles.activeSubTab,
-                                ]}
-                                onPress={() =>
-                                    setActiveSubTab(item?.serverName)
-                                }
-                            >
-                                <ThemedText
-                                    style={[
-                                        styles.subTabText,
-                                        activeSubTab === item?.serverName &&
-                                            styles.activeSubText,
-                                    ]}
-                                >
-                                    {item?.serverName}
-                                </ThemedText>
-                            </TouchableRipple>
+                                item={item}
+                                activeSubTab={activeSubTab}
+                                setActiveSubTab={setActiveSubTab}
+                            />
                         ))}
                     </View>
                 )}
@@ -590,36 +480,11 @@ const styles = StyleSheet.create({
         fontSize: SIZE(16),
     },
 
-    tabContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginBottom: SIZE(10),
-    },
-    tabButton: {
-        padding: SIZE(10),
-        flex: 1,
-        alignItems: "center",
-        borderBottomWidth: SIZE(2),
-        borderColor: "transparent",
-    },
-    activeTab: { borderColor: Colors.light.tabIconSelected },
-    tabText: { fontSize: SIZE(18), color: "#333" },
-    activeText: { color: Colors.light.tabIconSelected },
-
     subTabContainer: {
         flexDirection: "row",
         justifyContent: "space-evenly",
         marginBottom: SIZE(10),
     },
-    subTabButton: {
-        padding: SIZE(8),
-        borderWidth: SIZE(1),
-        borderRadius: SIZE(6),
-        borderColor: Colors.light.tabIconSelected,
-    },
-    activeSubTab: { backgroundColor: Colors.light.tabIconSelected },
-    subTabText: { fontSize: SIZE(16), color: Colors.light.tabIconSelected },
-    activeSubText: { color: "#fff" },
 
     contentContainer: { marginTop: SIZE(20), alignItems: "center" },
     contentText: { fontSize: SIZE(18), color: "#333" },
