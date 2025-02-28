@@ -1,8 +1,7 @@
-import { ImageBackground, StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import FastImage from "@d11/react-native-fast-image";
-import { ThemedView } from "../../components/ThemedView";
 import { SIZE } from "../../constants/Constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Colors";
@@ -10,22 +9,27 @@ import { apiConfig } from "../../AxiosConfig";
 import { FlashList } from "@shopify/flash-list";
 import { ThemedText } from "../../components/ThemedText";
 import { ActivityIndicator, TouchableRipple } from "react-native-paper";
-import MiniItem from "./_components/MiniItem";
-import { LinearGradient } from "expo-linear-gradient";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import Spotlight from "./_components/Spotlight";
+import AnimeDetails from "./_components/AnimeDetails";
+import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { getAnimeHistory } from "@/store/storage";
 
 const InfoPage = () => {
     const route = useRoute();
     const [animeInfo, setAnimeInfo] = useState(null);
     const [qTip, setQtip] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
-    console.log(qTip, "qtippppppp");
+    const [history, setHistory] = useState([]);
+    const [animeId, setAnimeId] = useState(route?.params?.id);
+    const [continueWatching, setContinueWatching] = useState(false);
+    // console.log(animeInfo, "qtippppppp");
 
     const getAnimeInfo = async (id) => {
         setPageLoading(true);
         try {
             const response = await apiConfig.get(
-                `/api/v2/hianime/anime/${id ? id : route?.params?.id}`
+                `/api/v2/hianime/anime/${animeId}`
             );
             setAnimeInfo(response.data.data);
             setPageLoading(false);
@@ -38,7 +42,7 @@ const InfoPage = () => {
         setPageLoading(true);
         try {
             const response = await apiConfig.get(
-                `/api/v2/hianime/qtip/${id ? id : route?.params?.id}`
+                `/api/v2/hianime/qtip/${animeId}`
             );
             setQtip(response.data.data);
             // setPageLoading(false);
@@ -46,11 +50,23 @@ const InfoPage = () => {
             console.log(error, "axios error");
         }
     };
+    useEffect(() => {
+        console.log(animeId, "animeId");
+
+        const getHistory = async () => {
+            const history = await getAnimeHistory();
+            setHistory(history);
+            history.find((item) => item.animeId === animeId)
+                ? setContinueWatching(true)
+                : setContinueWatching(false);
+        };
+        getHistory();
+    }, [animeId]);
 
     useEffect(() => {
         getAnimeInfo();
         getQtipInfo();
-    }, []);
+    }, [animeId]);
 
     if (pageLoading) {
         return (
@@ -70,8 +86,7 @@ const InfoPage = () => {
         <View style={styles.relatedAnimeItem}>
             <TouchableRipple
                 onPress={() => {
-                    getAnimeInfo(item.id);
-                    getQtipInfo(item.id);
+                    setAnimeId(item.id);
                 }}
                 rippleColor="rgba(140, 82, 255, 0.5)"
                 borderless={true}
@@ -100,177 +115,93 @@ const InfoPage = () => {
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled
             >
-                {/* Anime Poster and Background */}
-                <ThemedView style={styles.imageContainer}>
-                    <ImageBackground
-                        style={[styles.backgroundImage]}
-                        source={{ uri: animeInfo?.anime?.info?.poster }}
-                        resizeMode="cover"
-                        blurRadius={2}
+                <Spotlight animeInfo={animeInfo} qTip={qTip} />
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        width: "100%",
+                        justifyContent: "space-between",
+                        paddingTop: SIZE(16),
+                        paddingHorizontal: SIZE(16),
+                    }}
+                >
+                    <TouchableRipple
+                        onPress={() => {
+                            router.push({
+                                pathname: "watchpage",
+                                params: {
+                                    id: animeInfo?.anime?.info?.id,
+                                    ...(continueWatching && {
+                                        history: true,
+                                        episode: history.find(
+                                            (item) =>
+                                                item.animeId ===
+                                                animeInfo?.anime?.info?.id
+                                        )?.episodeNumber,
+                                    }),
+                                },
+                            });
+                        }}
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(6), width: "48%" }}
                     >
-                        <FastImage
-                            style={[styles.fastImage]}
-                            source={{
-                                uri: animeInfo?.anime?.info?.poster,
-                                priority: FastImage.priority.high,
-                            }}
-                            resizeMode="contain"
-                        />
-                        <LinearGradient
-                            colors={[
-                                "rgba(0, 0, 0, 0.6)",
-                                "rgba(0, 0, 0, 0.5)",
-                                "rgba(0, 0, 0, 0.4)",
-                                "rgba(0, 0, 0, 0.3)",
-                                "rgba(0, 0, 0, 0.2)",
-                                "rgba(0, 0, 0, 0.1)",
-                                "transparent",
-                            ]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 1 }}
-                            style={styles.topGradient}
-                        >
-                            <View style={styles.itemCommon}>
-                                {qTip?.anime?.quality && (
-                                    <MiniItem data={qTip?.anime?.type} />
-                                )}
-                                {qTip?.anime?.quality && (
-                                    <MiniItem data={qTip?.anime?.quality} />
-                                )}
-                            </View>
-                            <View style={styles.itemCommon}>
-                                <AntDesign
-                                    name="clockcircle"
-                                    size={SIZE(18)}
-                                    color={Colors.light.tabIconSelected}
-                                />
-                                <ThemedText
-                                    type="default"
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                    }}
-                                >
-                                    {animeInfo?.anime?.moreInfo?.duration}
-                                </ThemedText>
-                            </View>
-                        </LinearGradient>
-                        <LinearGradient
-                            colors={[
-                                "transparent",
-                                "rgba(0, 0, 0, 0.1)",
-                                "rgba(0, 0, 0, 0.2)",
-                                "rgba(0, 0, 0, 0.3)",
-                                "rgba(0, 0, 0, 0.4)",
-                                "rgba(0, 0, 0, 0.5)",
-                                "rgba(0, 0, 0, 0.6)",
-                            ]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 1 }}
-                            style={styles.bottomGradient}
-                        >
-                            {qTip?.anime?.aired && (
-                                <View style={styles.itemCommon}>
-                                    <MaterialIcons
-                                        name="calendar-month"
-                                        size={SIZE(20)}
-                                        color={Colors.light.tabIconSelected}
-                                    />
-                                    <ThemedText
-                                        type="default"
-                                        style={{
-                                            color: Colors.light.tabIconSelected,
-                                        }}
-                                    >
-                                        {qTip?.anime?.aired}
-                                    </ThemedText>
-                                </View>
-                            )}
-                            {qTip?.anime?.malscore && (
-                                <View style={styles.itemCommon}>
-                                    <MaterialIcons
-                                        name="star"
-                                        size={SIZE(20)}
-                                        color={Colors.light.tabIconSelected}
-                                    />
-                                    <ThemedText
-                                        type="default"
-                                        style={{
-                                            color: Colors.light.tabIconSelected,
-                                        }}
-                                    >
-                                        {qTip?.anime?.malscore}
-                                    </ThemedText>
-                                </View>
-                            )}
-                        </LinearGradient>
-                    </ImageBackground>
-                </ThemedView>
-                {/* Anime Details */}
-                <View style={styles.infoContainer}>
-                    <ThemedText type="title" style={styles.title}>
-                        {animeInfo?.anime?.info?.name}
-                    </ThemedText>
-                    <ThemedText type="subtitle" style={styles.detailText}>
-                        Japanese -{animeInfo?.anime?.moreInfo?.japanese}
-                    </ThemedText>
-                    <View>
-                        <ScrollView
-                            nestedScrollEnabled
-                            style={styles.descScroll}
-                        >
-                            <ThemedText
-                                type="default"
-                                style={styles.description}
-                                ellipsizeMode="tail"
-                            >
-                                {animeInfo?.anime?.info?.description}
-                            </ThemedText>
-                        </ScrollView>
-                        <LinearGradient
-                            colors={[
-                                "transparent",
-                                "rgba(0, 0, 0, 0.1)",
-                                "rgba(0, 0, 0, 0.2)",
-                                "rgba(0, 0, 0, 0.3)",
-                                "rgba(0, 0, 0, 0.4)",
-                            ]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 1 }}
+                        <View
                             style={{
-                                position: "absolute",
-                                bottom: SIZE(0),
-                                width: "100%",
-                                zIndex: 1000,
-                                height: SIZE(30),
-                                borderColor: "red",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                borderColor: Colors.light.tabIconSelected,
+                                borderWidth: SIZE(1),
+                                borderRadius: SIZE(6),
+                                height: SIZE(40),
+                                justifyContent: "center",
                             }}
-                        ></LinearGradient>
-                    </View>
-                    <View style={styles.detailsContainer}>
-                        {animeInfo?.anime?.moreInfo?.status ==
-                            "Finished Airing" && (
-                            <ThemedText style={styles.detailText}>
-                                Aired: {animeInfo?.anime?.moreInfo?.aired}
+                        >
+                            <MaterialIcons
+                                name="play-circle-outline"
+                                size={SIZE(20)}
+                                color={Colors.light.tabIconSelected}
+                            />
+                            <ThemedText type="subtitle" style={styles.playText}>
+                                {continueWatching
+                                    ? "Continue Watching"
+                                    : "Play"}
                             </ThemedText>
-                        )}
-                        <ThemedText style={styles.detailText}>
-                            Genres:{" "}
-                            {animeInfo?.anime?.moreInfo?.genres?.join(", ")}
-                        </ThemedText>
-                        <ThemedText style={styles.detailText}>
-                            Premiered: {animeInfo?.anime?.moreInfo?.premiered}
-                        </ThemedText>
-                        <ThemedText style={styles.detailText}>
-                            Status: {animeInfo?.anime?.moreInfo?.status}
-                        </ThemedText>
-                        <ThemedText style={styles.detailText}>
-                            Studios: {animeInfo?.anime?.moreInfo?.studios}
-                        </ThemedText>
-                    </View>
+                        </View>
+                    </TouchableRipple>
+                    <TouchableRipple
+                        onPress={() => {}}
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(6), width: "48%" }}
+                    >
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                borderColor: Colors.light.tabIconSelected,
+                                borderWidth: SIZE(1),
+                                borderRadius: SIZE(6),
+                                height: SIZE(40),
+                                justifyContent: "center",
+                            }}
+                        >
+                            <MaterialIcons
+                                name="download"
+                                size={SIZE(20)}
+                                color={Colors.light.tabIconSelected}
+                            />
+                            <ThemedText type="subtitle" style={styles.playText}>
+                                Download
+                            </ThemedText>
+                        </View>
+                    </TouchableRipple>
                 </View>
+                <AnimeDetails animeInfo={animeInfo} qTip={qTip} />
                 {/* Related Animes Section */}
                 <View style={styles.relatedAnimesContainer}>
-                    <ThemedText style={styles.sectionTitle}>
+                    <ThemedText type="subtitle" style={styles.sectionTitle}>
                         Related Animes
                     </ThemedText>
                     <FlashList
@@ -290,48 +221,6 @@ const InfoPage = () => {
 export default InfoPage;
 
 const styles = StyleSheet.create({
-    imageContainer: {
-        height: SIZE(250),
-        backgroundColor: "#000",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    backgroundImage: {
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    fastImage: {
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-    infoContainer: {
-        padding: SIZE(16),
-    },
-    title: {
-        fontSize: SIZE(24),
-        color: Colors.light.tabIconSelected,
-        marginBottom: SIZE(8),
-    },
-    description: {
-        fontSize: SIZE(13),
-        color: Colors.light.tabIconSelected,
-        lineHeight: SIZE(16),
-        marginBottom: SIZE(8),
-        marginTop: SIZE(3),
-    },
-    detailsContainer: {
-        marginTop: SIZE(16),
-    },
-    detailText: {
-        fontSize: SIZE(14),
-        color: Colors.light.tabIconSelected,
-        marginBottom: SIZE(8),
-    },
     relatedAnimesContainer: {
         marginTop: SIZE(24),
         paddingHorizontal: SIZE(16),
@@ -343,57 +232,25 @@ const styles = StyleSheet.create({
         marginBottom: SIZE(12),
     },
     relatedAnimeItem: {
-        width: SIZE(120),
+        width: SIZE(150),
+        height: SIZE(280),
         marginRight: SIZE(12),
     },
     relatedAnimeImage: {
-        width: "100%",
-        height: SIZE(150),
+        width: SIZE(150),
+        height: SIZE(220),
         borderRadius: SIZE(8),
     },
     relatedAnimeName: {
         fontSize: SIZE(14),
         color: Colors.light.tabIconSelected,
-        marginTop: SIZE(8),
+        marginTop: SIZE(5),
         textAlign: "center",
+        lineHeight: SIZE(16),
     },
-    showMoreButton: {
-        color: Colors.dark.text,
+    playText: {
         fontSize: SIZE(14),
-        marginTop: SIZE(8),
-    },
-    topGradient: {
-        position: "absolute",
-        top: SIZE(0),
-        flexDirection: "row",
-        gap: SIZE(5),
-        width: "100%",
-        paddingTop: SIZE(10),
-        paddingHorizontal: SIZE(10),
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    itemCommon: {
-        alignItems: "center",
-        flexDirection: "row",
-        gap: SIZE(5),
-    },
-    bottomGradient: {
-        position: "absolute",
-        bottom: SIZE(0),
-        flexDirection: "row",
-        gap: SIZE(5),
-        width: "100%",
-        paddingBottom: SIZE(10),
-        paddingHorizontal: SIZE(10),
-        justifyContent: "space-between",
-    },
-    descScroll: {
-        maxHeight: SIZE(100),
-        borderWidth: SIZE(1),
-        borderColor: Colors.light.tabIconSelected,
-        borderRadius: SIZE(5),
-        paddingHorizontal: SIZE(5),
-        backgroundColor: "rgba(140, 82, 255, 0.2)",
+        color: Colors.light.tabIconSelected,
+        marginLeft: SIZE(5),
     },
 });

@@ -56,7 +56,7 @@ const SearchPage = () => {
                         borderless={true}
                         onPress={() => {
                             router.push({
-                                pathname: "watchpage",
+                                pathname: "infopage",
                                 params: {
                                     id: item.id,
                                 },

@@ -273,27 +273,6 @@ const SinglePage = () => {
                 >
                     {animeInfo?.anime?.info?.name}
                 </ThemedText>
-                <ScrollView style={{ maxHeight: SIZE(55) }}>
-                    <ThemedText
-                        type="subtitle"
-                        style={{
-                            color: Colors.light.tabIconSelected,
-                            fontSize: SIZE(12),
-                        }}
-                    >
-                        {animeInfo?.anime?.info?.description}
-                    </ThemedText>
-                </ScrollView>
-                <ThemedText
-                    type="subtitle"
-                    style={{
-                        color: Colors.light.tabIconSelected,
-                        fontSize: SIZE(12),
-                        marginVertical: SIZE(10),
-                    }}
-                >
-                    Aired : {animeInfo?.anime?.moreInfo?.aired}
-                </ThemedText>
                 <ServerTab
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
