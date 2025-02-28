@@ -271,8 +271,7 @@ const SinglePage = () => {
                         marginBottom: SIZE(10),
                     }}
                 >
-                    {animeInfo?.anime?.info?.name} (
-                    {animeInfo?.anime?.moreInfo?.japanese})
+                    {animeInfo?.anime?.info?.name}
                 </ThemedText>
                 <ScrollView style={{ maxHeight: SIZE(55) }}>
                     <ThemedText

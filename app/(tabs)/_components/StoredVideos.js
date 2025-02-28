@@ -4,7 +4,7 @@ import { apiConfig } from "@/AxiosConfig";
 import { ThemedText } from "@/components/ThemedText";
 import { SIZE } from "@/constants/Constants";
 import { Colors } from "@/constants/Colors";
-import { TouchableRipple } from "react-native-paper";
+import { ActivityIndicator, TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import FastImage from "@d11/react-native-fast-image";
@@ -31,6 +31,16 @@ const StoredVideos = ({ id, episode, time }) => {
         const secs = Math.floor(seconds % 60);
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
+
+    if (pageLoading) {
+        return (
+            <ActivityIndicator
+                size={"small"}
+                color={Colors.light.tabIconSelected}
+                style={{ flex: 1 }}
+            />
+        );
+    }
     return (
         <View style={{ width: "100%", marginBottom: SIZE(16) }}>
             <TouchableRipple

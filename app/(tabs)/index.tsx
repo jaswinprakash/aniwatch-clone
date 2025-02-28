@@ -54,7 +54,7 @@ export const HomeScreen = () => {
                                 style={{ borderRadius: SIZE(10) }}
                                 onPress={() => {
                                     router.push({
-                                        pathname: "watchpage",
+                                        pathname: "infopage",
                                         params: {
                                             id: item.id,
                                         },
