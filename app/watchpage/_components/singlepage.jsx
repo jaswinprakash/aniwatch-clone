@@ -151,6 +151,9 @@ const SinglePage = () => {
                 setSelectedEpisode(episodeToPlay.number);
                 startStream(episodeToPlay.episodeId, episodeToPlay.number);
             }
+        } else {
+            setSelectedEpisode(episodes[0]?.number);
+            startStream(episodes[0]?.episodeId, episodes[0]?.number);
         }
     }, [episodes, route.params?.history, route.params?.episode]);
 

@@ -51,8 +51,6 @@ const InfoPage = () => {
         }
     };
     useEffect(() => {
-        console.log(animeId, "animeId");
-
         const getHistory = async () => {
             const history = await getAnimeHistory();
             setHistory(history);
