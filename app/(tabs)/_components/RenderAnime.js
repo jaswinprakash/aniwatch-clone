@@ -10,7 +10,7 @@ import FastImage from "@d11/react-native-fast-image";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
 
-const RenderAnime = ({ title, data }) => {
+const RenderAnime = ({ title, data, info, setAnimeId }) => {
     const [imageLoading, setImageLoading] = useState(true);
     if (!data) return null;
 
@@ -31,12 +31,16 @@ const RenderAnime = ({ title, data }) => {
                             borderless={true}
                             style={{ borderRadius: SIZE(10) }}
                             onPress={() => {
-                                router.push({
-                                    pathname: "infopage",
-                                    params: {
-                                        id: item.id,
-                                    },
-                                });
+                                if (info) {
+                                    setAnimeId(item.id);
+                                } else {
+                                    router.push({
+                                        pathname: "infopage",
+                                        params: {
+                                            id: item.id,
+                                        },
+                                    });
+                                }
                             }}
                         >
                             <>

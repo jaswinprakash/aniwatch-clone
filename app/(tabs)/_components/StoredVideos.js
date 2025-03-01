@@ -117,7 +117,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                         position: "absolute",
                                     }}
                                 >
-                                    Click to resume ({formatTime(time)})
+                                    Played time : {formatTime(time)}
                                 </ThemedText>
                             </View>
                             <TouchableRipple

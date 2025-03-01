@@ -57,6 +57,12 @@ const InfoPage = () => {
         getQtipInfo();
     }, [animeId]);
 
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    };
+
     if (pageLoading) {
         return (
             <SafeAreaView
@@ -131,7 +137,13 @@ const InfoPage = () => {
                                 color={Colors.light.tabIconSelected}
                             />
                             <ThemedText type="subtitle" style={styles.playText}>
-                                {playbackInfo ? "Continue Watching" : "Play"}
+                                {playbackInfo
+                                    ? `Continue (${
+                                          playbackInfo?.episodeNumber
+                                      } - ${formatTime(
+                                          playbackInfo?.currentTime
+                                      )})`
+                                    : "Play"}
                             </ThemedText>
                         </View>
                     </TouchableRipple>
@@ -169,6 +181,8 @@ const InfoPage = () => {
                     <RenderAnime
                         title={" Related Animes"}
                         data={animeInfo?.relatedAnimes}
+                        info={true}
+                        setAnimeId={setAnimeId}
                     />
                 </View>
             </ScrollView>
@@ -207,7 +221,7 @@ const styles = StyleSheet.create({
         lineHeight: SIZE(16),
     },
     playText: {
-        fontSize: SIZE(14),
+        fontSize: SIZE(13),
         color: Colors.light.tabIconSelected,
         marginLeft: SIZE(5),
     },
