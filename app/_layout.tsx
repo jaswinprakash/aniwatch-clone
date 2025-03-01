@@ -17,7 +17,7 @@ import { FullscreenProvider } from "../hooks/FullScreenContext";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { AnimeHistoryProvider } from "../store/AnimeHistoryContext";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -45,26 +45,32 @@ export default function RootLayout() {
 
     return (
         <Provider store={store}>
-            <FullscreenProvider>
-                <ThemeProvider
-                    value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-                >
-                    <PaperProvider>
-                        <SafeAreaProvider>
-                            <View style={{ flex: 1 }}>
-                                <Stack screenOptions={{ headerShown: false }}>
-                                    <Stack.Screen
-                                        name="(tabs)"
-                                        options={{ headerShown: false }}
-                                    />
-                                    <Stack.Screen name="+not-found" />
-                                </Stack>
-                            </View>
-                        </SafeAreaProvider>
-                    </PaperProvider>
-                    <StatusBar style="auto" />
-                </ThemeProvider>
-            </FullscreenProvider>
+            <AnimeHistoryProvider>
+                <FullscreenProvider>
+                    <ThemeProvider
+                        value={
+                            colorScheme === "dark" ? DarkTheme : DefaultTheme
+                        }
+                    >
+                        <PaperProvider>
+                            <SafeAreaProvider>
+                                <View style={{ flex: 1 }}>
+                                    <Stack
+                                        screenOptions={{ headerShown: false }}
+                                    >
+                                        <Stack.Screen
+                                            name="(tabs)"
+                                            options={{ headerShown: false }}
+                                        />
+                                        <Stack.Screen name="+not-found" />
+                                    </Stack>
+                                </View>
+                            </SafeAreaProvider>
+                        </PaperProvider>
+                        <StatusBar style="auto" />
+                    </ThemeProvider>
+                </FullscreenProvider>
+            </AnimeHistoryProvider>
         </Provider>
     );
 }

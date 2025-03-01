@@ -2,35 +2,20 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 
 import StoredVideos from "./_components/StoredVideos";
-import { getAnimeHistory } from "@/store/storage";
-import { useFocusEffect } from "expo-router";
 import { SIZE } from "@/constants/Constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
+import { useAnimeHistory } from "@/store/AnimeHistoryContext";
 
 const Profile = () => {
-    const [history, setHistory] = useState([]);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            const fetchHistory = async () => {
-                const animeHistory = await getAnimeHistory();
-                setHistory(animeHistory);
-            };
-
-            fetchHistory();
-
-            return () => {};
-        }, [])
-    );
+    const history = useAnimeHistory();
 
     return (
         <SafeAreaView
             style={{
                 flex: 1,
-                
             }}
         >
             <ThemedView
@@ -40,7 +25,7 @@ const Profile = () => {
                     justifyContent: "center",
                     borderBottomWidth: SIZE(1),
                     borderColor: Colors.light.tabIconSelected,
-                    backgroundColor:"transparent"
+                    backgroundColor: "transparent",
                 }}
             >
                 <ThemedText

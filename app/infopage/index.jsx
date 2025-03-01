@@ -13,17 +13,17 @@ import Spotlight from "./_components/Spotlight";
 import AnimeDetails from "./_components/AnimeDetails";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { getAnimeHistory } from "@/store/storage";
+import { useAnimeHistory } from "@/store/AnimeHistoryContext";
 
 const InfoPage = () => {
     const route = useRoute();
     const [animeInfo, setAnimeInfo] = useState(null);
     const [qTip, setQtip] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
-    const [history, setHistory] = useState([]);
     const [animeId, setAnimeId] = useState(route?.params?.id);
     const [continueWatching, setContinueWatching] = useState(false);
-    // console.log(animeInfo, "qtippppppp");
+    const history = useAnimeHistory();
+    // console.log(history, "qtippppppp");
 
     const getAnimeInfo = async (id) => {
         setPageLoading(true);
@@ -51,14 +51,9 @@ const InfoPage = () => {
         }
     };
     useEffect(() => {
-        const getHistory = async () => {
-            const history = await getAnimeHistory();
-            setHistory(history);
-            history.find((item) => item.animeId === animeId)
-                ? setContinueWatching(true)
-                : setContinueWatching(false);
-        };
-        getHistory();
+        history.find((item) => item.animeId === animeId)
+            ? setContinueWatching(true)
+            : setContinueWatching(false);
     }, [animeId]);
 
     useEffect(() => {

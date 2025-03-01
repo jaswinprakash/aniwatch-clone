@@ -19,9 +19,8 @@ import throttle from "lodash.throttle";
 import useDeviceOrientation from "../../../hooks/useDeviceOrientation";
 import SubModal from "./SubModal";
 import Controls from "./Controls";
-import { useDispatch, useSelector } from "react-redux";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
-import { getAnimeHistory } from "../../../store/storage";
+import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 
 const VideoPlayer = ({
     videoUrl,
@@ -57,6 +56,7 @@ const VideoPlayer = ({
     const [isLoading, setIsLoading] = useState(false);
     let touchStart = 0;
     const throttledUpdate = useThrottledPlayback();
+    const history = useAnimeHistory();
 
     const toggleControls = () => {
         setShowControls((prev) => !prev);
@@ -159,7 +159,6 @@ const VideoPlayer = ({
     };
 
     useEffect(() => {
-        const history = getAnimeHistory();
         const animeData = history.find(
             (item) =>
                 item.animeId === animeId &&
