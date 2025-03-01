@@ -21,9 +21,9 @@ const InfoPage = () => {
     const [qTip, setQtip] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
     const [animeId, setAnimeId] = useState(route?.params?.id);
-    const [continueWatching, setContinueWatching] = useState(false);
     const history = useAnimeHistory();
-    // console.log(history, "qtippppppp");
+    const animeHistory = useAnimeHistory();
+    const playbackInfo = animeHistory.find((item) => item.animeId === animeId);
 
     const getAnimeInfo = async (id) => {
         setPageLoading(true);
@@ -50,11 +50,6 @@ const InfoPage = () => {
             console.log(error, "axios error");
         }
     };
-    useEffect(() => {
-        history.find((item) => item.animeId === animeId)
-            ? setContinueWatching(true)
-            : setContinueWatching(false);
-    }, [animeId]);
 
     useEffect(() => {
         getAnimeInfo();
@@ -125,7 +120,7 @@ const InfoPage = () => {
                                 pathname: "watchpage",
                                 params: {
                                     id: animeInfo?.anime?.info?.id,
-                                    ...(continueWatching && {
+                                    ...(playbackInfo && {
                                         history: true,
                                         episode: history.find(
                                             (item) =>
@@ -157,9 +152,7 @@ const InfoPage = () => {
                                 color={Colors.light.tabIconSelected}
                             />
                             <ThemedText type="subtitle" style={styles.playText}>
-                                {continueWatching
-                                    ? "Continue Watching"
-                                    : "Play"}
+                                {playbackInfo ? "Continue Watching" : "Play"}
                             </ThemedText>
                         </View>
                     </TouchableRipple>

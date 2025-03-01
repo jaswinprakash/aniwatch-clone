@@ -1,17 +1,21 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { apiConfig } from "@/AxiosConfig";
 import { ThemedText } from "@/components/ThemedText";
 import { SIZE } from "@/constants/Constants";
 import { Colors } from "@/constants/Colors";
-import { ActivityIndicator, TouchableRipple } from "react-native-paper";
+import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import FastImage from "@d11/react-native-fast-image";
+import { useDispatch } from "react-redux";
+import { deletePlayback } from "@/store/playbackSlice";
+import { SkeletonLoader } from "@/components/SkeletonLoader";
 
 const StoredVideos = ({ id, episode, time }) => {
     const [animeInfo, setAnimeInfo] = useState();
     const [pageLoading, setPageLoading] = useState(true);
+    const dispatch = useDispatch();
     const getAnimeInfo = async () => {
         try {
             const response = await apiConfig.get(`/api/v2/hianime/anime/${id}`);
@@ -34,10 +38,15 @@ const StoredVideos = ({ id, episode, time }) => {
 
     if (pageLoading) {
         return (
-            <ActivityIndicator
-                size={"small"}
-                color={Colors.light.tabIconSelected}
-                style={{ flex: 1 }}
+            <SkeletonLoader
+                height={SIZE(150)}
+                width={SIZE(100)}
+                style={{
+                    width: "100%",
+                    marginBottom: SIZE(16),
+                    borderRadius: SIZE(10),
+                }}
+                backgroundColor={Colors.dark.background}
             />
         );
     }
@@ -104,7 +113,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                     style={{
                                         color: Colors.light.tabIconSelected,
                                         fontSize: SIZE(15),
-                                        bottom: SIZE(10),
+                                        bottom: SIZE(65),
                                         position: "absolute",
                                     }}
                                 >
@@ -113,7 +122,9 @@ const StoredVideos = ({ id, episode, time }) => {
                             </View>
                             <TouchableRipple
                                 hitSlop={10}
-                                onPress={() => {}}
+                                onPress={() => {
+                                    dispatch(deletePlayback(id));
+                                }}
                                 rippleColor="rgba(140, 82, 255, 0.5)"
                                 borderless={true}
                                 style={{
@@ -123,7 +134,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                 }}
                             >
                                 <MaterialIcons
-                                    name="delete"
+                                    name="delete-forever"
                                     size={SIZE(24)}
                                     color={Colors.light.tabIconSelected}
                                 />

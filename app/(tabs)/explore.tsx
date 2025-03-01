@@ -8,7 +8,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAnimeHistory } from "@/store/AnimeHistoryContext";
-
+import LottieView from "lottie-react-native";
 const Profile = () => {
     const history = useAnimeHistory();
 
@@ -35,19 +35,36 @@ const Profile = () => {
                         fontSize: SIZE(20),
                     }}
                 >
-                    Continue watching
+                    Watch History
                 </ThemedText>
             </ThemedView>
-            <ScrollView style={{ padding: SIZE(16) }}>
-                {history?.map((item, index) => (
-                    <StoredVideos
-                        key={index}
-                        id={item?.animeId}
-                        episode={item?.episodeNumber}
-                        time={item?.currentTime}
+            {!history?.length ? (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <LottieView
+                        source={require("../../assets/lottie/no-data.json")}
+                        autoPlay
+                        loop
+                        style={{ width: SIZE(200), height: SIZE(200) }}
                     />
-                ))}
-            </ScrollView>
+                </View>
+            ) : (
+                <ScrollView style={{ padding: SIZE(16) }}>
+                    {history?.map((item, index) => (
+                        <StoredVideos
+                            key={index}
+                            id={item?.animeId}
+                            episode={item?.episodeNumber}
+                            time={item?.currentTime}
+                        />
+                    ))}
+                </ScrollView>
+            )}
         </SafeAreaView>
     );
 };

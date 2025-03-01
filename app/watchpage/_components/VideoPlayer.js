@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 10000000,
+        zIndex: 999,
     },
     controlsOverlay: {
         position: "absolute",
