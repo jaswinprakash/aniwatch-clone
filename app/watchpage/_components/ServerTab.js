@@ -24,7 +24,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
                             activeTab === "sub" && styles.activeText,
                         ]}
                     >
-                        Sub
+                        SUB
                     </ThemedText>
                 </TouchableRipple>
             )}
@@ -44,7 +44,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
                             activeTab === "dub" && styles.activeText,
                         ]}
                     >
-                        Dub
+                        DUB
                     </ThemedText>
                 </TouchableRipple>
             )}

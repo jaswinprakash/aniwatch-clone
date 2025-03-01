@@ -3,7 +3,6 @@ import {
     StyleSheet,
     View,
     ImageBackground,
-    ScrollView,
     Text,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,7 +14,7 @@ import { ThemedView } from "@/components/ThemedView";
 import VideoPlayer from "./VideoPlayer";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
-import { TouchableRipple } from "react-native-paper";
+import { TextInput, TouchableRipple } from "react-native-paper";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import Constants from "expo-constants";
 import FastImage from "@d11/react-native-fast-image";
@@ -23,6 +22,7 @@ import VideoLoader from "./VideoLoader";
 import ServerTab from "./ServerTab";
 import DropDownTab from "./DropDownTab";
 import { Dropdown } from "react-native-element-dropdown";
+import LottieView from "lottie-react-native";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -43,6 +43,8 @@ const SinglePage = () => {
     const [currentPlayingEpisodeId, setCurrentPlayingEpisodeId] =
         useState(null);
     const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
 
     const getEpisodes = async () => {
         try {
@@ -150,6 +152,7 @@ const SinglePage = () => {
             if (episodeToPlay) {
                 setSelectedEpisode(episodeToPlay.number);
                 startStream(episodeToPlay.episodeId, episodeToPlay.number);
+                adjustRangeForSelectedEpisode(episodeToPlay.number);
             }
         } else {
             setSelectedEpisode(episodes[0]?.number);
@@ -159,12 +162,6 @@ const SinglePage = () => {
 
     const handlePlaybackTimeUpdate = (time) => {
         setCurrentPlaybackTime(time);
-    };
-
-    const handleRangeChange = (range) => {
-        const [start, end] = range.split("-").map(Number);
-        setCurrentRange({ start: start - 1, end });
-        setSelectedRange(range);
     };
 
     const generateRangeOptions = () => {
@@ -179,7 +176,11 @@ const SinglePage = () => {
     };
 
     useEffect(() => {
-        if (episodes.length > 0) {
+        if (
+            episodes.length > 0 &&
+            (!route.params?.history === "true" ||
+                !route.params?.history === true)
+        ) {
             const totalEpisodes = episodes.length;
             const defaultRange = `1-${Math.min(50, totalEpisodes)}`;
             setSelectedRange(defaultRange);
@@ -188,20 +189,61 @@ const SinglePage = () => {
     }, [episodes]);
 
     const getEpisodesForCurrentRange = () => {
+        if (searchQuery) {
+            return searchResults;
+        }
         return episodes.slice(currentRange.start, currentRange.end);
     };
+    const handleRangeChange = (range) => {
+        const [start, end] = range.split("-").map(Number);
+        setCurrentRange({ start: start - 1, end });
+        setSelectedRange(range);
+    };
 
+    const adjustRangeForSelectedEpisode = (episodeNumber) => {
+        const episodeIndex = episodes.findIndex(
+            (ep) => ep.number === episodeNumber
+        );
+        if (episodeIndex === -1) return;
+
+        const rangeSize = 50;
+        const start = Math.floor(episodeIndex / rangeSize) * rangeSize;
+        const end = start + rangeSize;
+
+        setCurrentRange({ start, end });
+        setSelectedRange(`${start + 1}-${end}`);
+    };
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        if (query) {
+            const filteredEpisodes = episodes.filter((episode) =>
+                episode.number.toString().includes(query)
+            );
+            setSearchResults(filteredEpisodes);
+        } else {
+            setSearchResults([]);
+        }
+    };
     if (pageLoading) {
         return (
-            <ActivityIndicator
-                size={"large"}
-                color={Colors.light.tabIconSelected}
+            <View
                 style={{
                     flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
+                    backgroundColor: Colors.dark.background,
                 }}
-            />
+            >
+                <LottieView
+                    source={require("../../../assets/lottie//loader-3.json")}
+                    autoPlay
+                    loop
+                    style={{
+                        width: SIZE(200),
+                        height: SIZE(200),
+                    }}
+                />
+            </View>
         );
     }
 
@@ -276,50 +318,87 @@ const SinglePage = () => {
                 >
                     {animeInfo?.anime?.info?.name}
                 </ThemedText>
-                <ServerTab
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                    servers={servers}
-                />
-                {activeTab === "sub" && (
-                    <View style={styles.subTabContainer}>
-                        {servers?.sub?.map((item, index) => (
-                            <DropDownTab
-                                key={index}
-                                item={item}
-                                activeSubTab={activeSubTab}
-                                setActiveSubTab={setActiveSubTab}
-                            />
-                        ))}
-                    </View>
-                )}
+                <View
+                    style={{
+                        borderWidth: SIZE(1),
+                        borderColor: Colors.light.tabIconSelected,
+                        borderRadius: SIZE(8),
+                        marginBottom: SIZE(10),
+                        padding: SIZE(10),
+                    }}
+                >
+                    <ServerTab
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                        servers={servers}
+                    />
+                    {activeTab === "sub" && (
+                        <View style={styles.subTabContainer}>
+                            {servers?.sub?.map((item, index) => (
+                                <DropDownTab
+                                    key={index}
+                                    item={item}
+                                    activeSubTab={activeSubTab}
+                                    setActiveSubTab={setActiveSubTab}
+                                />
+                            ))}
+                        </View>
+                    )}
 
-                {activeTab === "dub" && (
-                    <View style={styles.subTabContainer}>
-                        {servers?.dub?.map((item, index) => (
-                            <DropDownTab
-                                key={index}
-                                item={item}
-                                activeSubTab={activeSubTab}
-                                setActiveSubTab={setActiveSubTab}
-                            />
-                        ))}
-                    </View>
-                )}
+                    {activeTab === "dub" && (
+                        <View style={styles.subTabContainer}>
+                            {servers?.dub?.map((item, index) => (
+                                <DropDownTab
+                                    key={index}
+                                    item={item}
+                                    activeSubTab={activeSubTab}
+                                    setActiveSubTab={setActiveSubTab}
+                                />
+                            ))}
+                        </View>
+                    )}
 
-                {activeTab === "raw" && (
-                    <View style={styles.subTabContainer}>
-                        {servers?.raw?.map((item, index) => (
-                            <DropDownTab
-                                key={index}
-                                item={item}
-                                activeSubTab={activeSubTab}
-                                setActiveSubTab={setActiveSubTab}
-                            />
-                        ))}
-                    </View>
-                )}
-                <ThemedText>List of episodes</ThemedText>
+                    {activeTab === "raw" && (
+                        <View style={styles.subTabContainer}>
+                            {servers?.raw?.map((item, index) => (
+                                <DropDownTab
+                                    key={index}
+                                    item={item}
+                                    activeSubTab={activeSubTab}
+                                    setActiveSubTab={setActiveSubTab}
+                                />
+                            ))}
+                        </View>
+                    )}
+                </View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <ThemedText
+                        type="subtitle"
+                        style={{
+                            color: Colors.light.tabIconSelected,
+                            marginBottom: SIZE(10),
+                            fontSize: SIZE(16),
+                        }}
+                    >
+                        List of episodes
+                    </ThemedText>
+                    <ThemedText
+                        type="subtitle"
+                        style={{
+                            color: Colors.light.tabIconSelected,
+                            marginBottom: SIZE(10),
+                            fontSize: SIZE(16),
+                        }}
+                    >
+                        Search episodes
+                    </ThemedText>
+                </View>
                 {episodeLoading ? (
                     <ActivityIndicator
                         size={"large"}
@@ -328,58 +407,115 @@ const SinglePage = () => {
                     />
                 ) : (
                     <>
-                        {/* Picker for episode range selection */}
                         <View
-                            style={[
-                                styles.pickerContainer,
-                                {
-                                    borderColor: Colors.light.tabIconSelected,
-                                },
-                            ]}
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                            }}
                         >
-                            <Dropdown
-                                data={generateRangeOptions().map((range) => ({
-                                    label: range,
-                                    value: range,
-                                }))}
-                                labelField="label"
-                                valueField="value"
-                                placeholder={selectedRange}
-                                value={selectedRange}
-                                onChange={(item) =>
-                                    handleRangeChange(item.value)
-                                }
-                                style={styles.dropdown}
-                                placeholderStyle={styles.placeholderStyle}
-                                selectedTextStyle={styles.selectedTextStyle}
-                                containerStyle={styles.dropdownContainer}
-                                renderItem={(item) => {
-                                    const isSelected =
-                                        item.value === selectedRange;
-                                    return (
-                                        <View
-                                            style={[
-                                                styles.itemContainer,
-                                                isSelected &&
-                                                    styles.selectedItemContainer,
-                                            ]}
-                                        >
-                                            <Text
+                            <View
+                                style={[
+                                    styles.pickerContainer,
+                                    {
+                                        borderColor:
+                                            Colors.light.tabIconSelected,
+                                    },
+                                ]}
+                            >
+                                <Dropdown
+                                    data={generateRangeOptions().map(
+                                        (range) => ({
+                                            label: range,
+                                            value: range,
+                                        })
+                                    )}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder={selectedRange}
+                                    value={selectedRange}
+                                    onChange={(item) =>
+                                        handleRangeChange(item.value)
+                                    }
+                                    style={styles.dropdown}
+                                    placeholderStyle={styles.placeholderStyle}
+                                    selectedTextStyle={styles.selectedTextStyle}
+                                    containerStyle={styles.dropdownContainer}
+                                    renderItem={(item) => {
+                                        const isSelected =
+                                            item.value === selectedRange;
+                                        return (
+                                            <View
                                                 style={[
-                                                    styles.itemText,
+                                                    styles.itemContainer,
                                                     isSelected &&
-                                                        styles.selectedItemText,
+                                                        styles.selectedItemContainer,
                                                 ]}
                                             >
-                                                {item.label}
-                                            </Text>
-                                        </View>
-                                    );
-                                }}
-                                dropdownPosition="auto"
-                            />
+                                                <Text
+                                                    style={[
+                                                        styles.itemText,
+                                                        isSelected &&
+                                                            styles.selectedItemText,
+                                                    ]}
+                                                >
+                                                    {item.label}
+                                                </Text>
+                                            </View>
+                                        );
+                                    }}
+                                    dropdownPosition="auto"
+                                />
+                            </View>
+                            <View>
+                                <TextInput
+                                    contentStyle={{
+                                        fontFamily: "Exo2Medium",
+                                        fontSize: SIZE(14),
+                                    }}
+                                    placeholderTextColor={
+                                        Colors.light.tabIconSelected
+                                    }
+                                    outlineStyle={{
+                                        borderColor:
+                                            Colors.light.tabIconSelected,
+                                        borderRadius: SIZE(10),
+                                        fontSize: SIZE(10),
+                                    }}
+                                    outlineColor={Colors.light.tabIconSelected}
+                                    textColor={Colors.light.tabIconSelected}
+                                    theme={{
+                                        colors: {
+                                            primary:
+                                                Colors.light.tabIconSelected,
+                                            onSurfaceVariant:
+                                                Colors.light.tabIconSelected,
+                                        },
+                                        fonts: {
+                                            bodyLarge: {
+                                                fontFamily: "Exo2Medium",
+                                                fontSize: SIZE(10),
+                                            },
+                                        },
+                                    }}
+                                    left={
+                                        <TextInput.Icon
+                                            icon="magnify"
+                                            color={Colors.light.tabIconSelected}
+                                            size={SIZE(24)}
+                                        />
+                                    }
+                                    style={{
+                                        height: SIZE(40),
+                                        backgroundColor: "transparent",
+                                    }}
+                                    mode="outlined"
+                                    label="Search "
+                                    value={searchQuery}
+                                    onChangeText={handleSearch}
+                                />
+                            </View>
                         </View>
-                        {/* FlashList for displaying episodes */}
                         <FlashList
                             data={getEpisodesForCurrentRange()}
                             keyExtractor={(item, index) => index.toString()}
@@ -389,12 +525,12 @@ const SinglePage = () => {
                                 <TouchableRipple
                                     rippleColor="rgba(140, 82, 255, 0.5)"
                                     borderless={true}
-                                    disabled={selectedEpisode == item?.number}
+                                    disabled={selectedEpisode === item?.number}
                                     style={[
                                         styles.episodeButton,
                                         {
                                             backgroundColor:
-                                                selectedEpisode == item?.number
+                                                selectedEpisode === item?.number
                                                     ? Colors.light
                                                           .tabIconSelected
                                                     : null,
@@ -411,6 +547,10 @@ const SinglePage = () => {
                                             item?.episodeId,
                                             item?.number
                                         );
+                                        adjustRangeForSelectedEpisode(
+                                            item?.number
+                                        );
+                                        setSearchQuery("");
                                     }}
                                 >
                                     <ThemedText
@@ -461,7 +601,6 @@ const styles = StyleSheet.create({
         marginBottom: SIZE(16),
     },
     pickerContainer: {
-        borderWidth: SIZE(1),
         borderColor: "#333",
         borderRadius: SIZE(8),
         width: "35%",
