@@ -11,6 +11,7 @@ import Animated, {
 import { MaterialIcons } from "@expo/vector-icons";
 import { ThemedText } from "../../../components/ThemedText";
 import { Slider } from "@miblanchard/react-native-slider";
+import { TouchableRipple } from "react-native-paper";
 
 const Controls = ({
     showControls,
@@ -97,7 +98,10 @@ const Controls = ({
                         gap: SIZE(10),
                     }}
                 >
-                    <TouchableOpacity
+                    <TouchableRipple
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(24) }}
                         hitSlop={10}
                         onPress={() => {
                             if (isFullScreen) {
@@ -112,7 +116,7 @@ const Controls = ({
                             size={SIZE(24)}
                             color={Colors.light.tabIconSelected}
                         />
-                    </TouchableOpacity>
+                    </TouchableRipple>
                     <View style={{ width: "80%" }}>
                         <ThemedText
                             numberOfLines={1}
@@ -139,7 +143,10 @@ const Controls = ({
                         </ThemedText>
                     </View>
                 </View>
-                <TouchableOpacity
+                <TouchableRipple
+                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    borderless={true}
+                    style={{ borderRadius: SIZE(24) }}
                     hitSlop={10}
                     onPress={() => {
                         if (showQualityList) {
@@ -155,7 +162,7 @@ const Controls = ({
                         size={SIZE(24)}
                         color={Colors.light.tabIconSelected}
                     />
-                </TouchableOpacity>
+                </TouchableRipple>
             </Animated.View>
             {/* Play/Pause and Skip Buttons */}
             <Animated.View
@@ -206,8 +213,10 @@ const Controls = ({
                     },
                 ]}
             >
-                <TouchableOpacity
-                    hitSlop={10}
+                <TouchableRipple
+                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    borderless={true}
+                    style={{ borderRadius: SIZE(24) }}
                     onPress={() => {
                         if (showSubtitleList) {
                             setShowSubtitleList(false);
@@ -226,7 +235,7 @@ const Controls = ({
                         size={24}
                         color={Colors.light.tabIconSelected}
                     />
-                </TouchableOpacity>
+                </TouchableRipple>
                 <View
                     style={{
                         width: isFullScreen ? "50%" : "70%",
@@ -235,7 +244,10 @@ const Controls = ({
                         justifyContent: "space-between",
                     }}
                 >
-                    <TouchableOpacity
+                    <TouchableRipple
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(30) }}
                         hitSlop={10}
                         onPress={() => prevEpisode()}
                     >
@@ -244,29 +256,50 @@ const Controls = ({
                             size={SIZE(30)}
                             color={Colors.light.tabIconSelected}
                         />
-                    </TouchableOpacity>
-                    <TouchableOpacity hitSlop={10} onPress={() => skip(-10)}>
+                    </TouchableRipple>
+                    <TouchableRipple
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(30) }}
+                        hitSlop={10}
+                        onPress={() => skip(-10)}
+                    >
                         <MaterialIcons
                             name="replay-10"
                             size={SIZE(30)}
                             color={Colors.light.tabIconSelected}
                         />
-                    </TouchableOpacity>
-                    <TouchableOpacity hitSlop={10} onPress={togglePlayPause}>
+                    </TouchableRipple>
+                    <TouchableRipple
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(36) }}
+                        hitSlop={10}
+                        onPress={togglePlayPause}
+                    >
                         <MaterialIcons
                             name={isPlaying ? "pause" : "play-arrow"}
                             size={SIZE(36)}
                             color={Colors.light.tabIconSelected}
                         />
-                    </TouchableOpacity>
-                    <TouchableOpacity hitSlop={10} onPress={() => skip(10)}>
+                    </TouchableRipple>
+                    <TouchableRipple
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(30) }}
+                        hitSlop={10}
+                        onPress={() => skip(10)}
+                    >
                         <MaterialIcons
                             name="forward-10"
                             size={SIZE(30)}
                             color={Colors.light.tabIconSelected}
                         />
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                    </TouchableRipple>
+                    <TouchableRipple
+                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        borderless={true}
+                        style={{ borderRadius: SIZE(30) }}
                         hitSlop={10}
                         onPress={() => nextEpisode()}
                     >
@@ -275,15 +308,21 @@ const Controls = ({
                             size={SIZE(30)}
                             color={Colors.light.tabIconSelected}
                         />
-                    </TouchableOpacity>
+                    </TouchableRipple>
                 </View>
-                <TouchableOpacity hitSlop={10} onPress={toggleFullScreen}>
+                <TouchableRipple
+                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    borderless={true}
+                    style={{ borderRadius: SIZE(24) }}
+                    hitSlop={10}
+                    onPress={toggleFullScreen}
+                >
                     <MaterialIcons
                         name={isFullScreen ? "fullscreen-exit" : "fullscreen"}
                         size={SIZE(24)}
                         color={Colors.light.tabIconSelected}
                     />
-                </TouchableOpacity>
+                </TouchableRipple>
             </Animated.View>
         </>
     );

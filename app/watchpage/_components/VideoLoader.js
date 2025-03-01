@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { ActivityIndicator } from "react-native-paper";
 import { ThemedText } from "../../../components/ThemedText";
 import { ThemedView } from "../../../components/ThemedView";
 import { Colors } from "../../../constants/Colors";
+import LottieView from "lottie-react-native";
+import { SIZE } from "../../../constants/Constants";
 const VideoLoader = ({ selectedEpisode }) => {
     return (
         <ThemedView
@@ -16,9 +17,11 @@ const VideoLoader = ({ selectedEpisode }) => {
                 alignItems: "center",
             }}
         >
-            <ActivityIndicator
-                size="small"
-                color={Colors.light.tabIconSelected}
+            <LottieView
+                source={require("../../../assets/lottie/loader-2.json")}
+                autoPlay
+                loop
+                style={{ width: SIZE(200), height: SIZE(200) }}
             />
             <ThemedText
                 type="subtitle"

@@ -14,6 +14,7 @@ import AnimeDetails from "./_components/AnimeDetails";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useAnimeHistory } from "@/store/AnimeHistoryContext";
+import RenderAnime from "../(tabs)/_components/RenderAnime";
 
 const InfoPage = () => {
     const route = useRoute();
@@ -69,28 +70,6 @@ const InfoPage = () => {
             </SafeAreaView>
         );
     }
-
-    const renderRelatedAnime = ({ item }) => (
-        <View style={styles.relatedAnimeItem}>
-            <TouchableRipple
-                onPress={() => {
-                    setAnimeId(item.id);
-                }}
-                rippleColor="rgba(140, 82, 255, 0.5)"
-                borderless={true}
-                style={styles.relatedAnimeImage}
-            >
-                <FastImage
-                    style={styles.relatedAnimeImage}
-                    source={{ uri: item.poster }}
-                    resizeMode="cover"
-                />
-            </TouchableRipple>
-            <ThemedText style={styles.relatedAnimeName} numberOfLines={2}>
-                {item.name}
-            </ThemedText>
-        </View>
-    );
 
     return (
         <SafeAreaView
@@ -187,16 +166,9 @@ const InfoPage = () => {
                 <AnimeDetails animeInfo={animeInfo} qTip={qTip} />
                 {/* Related Animes Section */}
                 <View style={styles.relatedAnimesContainer}>
-                    <ThemedText type="subtitle" style={styles.sectionTitle}>
-                        Related Animes
-                    </ThemedText>
-                    <FlashList
+                    <RenderAnime
+                        title={" Related Animes"}
                         data={animeInfo?.relatedAnimes}
-                        renderItem={renderRelatedAnime}
-                        keyExtractor={(item, index) => index.toString()}
-                        horizontal
-                        estimatedItemSize={150}
-                        showsHorizontalScrollIndicator={false}
                     />
                 </View>
             </ScrollView>

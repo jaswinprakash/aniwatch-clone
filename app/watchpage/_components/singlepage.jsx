@@ -319,6 +319,7 @@ const SinglePage = () => {
                         ))}
                     </View>
                 )}
+                <ThemedText>List of episodes</ThemedText>
                 {episodeLoading ? (
                     <ActivityIndicator
                         size={"large"}
@@ -463,7 +464,6 @@ const styles = StyleSheet.create({
         borderWidth: SIZE(1),
         borderColor: "#333",
         borderRadius: SIZE(8),
-        marginBottom: SIZE(16),
         width: "35%",
     },
     picker: {
