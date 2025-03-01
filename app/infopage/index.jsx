@@ -15,6 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useAnimeHistory } from "@/store/AnimeHistoryContext";
 import RenderAnime from "../(tabs)/_components/RenderAnime";
+import LottieView from "lottie-react-native";
 
 const InfoPage = () => {
     const route = useRoute();
@@ -66,12 +67,21 @@ const InfoPage = () => {
     if (pageLoading) {
         return (
             <SafeAreaView
-                style={{ flex: 1, backgroundColor: Colors.dark.background }}
+                style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: Colors.dark.background,
+                }}
             >
-                <ActivityIndicator
-                    size={"small"}
-                    color={Colors.light.tabIconSelected}
-                    style={{ flex: 1 }}
+                <LottieView
+                    source={require("../../assets/lottie/loader-3.json")}
+                    autoPlay
+                    loop
+                    style={{
+                        width: SIZE(200),
+                        height: SIZE(200),
+                    }}
                 />
             </SafeAreaView>
         );

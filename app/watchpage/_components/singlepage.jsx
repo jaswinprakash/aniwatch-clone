@@ -23,6 +23,7 @@ import ServerTab from "./ServerTab";
 import DropDownTab from "./DropDownTab";
 import { Dropdown } from "react-native-element-dropdown";
 import LottieView from "lottie-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -226,7 +227,7 @@ const SinglePage = () => {
     };
     if (pageLoading) {
         return (
-            <View
+            <SafeAreaView
                 style={{
                     flex: 1,
                     alignItems: "center",
@@ -235,7 +236,7 @@ const SinglePage = () => {
                 }}
             >
                 <LottieView
-                    source={require("../../../assets/lottie//loader-3.json")}
+                    source={require("../../../assets/lottie/loader-3.json")}
                     autoPlay
                     loop
                     style={{
@@ -243,7 +244,7 @@ const SinglePage = () => {
                         height: SIZE(200),
                     }}
                 />
-            </View>
+            </SafeAreaView>
         );
     }
 
