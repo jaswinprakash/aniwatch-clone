@@ -9,7 +9,8 @@
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.animplay"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +34,7 @@
           "image": "./assets/images/splash.png",
           "imageWidth": 400,
           "resizeMode": "contain",
-          "backgroundColor": "#000000"
+          "backgroundColor": "#151718"
         }
       ],
       "expo-video",
