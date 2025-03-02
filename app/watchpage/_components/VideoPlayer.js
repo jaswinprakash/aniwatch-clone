@@ -21,7 +21,6 @@ import SubModal from "./SubModal";
 import Controls from "./Controls";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
-import { ThemedText } from "../../../components/ThemedText";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const VideoPlayer = ({
