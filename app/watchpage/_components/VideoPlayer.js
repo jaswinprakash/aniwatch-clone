@@ -21,6 +21,8 @@ import SubModal from "./SubModal";
 import Controls from "./Controls";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
+import { ThemedText } from "../../../components/ThemedText";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const VideoPlayer = ({
     videoUrl,
@@ -56,6 +58,12 @@ const VideoPlayer = ({
     const [showQualityList, setShowQualityList] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [epId, setEpId] = useState();
+    const [showForwardIndicator, setShowForwardIndicator] = useState(false);
+    const [showBackwardIndicator, setShowBackwardIndicator] = useState(false);
+    const [lastTap, setLastTap] = useState(0);
+    const [doubleTapTimeoutId, setDoubleTapTimeoutId] = useState(null);
+    const DOUBLE_TAP_DELAY = 300; // milliseconds
+    const SEEK_AMOUNT = 10; // seconds to seek on double tap
     let touchStart = 0;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
@@ -242,6 +250,50 @@ const VideoPlayer = ({
         }
     };
 
+    const handleDoubleTap = (event) => {
+        const now = Date.now();
+        const screenWidth = SIZE(400); // Approximate screen width, adjust if needed
+        const tapX = event.nativeEvent.locationX;
+        const isRightSide = tapX > screenWidth / 2;
+
+        if (now - lastTap < DOUBLE_TAP_DELAY) {
+            // Double tap detected
+            if (isRightSide) {
+                // Double tap on right side - seek forward
+                skip(SEEK_AMOUNT);
+                setShowForwardIndicator(true);
+                setTimeout(() => setShowForwardIndicator(false), 500);
+            } else {
+                // Double tap on left side - seek backward
+                skip(-SEEK_AMOUNT);
+                setShowBackwardIndicator(true);
+                setTimeout(() => setShowBackwardIndicator(false), 500);
+            }
+
+            // Clear any existing timeout
+            if (doubleTapTimeoutId) {
+                clearTimeout(doubleTapTimeoutId);
+                setDoubleTapTimeoutId(null);
+            }
+        } else {
+            // First tap - set up for potential double tap
+            // Clear any existing timeout first
+            if (doubleTapTimeoutId) {
+                clearTimeout(doubleTapTimeoutId);
+            }
+
+            // Set a timeout to reset and handle this as a single tap if no second tap occurs
+            const timeoutId = setTimeout(() => {
+                toggleControls(); // Regular tap behavior
+                setDoubleTapTimeoutId(null);
+            }, DOUBLE_TAP_DELAY);
+
+            setDoubleTapTimeoutId(timeoutId);
+        }
+
+        setLastTap(now);
+    };
+
     // const toggleFullScreen2 = useCallback(
     //     async (forceFullScreen = null) => {
     //         const newFullScreenState = forceFullScreen ?? !isFullScreen;
@@ -282,14 +334,16 @@ const VideoPlayer = ({
     //     }
     // }, [showControls, showQualityList, showSubtitleList]);
 
+    // Add these state variables at the top of your component
+
+    // Add this function to handle the double tap
+
     return (
         <>
             <StatusBar hidden={isFullScreen} style="auto" />
             <View style={[styles.container, isFullScreen && styles.fullScreen]}>
                 <TouchableWithoutFeedback
-                    onPress={() => {
-                        toggleControls();
-                    }}
+                    onPress={(event) => handleDoubleTap(event)}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                 >
@@ -301,6 +355,25 @@ const VideoPlayer = ({
                                 style={styles.loader}
                             />
                         )}
+                        {showBackwardIndicator && (
+                            <View style={styles.skipIndicator}>
+                                <MaterialIcons
+                                    name="replay-10"
+                                    size={SIZE(30)}
+                                    color={Colors.light.tabIconSelected}
+                                />
+                            </View>
+                        )}
+                        {showForwardIndicator && (
+                            <View style={styles.skipIndicator}>
+                                <MaterialIcons
+                                    name="forward-10"
+                                    size={SIZE(30)}
+                                    color={Colors.light.tabIconSelected}
+                                />
+                            </View>
+                        )}
+
                         <Video
                             onBuffer={(data) => {
                                 if (data.isBuffering) {
@@ -476,6 +549,20 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         padding: SIZE(10),
         zIndex: 1000,
+    },
+    skipIndicator: {
+        position: "absolute",
+        top: "50%",
+        alignSelf: "center",
+        backgroundColor: "rgba(140, 82, 255, 0.5)",
+        borderRadius: SIZE(25),
+        padding: SIZE(10),
+        marginTop: -SIZE(27),
+        zIndex: 1000,
+    },
+    skipIndicatorText: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(16),
     },
 });
 
