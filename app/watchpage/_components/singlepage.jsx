@@ -45,7 +45,6 @@ const SinglePage = () => {
     const [availableQualities, setAvailableQualities] = useState(["auto"]);
     const [currentPlayingEpisodeId, setCurrentPlayingEpisodeId] =
         useState(null);
-    const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
 
@@ -129,7 +128,6 @@ const SinglePage = () => {
                 setVideoData(streamResponse.data.data);
 
                 if (currentPlayingEpisodeId !== id) {
-                    setCurrentPlaybackTime(0);
                     setCurrentPlayingEpisodeId(id);
                 }
             } catch (error) {
@@ -181,10 +179,6 @@ const SinglePage = () => {
             startStream(episodes[0]?.episodeId, episodes[0]?.number);
         }
     }, [episodes, route.params?.history, route.params?.episode]);
-
-    const handlePlaybackTimeUpdate = (time) => {
-        setCurrentPlaybackTime(time);
-    };
 
     const generateRangeOptions = () => {
         const totalEpisodes = episodes.length;
@@ -288,7 +282,6 @@ const SinglePage = () => {
                     onReadyForDisplay={() => setVideoLoading(false)}
                     availableQualities={availableQualities}
                     title={animeInfo?.anime?.info?.name}
-                    onPlaybackTimeUpdate={handlePlaybackTimeUpdate}
                     selectedEpisode={selectedEpisode}
                     episodes={episodes}
                     setSelectedEpisode={setSelectedEpisode}

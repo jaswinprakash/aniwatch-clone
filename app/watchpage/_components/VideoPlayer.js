@@ -28,7 +28,6 @@ const VideoPlayer = ({
     subtitlesData,
     availableQualities,
     title,
-    onPlaybackTimeUpdate,
     selectedEpisode,
     episodes,
     setSelectedEpisode,
@@ -208,9 +207,6 @@ const VideoPlayer = ({
             if (!isSeeking) {
                 const currentTime = data.currentTime;
                 setCurrentTime(currentTime);
-                if (onPlaybackTimeUpdate) {
-                    onPlaybackTimeUpdate(currentTime);
-                }
                 throttledUpdate(animeId, selectedEpisode, currentTime);
             }
         }, 1000)
