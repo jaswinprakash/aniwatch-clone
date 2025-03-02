@@ -20,7 +20,7 @@ const AnimeDetails = ({ animeInfo, qTip }) => {
                         {animeInfo?.anime?.info?.name}
                     </MarqueeText>
                 </View>
-                <View style={styles.episodeContainer}>
+                {/* <View style={styles.episodeContainer}>
                     {qTip?.anime?.episodes?.sub && (
                         <ThemedText
                             style={{
@@ -47,7 +47,7 @@ const AnimeDetails = ({ animeInfo, qTip }) => {
                             DUB : {qTip?.anime?.episodes?.dub}
                         </ThemedText>
                     )}
-                </View>
+                </View> */}
             </View>
             <ThemedText type="subtitle" style={styles.detailText}>
                 Native name : {animeInfo?.anime?.moreInfo?.japanese}
@@ -209,9 +209,9 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         marginRight: SIZE(10),
     },
-    episodeContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: SIZE(10),
-    },
+    // episodeContainer: {
+    //     flexDirection: "row",
+    //     alignItems: "center",
+    //     gap: SIZE(10),
+    // },
 });

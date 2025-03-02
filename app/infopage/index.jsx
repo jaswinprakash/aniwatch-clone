@@ -157,7 +157,7 @@ const InfoPage = () => {
                             </ThemedText>
                         </View>
                     </TouchableRipple>
-                    <TouchableRipple
+                    {/* <TouchableRipple
                         onPress={() => {}}
                         rippleColor="rgba(140, 82, 255, 0.5)"
                         borderless={true}
@@ -183,7 +183,51 @@ const InfoPage = () => {
                                 Download
                             </ThemedText>
                         </View>
-                    </TouchableRipple>
+                    </TouchableRipple> */}
+                    <View style={styles.episodeContainer}>
+                        {qTip?.anime?.episodes?.sub && (
+                            <View
+                                style={{
+                                    borderWidth: SIZE(1),
+                                    borderColor: Colors.light.tabIconSelected,
+                                    borderRadius: SIZE(6),
+                                    height: SIZE(40),
+                                    paddingHorizontal: SIZE(10),
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <ThemedText
+                                    style={{
+                                        color: Colors.light.tabIconSelected,
+                                    }}
+                                >
+                                    SUB : {qTip?.anime?.episodes?.sub}
+                                </ThemedText>
+                            </View>
+                        )}
+                        {qTip?.anime?.episodes?.dub && (
+                            <View
+                                style={{
+                                    borderWidth: SIZE(1),
+                                    borderColor: Colors.light.tabIconSelected,
+                                    borderRadius: SIZE(6),
+                                    height: SIZE(40),
+                                    paddingHorizontal: SIZE(10),
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <ThemedText
+                                    style={{
+                                        color: Colors.light.tabIconSelected,
+                                    }}
+                                >
+                                    DUB : {qTip?.anime?.episodes?.dub}
+                                </ThemedText>
+                            </View>
+                        )}
+                    </View>
                 </View>
                 <AnimeDetails animeInfo={animeInfo} qTip={qTip} />
                 {/* Related Animes Section */}
@@ -234,5 +278,10 @@ const styles = StyleSheet.create({
         fontSize: SIZE(13),
         color: Colors.light.tabIconSelected,
         marginLeft: SIZE(5),
+    },
+    episodeContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SIZE(5),
     },
 });
