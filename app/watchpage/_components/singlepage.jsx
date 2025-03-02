@@ -24,6 +24,7 @@ import DropDownTab from "./DropDownTab";
 import { Dropdown } from "react-native-element-dropdown";
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ToastAndroid } from "react-native";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -37,8 +38,8 @@ const SinglePage = () => {
     const [videoLoading, setVideoLoading] = useState(false);
     const [selectedEpisode, setSelectedEpisode] = useState();
     const [selectedEpisodeId, setSelectedEpisodeId] = useState();
-    const [activeTab, setActiveTab] = useState("sub");
-    const [activeSubTab, setActiveSubTab] = useState();
+    const [activeTab, setActiveTab] = useState("");
+    const [activeSubTab, setActiveSubTab] = useState("hd-1");
     const [servers, setServers] = useState();
     const [animeInfo, setAnimeInfo] = useState();
     const [availableQualities, setAvailableQualities] = useState(["auto"]);
@@ -96,7 +97,7 @@ const SinglePage = () => {
     const startStream = useCallback(
         async (id, number) => {
             setVideoLoading(true);
-
+            setVideoData(null);
             try {
                 const serverResponse = await apiConfig.get(
                     `/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${number}`
@@ -104,18 +105,28 @@ const SinglePage = () => {
                 const servers = serverResponse.data.data;
                 setServers(servers);
 
-                const selectedServer =
-                    activeSubTab || servers[activeTab]?.[0]?.serverName;
-                setActiveSubTab(selectedServer);
+                const parentKey = Object.keys(servers).find(
+                    (key) => servers[key]?.length > 0
+                );
+
+                if (!activeTab) {
+                    if (parentKey) {
+                        setActiveTab(parentKey);
+                    } else {
+                        console.log("No servers available in any parent key.");
+                    }
+                } else if (!servers[activeTab]?.length) {
+                    if (parentKey) {
+                        setActiveTab(parentKey);
+                    } else {
+                        console.log("No servers available in any parent key.");
+                    }
+                }
 
                 const streamResponse = await apiConfig.get(
-                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${selectedServer}&category=${activeTab}`
+                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${activeSubTab}&category=${activeTab}`
                 );
                 setVideoData(streamResponse.data.data);
-                // console.log(
-                //     streamResponse.data.data,
-                //     "streamResponse.data.data"
-                // );
 
                 if (currentPlayingEpisodeId !== id) {
                     setCurrentPlaybackTime(0);
@@ -123,6 +134,7 @@ const SinglePage = () => {
                 }
             } catch (error) {
                 console.log(error, "axios error");
+                ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
             } finally {
                 setVideoLoading(false);
             }
