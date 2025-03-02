@@ -36,6 +36,7 @@ const SinglePage = () => {
     const [episodeLoading, setEpisodeLoading] = useState(true);
     const [videoLoading, setVideoLoading] = useState(false);
     const [selectedEpisode, setSelectedEpisode] = useState();
+    const [selectedEpisodeId, setSelectedEpisodeId] = useState();
     const [activeTab, setActiveTab] = useState("sub");
     const [activeSubTab, setActiveSubTab] = useState();
     const [servers, setServers] = useState();
@@ -95,6 +96,7 @@ const SinglePage = () => {
     const startStream = useCallback(
         async (id, number) => {
             setVideoLoading(true);
+
             try {
                 const serverResponse = await apiConfig.get(
                     `/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${number}`
@@ -110,6 +112,11 @@ const SinglePage = () => {
                     `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${selectedServer}&category=${activeTab}`
                 );
                 setVideoData(streamResponse.data.data);
+                // console.log(
+                //     streamResponse.data.data,
+                //     "streamResponse.data.data"
+                // );
+
                 if (currentPlayingEpisodeId !== id) {
                     setCurrentPlaybackTime(0);
                     setCurrentPlayingEpisodeId(id);
@@ -152,11 +159,13 @@ const SinglePage = () => {
 
             if (episodeToPlay) {
                 setSelectedEpisode(episodeToPlay.number);
+                setSelectedEpisodeId(episodeToPlay.episodeId);
                 startStream(episodeToPlay.episodeId, episodeToPlay.number);
                 adjustRangeForSelectedEpisode(episodeToPlay.number);
             }
         } else {
             setSelectedEpisode(episodes[0]?.number);
+            setSelectedEpisodeId(episodes[0]?.episodeId);
             startStream(episodes[0]?.episodeId, episodes[0]?.number);
         }
     }, [episodes, route.params?.history, route.params?.episode]);
@@ -267,12 +276,14 @@ const SinglePage = () => {
                     onReadyForDisplay={() => setVideoLoading(false)}
                     availableQualities={availableQualities}
                     title={animeInfo?.anime?.info?.name}
-                    initialPlaybackTime={currentPlaybackTime}
                     onPlaybackTimeUpdate={handlePlaybackTimeUpdate}
                     selectedEpisode={selectedEpisode}
                     episodes={episodes}
                     setSelectedEpisode={setSelectedEpisode}
+                    selectedEpisodeId={selectedEpisodeId}
+                    currentPlayingEpisodeId={currentPlayingEpisodeId}
                     startStream={startStream}
+                    setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
                     animeId={route?.params?.id}
                 />
             ) : (
@@ -544,6 +555,7 @@ const SinglePage = () => {
                                             item.episodeId
                                         );
                                         setSelectedEpisode(item?.number);
+                                        setSelectedEpisodeId(item?.episodeId);
                                         startStream(
                                             item?.episodeId,
                                             item?.number

@@ -27,13 +27,14 @@ const VideoPlayer = ({
     subtitlesData,
     availableQualities,
     title,
-    initialPlaybackTime = 0,
     onPlaybackTimeUpdate,
     selectedEpisode,
     episodes,
     setSelectedEpisode,
     startStream,
     animeId,
+    currentPlayingEpisodeId,
+    setCurrentPlayingEpisodeId,
 }) => {
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
@@ -54,6 +55,7 @@ const VideoPlayer = ({
     const [selectedQuality, setSelectedQuality] = useState("auto");
     const [showQualityList, setShowQualityList] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [epId, setEpId] = useState();
     let touchStart = 0;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
@@ -158,6 +160,8 @@ const VideoPlayer = ({
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
 
+    const [initialLoad, setInitialLoad] = useState(true);
+
     useEffect(() => {
         const animeData = history.find(
             (item) =>
@@ -167,17 +171,31 @@ const VideoPlayer = ({
 
         if (animeData) {
             setCurrentTime(animeData.currentTime);
+        } else {
+            setCurrentTime(0);
         }
     }, [animeId, selectedEpisode]);
 
+    useEffect(() => {
+        if (epId !== currentPlayingEpisodeId) {
+            setCurrentPlayingEpisodeId(epId);
+            setInitialLoad(true);
+        }
+    }, [epId]);
+
     const onLoad = (data) => {
         setDuration(data.duration);
-        if (currentTime > 0) {
-            videoRef.current.seek(currentTime);
-        } else if (initialPlaybackTime > 0) {
-            videoRef.current.seek(initialPlaybackTime);
+
+        if (initialLoad) {
+            if (currentTime > 0) {
+                videoRef.current.seek(currentTime);
+            } else {
+                videoRef.current.seek(0);
+            }
+            setInitialLoad(false);
         }
     };
+
     const onProgress = useRef(
         throttle((data) => {
             if (!isSeeking) {
@@ -203,6 +221,7 @@ const VideoPlayer = ({
 
         if (nextEpisode) {
             setSelectedEpisode(nextEpisode.number);
+            setEpId(nextEpisode.episodeId);
             startStream(nextEpisode.episodeId, nextEpisode.number);
         } else {
             console.log("No next episode available.");
@@ -216,6 +235,7 @@ const VideoPlayer = ({
 
         if (prevEpisode) {
             setSelectedEpisode(prevEpisode.number);
+            setEpId(prevEpisode.episodeId);
             startStream(prevEpisode.episodeId, prevEpisode.number);
         } else {
             console.log("No previous episode available.");
