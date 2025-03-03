@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import FastImage from "@d11/react-native-fast-image";
@@ -8,7 +8,7 @@ import { Colors } from "../../constants/Colors";
 import { apiConfig } from "../../AxiosConfig";
 import { FlashList } from "@shopify/flash-list";
 import { ThemedText } from "../../components/ThemedText";
-import { ActivityIndicator, TouchableRipple } from "react-native-paper";
+import { TouchableRipple } from "react-native-paper";
 import Spotlight from "./_components/Spotlight";
 import AnimeDetails from "./_components/AnimeDetails";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -86,6 +86,33 @@ const InfoPage = () => {
             </SafeAreaView>
         );
     }
+    const renderVoiceActorItem = ({ item }) => (
+        <View style={styles.voiceActorItem}>
+            <FastImage
+                source={{ uri: item.character.poster }}
+                style={styles.characterImage}
+            />
+            <ThemedText type="subtitle" style={styles.characterName}>
+                {item.character.name}
+            </ThemedText>
+            <FastImage
+                source={{ uri: item.voiceActor.poster }}
+                style={styles.voiceActorImage}
+            />
+            <ThemedText type="subtitle" style={styles.voiceActorName}>
+                {item.voiceActor.name}
+            </ThemedText>
+        </View>
+    );
+
+    const validVoiceActors =
+        animeInfo?.anime?.info?.charactersVoiceActors?.filter(
+            (item) =>
+                item.character?.name &&
+                item.character?.poster &&
+                item.voiceActor?.name &&
+                item.voiceActor?.poster
+        );
 
     return (
         <SafeAreaView
@@ -230,7 +257,20 @@ const InfoPage = () => {
                     </View>
                 </View>
                 <AnimeDetails animeInfo={animeInfo} qTip={qTip} />
-                {/* Related Animes Section */}
+                {validVoiceActors?.length > 0 && (
+                    <View style={styles.voiceActorsContainer}>
+                        <ThemedText type="title" style={styles.sectionTitle}>
+                            Voice Actors
+                        </ThemedText>
+                        <FlatList
+                            data={validVoiceActors}
+                            renderItem={renderVoiceActorItem}
+                            keyExtractor={(item) => item.character.id}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                        />
+                    </View>
+                )}
                 <View style={styles.relatedAnimesContainer}>
                     <RenderAnime
                         title={" Related Animes"}
@@ -248,7 +288,7 @@ export default InfoPage;
 
 const styles = StyleSheet.create({
     relatedAnimesContainer: {
-        marginTop: SIZE(24),
+        marginTop: SIZE(16),
         paddingHorizontal: SIZE(16),
         marginBottom: SIZE(16),
     },
@@ -256,23 +296,6 @@ const styles = StyleSheet.create({
         fontSize: SIZE(20),
         color: Colors.light.tabIconSelected,
         marginBottom: SIZE(12),
-    },
-    relatedAnimeItem: {
-        width: SIZE(150),
-        height: SIZE(280),
-        marginRight: SIZE(12),
-    },
-    relatedAnimeImage: {
-        width: SIZE(150),
-        height: SIZE(220),
-        borderRadius: SIZE(8),
-    },
-    relatedAnimeName: {
-        fontSize: SIZE(14),
-        color: Colors.light.tabIconSelected,
-        marginTop: SIZE(5),
-        textAlign: "center",
-        lineHeight: SIZE(16),
     },
     playText: {
         fontSize: SIZE(13),
@@ -283,5 +306,35 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: SIZE(5),
+    },
+    voiceActorsContainer: {
+        paddingHorizontal: SIZE(16),
+    },
+    voiceActorItem: {
+        width: SIZE(120),
+        alignItems: "center",
+    },
+    characterImage: {
+        width: SIZE(100),
+        height: SIZE(100),
+        borderRadius: SIZE(50),
+    },
+    characterName: {
+        fontSize: SIZE(14),
+        color: Colors.light.tabIconSelected,
+        marginTop: SIZE(5),
+        textAlign: "center",
+    },
+    voiceActorImage: {
+        width: SIZE(100),
+        height: SIZE(100),
+        borderRadius: SIZE(50),
+        marginTop: SIZE(10),
+    },
+    voiceActorName: {
+        fontSize: SIZE(14),
+        color: Colors.light.tabIconSelected,
+        marginTop: SIZE(5),
+        textAlign: "center",
     },
 });

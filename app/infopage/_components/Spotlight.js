@@ -47,6 +47,9 @@ const Spotlight = ({ animeInfo, qTip }) => {
                         {qTip?.anime?.quality && (
                             <MiniItem data={qTip?.anime?.quality} />
                         )}
+                    {animeInfo?.anime?.info?.stats?.rating && (
+                            <MiniItem data={animeInfo?.anime?.info?.stats?.rating} />
+                        )}
                     </View>
                     <View style={styles.itemCommon}>
                         <AntDesign
