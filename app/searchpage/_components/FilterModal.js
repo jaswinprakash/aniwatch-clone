@@ -35,6 +35,7 @@ const FilterModal = ({
                         {categories?.map((category, index) => (
                             <View key={index}>
                                 <TouchableRipple
+                                    borderless
                                     onPress={() =>
                                         handleSelection("category", category.id)
                                     }
@@ -89,6 +90,7 @@ const FilterModal = ({
                                     onPress={() =>
                                         handleSelection("genre", genre)
                                     }
+                                    borderless
                                     style={{
                                         backgroundColor: selectedGenre.includes(
                                             genre

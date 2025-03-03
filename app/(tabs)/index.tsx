@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Image, StyleSheet, ActivityIndicator } from "react-native";
+import {
+    View,
+    Image,
+    StyleSheet,
+    ActivityIndicator,
+    Dimensions,
+    ImageBackground,
+} from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { apiConfig } from "../../AxiosConfig";
 import { router } from "expo-router";
@@ -10,6 +17,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import RenderAnime from "./_components/RenderAnime";
+import Carousel from "react-native-reanimated-carousel";
+import { ThemedText } from "@/components/ThemedText";
+import { LinearGradient } from "expo-linear-gradient";
+
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
@@ -92,11 +103,141 @@ export const HomeScreen = () => {
                         dark: "#1D3D47",
                     }}
                     headerImage={
-                        <Image
-                            resizeMode="cover"
-                            source={require("@/assets/images/AnimPlay.png")}
-                            style={styles.reactLogo}
-                        />
+                        <View style={styles.carouselContainer}>
+                            <Carousel
+                                loop
+                                autoPlay
+                                autoPlayInterval={3000} // Slide every 3 seconds
+                                width={Dimensions.get("window").width}
+                                height={SIZE(200)} // Adjust height as needed
+                                data={animeHomeList.spotlightAnimes}
+                                renderItem={({ item }) => (
+                                    <TouchableRipple
+                                        rippleColor="rgba(140, 82, 255, 0.5)"
+                                        borderless={true}
+                                        onPress={() => {
+                                            router.push({
+                                                pathname: "infopage",
+                                                params: {
+                                                    id: item.id,
+                                                },
+                                            });
+                                        }}
+                                    >
+                                        <ImageBackground
+                                            source={{ uri: item.poster }}
+                                            style={styles.carouselImage}
+                                            resizeMode="cover"
+                                        >
+                                            <LinearGradient
+                                                colors={[
+                                                    "rgba(0, 0, 0, 0.6)",
+                                                    "rgba(0, 0, 0, 0.5)",
+                                                    "rgba(0, 0, 0, 0.4)",
+                                                    "rgba(0, 0, 0, 0.3)",
+                                                    "rgba(0, 0, 0, 0.2)",
+                                                    "rgba(0, 0, 0, 0.1)",
+                                                    "transparent",
+                                                ]}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 0, y: 1 }}
+                                            >
+                                                <ThemedText
+                                                    style={{
+                                                        color: Colors.light
+                                                            .tabIconSelected,
+                                                        fontSize: SIZE(20),
+                                                        textShadowColor: "#000",
+                                                        textShadowOffset: {
+                                                            width: 1,
+                                                            height: 1,
+                                                        },
+                                                        textShadowRadius: 2,
+                                                        lineHeight: SIZE(24),
+                                                        padding: SIZE(5),
+                                                    }}
+                                                    type="title"
+                                                >
+                                                    {item.name}
+                                                </ThemedText>
+                                            </LinearGradient>
+                                            <LinearGradient
+                                                colors={[
+                                                    "transparent",
+                                                    "rgba(0, 0, 0, 0.1)",
+                                                    "rgba(0, 0, 0, 0.2)",
+                                                    "rgba(0, 0, 0, 0.3)",
+                                                    "rgba(0, 0, 0, 0.4)",
+                                                    "rgba(0, 0, 0, 0.5)",
+                                                    "rgba(0, 0, 0, 0.6)",
+                                                ]}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 0, y: 1 }}
+                                                style={{
+                                                    flexDirection: "row",
+                                                    justifyContent: "flex-end",
+                                                    gap: SIZE(5),
+                                                    padding: SIZE(5),
+                                                }}
+                                            >
+                                                {item?.otherInfo?.map(
+                                                    (info, index) => {
+                                                        return (
+                                                            <View
+                                                                key={index}
+                                                                style={{
+                                                                    borderWidth:
+                                                                        SIZE(1),
+                                                                    borderRadius:
+                                                                        SIZE(6),
+                                                                    borderColor:
+                                                                        Colors
+                                                                            .light
+                                                                            .tabIconSelected,
+                                                                    marginBottom:
+                                                                        SIZE(5),
+                                                                }}
+                                                            >
+                                                                <ThemedText
+                                                                    style={{
+                                                                        color: Colors
+                                                                            .light
+                                                                            .tabIconSelected,
+                                                                        fontSize:
+                                                                            SIZE(
+                                                                                16
+                                                                            ),
+                                                                        textShadowColor:
+                                                                            "#000",
+                                                                        textShadowOffset:
+                                                                            {
+                                                                                width: 1,
+                                                                                height: 1,
+                                                                            },
+                                                                        textShadowRadius: 2,
+                                                                        lineHeight:
+                                                                            SIZE(
+                                                                                14
+                                                                            ),
+                                                                        padding:
+                                                                            SIZE(
+                                                                                5
+                                                                            ),
+                                                                    }}
+                                                                    type="title"
+                                                                >
+                                                                    {info}
+                                                                </ThemedText>
+                                                            </View>
+                                                        );
+                                                    }
+                                                )}
+                                            </LinearGradient>
+                                        </ImageBackground>
+                                    </TouchableRipple>
+                                )}
+                            />
+                        </View>
                     }
                 >
                     <>
@@ -140,11 +281,20 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     reactLogo: {
         width: "100%",
-        height: SIZE(155),
+        height: SIZE(200),
     },
     animeInfo: {
         fontSize: SIZE(12),
         color: "#666",
         textAlign: "center",
+    },
+    carouselContainer: {
+        width: "100%",
+        height: SIZE(200), // Adjust height as needed
+    },
+    carouselImage: {
+        width: "100%",
+        height: "100%",
+        justifyContent: "space-between",
     },
 });
