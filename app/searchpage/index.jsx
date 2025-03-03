@@ -24,7 +24,7 @@ const SearchPage = () => {
     const handleSearch = async (query) => {
         setSearchLoading(true);
         setSearchQuery(query);
-        if (query.length > 2) {
+        if (query) {
             try {
                 const response = await apiConfig.get(
                     `/api/v2/hianime/search/suggestion?q=${query}`
@@ -42,8 +42,39 @@ const SearchPage = () => {
     };
 
     const renderSearchResults = () => {
-        if (searchResults.length === 0) return null;
+        // Case 1: No query entered
+        if (searchQuery.length === 0) {
+            return (
+                <View style={styles.placeholderContainer}>
+                    <MaterialIcons
+                        name="search"
+                        size={SIZE(50)}
+                        color={Colors.light.tabIconSelected}
+                    />
+                    <ThemedText type="title" style={styles.placeholderText}>
+                        Search for something...
+                    </ThemedText>
+                </View>
+            );
+        }
 
+        // Case 2: Query entered but no results found
+        if (searchResults.length === 0 && !searchLoading) {
+            return (
+                <View style={styles.placeholderContainer}>
+                    <MaterialIcons
+                        name="search-off"
+                        size={SIZE(50)}
+                        color={Colors.light.tabIconSelected}
+                    />
+                    <ThemedText type="title" style={styles.placeholderText}>
+                        No results found
+                    </ThemedText>
+                </View>
+            );
+        }
+
+        // Case 3: Query entered and results are available
         return (
             <FlashList
                 showsVerticalScrollIndicator={false}
@@ -100,11 +131,11 @@ const SearchPage = () => {
             />
         );
     };
-
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#151718" }}>
             <View style={styles.searchContainer}>
                 <TextInput
+                    autoFocus
                     contentStyle={{
                         fontFamily: "Exo2Medium",
                         fontSize: SIZE(14),
@@ -160,7 +191,7 @@ const SearchPage = () => {
                 />
             </View>
             <View style={{ padding: SIZE(16), flex: 1 }}>
-                {searchQuery && renderSearchResults()}
+                {renderSearchResults()}
             </View>
         </SafeAreaView>
     );
@@ -195,7 +226,6 @@ const styles = StyleSheet.create({
     },
     animePoster: {
         width: SIZE(100),
-        width: SIZE(100),
         height: SIZE(150),
         borderRadius: SIZE(10),
         marginRight: SIZE(10),
@@ -208,5 +238,15 @@ const styles = StyleSheet.create({
     animeInfo: {
         fontSize: SIZE(12),
         color: "#666",
+    },
+    placeholderContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    placeholderText: {
+        marginTop: SIZE(10),
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(18),
     },
 });
