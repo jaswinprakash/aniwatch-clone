@@ -121,8 +121,9 @@ const Subtitles: React.FC<SubtitlesProps> = memo(
                     {
                         position: "absolute",
                         bottom: 50,
-                        width: "100%",
+                        // width: "100%",
                         alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.4)",
                     },
                     containerStyle,
                 ]}
@@ -134,11 +135,11 @@ const Subtitles: React.FC<SubtitlesProps> = memo(
                             fontSize: 25,
                             color: "white",
                             textAlign: "center",
-                            padding: 15,
-                            backgroundColor: "rgba(0,0,0,0.6)",
-                            textShadowColor: "#000",
-                            textShadowOffset: { width: 2, height: 2 },
-                            textShadowRadius: 2,
+                            // padding: 15,
+                            // backgroundColor: "rgba(0,0,0,0.6)",
+                            // textShadowColor: "#000",
+                            // textShadowOffset: { width: 2, height: 2 },
+                            // textShadowRadius: 2,
                             ...textStyle,
                         }}
                     >
