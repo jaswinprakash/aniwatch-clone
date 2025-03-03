@@ -408,15 +408,18 @@ const VideoPlayer = ({
                                 fontSize: SIZE(16),
                                 backgroundColor: "transparent",
                                 color: "#fff",
+                                fontFamily: "Exo2Regular",
+                                marginBottom: SIZE(3),
                             }}
                             containerStyle={{
                                 position: "absolute",
-                                bottom: SIZE(10),
+                                bottom: SIZE(20),
                                 zIndex: 1000,
                                 alignSelf: "center",
                                 justifyContent: "center",
+                                paddingHorizontal: SIZE(5),
                             }}
-                            currentTime={currentTime}
+                            currentTime={currentTime - 0.1}
                             selectedsubtitle={{
                                 file: selectedSubtitle?.file,
                             }}
