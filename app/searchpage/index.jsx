@@ -10,7 +10,6 @@ import {
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "../../components/ThemedText";
-import { ThemedView } from "../../components/ThemedView";
 import { FlashList } from "@shopify/flash-list";
 import FastImage from "@d11/react-native-fast-image";
 import { MaterialIcons } from "@expo/vector-icons";
