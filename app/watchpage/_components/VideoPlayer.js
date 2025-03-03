@@ -418,6 +418,7 @@ const VideoPlayer = ({
                                 alignSelf: "center",
                                 justifyContent: "center",
                                 paddingHorizontal: SIZE(5),
+                                borderRadius: SIZE(5),
                             }}
                             currentTime={currentTime - 0.1}
                             selectedsubtitle={{

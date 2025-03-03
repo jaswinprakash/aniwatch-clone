@@ -39,7 +39,7 @@ const StoredVideos = ({ id, episode, time }) => {
     if (pageLoading) {
         return (
             <SkeletonLoader
-                height={SIZE(150)}
+                height={SIZE(152)}
                 width={SIZE(100)}
                 style={{
                     width: "100%",
