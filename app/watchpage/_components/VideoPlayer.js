@@ -350,7 +350,7 @@ const VideoPlayer = ({
                             />
                         )}
                         {showBackwardIndicator && (
-                            <View style={styles.skipIndicator}>
+                            <View style={[styles.skipIndicator,{left:SIZE(50)}]}>
                                 <MaterialIcons
                                     name="replay-10"
                                     size={SIZE(30)}
@@ -359,7 +359,7 @@ const VideoPlayer = ({
                             </View>
                         )}
                         {showForwardIndicator && (
-                            <View style={styles.skipIndicator}>
+                            <View style={[styles.skipIndicator,{right:SIZE(50)}]}>
                                 <MaterialIcons
                                     name="forward-10"
                                     size={SIZE(30)}
