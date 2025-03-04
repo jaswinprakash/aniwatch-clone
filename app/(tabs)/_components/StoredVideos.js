@@ -22,7 +22,7 @@ const StoredVideos = ({ id, episode, time }) => {
             setAnimeInfo(response.data.data);
             setPageLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - info - stored");
         }
     };
 

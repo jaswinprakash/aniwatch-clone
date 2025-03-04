@@ -56,7 +56,7 @@ const SinglePage = () => {
             setEpisodes(response.data.data.episodes);
             setEpisodeLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - episodes");
             setEpisodeLoading(false);
         }
     };
@@ -68,7 +68,7 @@ const SinglePage = () => {
             setAnimeInfo(response.data.data);
             setPageLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - info play page");
         }
     };
 
@@ -89,7 +89,7 @@ const SinglePage = () => {
 
             setAvailableQualities(qualityOptions);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - quality play page");
         }
     };
 
@@ -131,7 +131,7 @@ const SinglePage = () => {
                     setCurrentPlayingEpisodeId(id);
                 }
             } catch (error) {
-                console.log(error, "axios error");
+                console.log(error, "axios error - stream");
                 ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
             } finally {
                 setVideoLoading(false);

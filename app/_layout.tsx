@@ -18,6 +18,10 @@ import { Provider } from "react-redux";
 import { store } from "../store/store";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AnimeHistoryProvider } from "../store/AnimeHistoryContext";
+import { apiConfig } from "@/AxiosConfig";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -42,6 +46,31 @@ export default function RootLayout() {
     if (!loaded) {
         return null;
     }
+
+    apiConfig.interceptors.request.use(
+        (response) => {
+            return response;
+        },
+        (error) => {
+            console.log(error, "error - main axios");
+            if (error == "[AxiosError: Network Error]") {
+                return (
+                    <ThemedView style={{ flex: 1, justifyContent: "center" }}>
+                        <ThemedText
+                            style={{
+                                textAlign: "center",
+                                color: Colors.light.tabIconSelected,
+                            }}
+                            type="title"
+                        >
+                            Network Error
+                        </ThemedText>
+                    </ThemedView>
+                );
+            }
+            return Promise.reject(error);
+        }
+    );
 
     return (
         <Provider store={store}>

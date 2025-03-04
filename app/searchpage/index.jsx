@@ -76,7 +76,7 @@ const SearchPage = () => {
             setGenres(response.data.data.genres);
             setFilterLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - search - genre");
             setFilterLoading(false);
         }
     };
@@ -109,7 +109,7 @@ const SearchPage = () => {
                     );
                     setSearchResults(response.data.data.animes);
                 } catch (error) {
-                    console.log(error, "axios error");
+                    console.log(error, "axios error - search perform");
                 } finally {
                     setSearchLoading(false);
                 }

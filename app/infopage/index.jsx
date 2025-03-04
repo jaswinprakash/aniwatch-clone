@@ -36,7 +36,7 @@ const InfoPage = () => {
             setAnimeInfo(response.data.data);
             setPageLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - info page");
         }
     };
 
@@ -49,7 +49,7 @@ const InfoPage = () => {
             setQtip(response.data.data);
             // setPageLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - info page qtip");
         }
     };
 

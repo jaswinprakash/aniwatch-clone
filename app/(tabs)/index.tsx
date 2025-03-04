@@ -20,6 +20,7 @@ import RenderAnime from "./_components/RenderAnime";
 import Carousel from "react-native-reanimated-carousel";
 import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
+import { ThemedView } from "@/components/ThemedView";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
@@ -33,7 +34,7 @@ export const HomeScreen = () => {
             setAnimeHomeList(response.data.data);
             setPageLoading(false);
         } catch (error) {
-            console.log(error, "axios error");
+            console.log(error, "axios error - home");
             setPageLoading(false);
         }
     };
@@ -110,7 +111,7 @@ export const HomeScreen = () => {
                                 autoPlayInterval={3000} // Slide every 3 seconds
                                 width={Dimensions.get("window").width}
                                 height={SIZE(200)} // Adjust height as needed
-                                data={animeHomeList.spotlightAnimes}
+                                data={animeHomeList?.spotlightAnimes}
                                 renderItem={({ item }) => (
                                     <TouchableRipple
                                         rippleColor="rgba(140, 82, 255, 0.5)"
