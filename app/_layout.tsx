@@ -10,7 +10,6 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import { FullscreenProvider } from "../hooks/FullScreenContext";
@@ -22,6 +21,9 @@ import { apiConfig } from "@/AxiosConfig";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
+import useNetworkState from "../hooks/NetworkState";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SIZE } from "@/constants/Constants";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -36,6 +38,7 @@ export default function RootLayout() {
         Exo2SemiBold: require("../assets/fonts/Exo2-SemiBold.ttf"),
         Exo2Bold: require("../assets/fonts/Exo2-Bold.ttf"),
     });
+    const isConnected = useNetworkState();
 
     useEffect(() => {
         if (loaded) {
@@ -45,6 +48,27 @@ export default function RootLayout() {
 
     if (!loaded) {
         return null;
+    }
+
+    if (isConnected) {
+        return (
+            <ThemedView style={{ flex: 1, justifyContent: "center" }}>
+                <MaterialCommunityIcons
+                    name="wifi-off"
+                    size={SIZE(100)}
+                    color={Colors.light.tabIconSelected}
+                />
+                <ThemedText
+                    style={{
+                        textAlign: "center",
+                        color: Colors.light.tabIconSelected,
+                    }}
+                    type="title"
+                >
+                    Check your internet connection
+                </ThemedText>
+            </ThemedView>
+        );
     }
 
     apiConfig.interceptors.request.use(
