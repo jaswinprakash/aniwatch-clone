@@ -10,7 +10,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { TouchableOpacity, View } from "react-native";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import { FullscreenProvider } from "../hooks/FullScreenContext";
 import { Provider } from "react-redux";
@@ -50,13 +50,20 @@ export default function RootLayout() {
         return null;
     }
 
-    if (isConnected) {
+    if (!isConnected) {
         return (
-            <ThemedView style={{ flex: 1, justifyContent: "center" }}>
+            <SafeAreaView
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    backgroundColor: Colors.dark.background,
+                }}
+            >
                 <MaterialCommunityIcons
                     name="wifi-off"
                     size={SIZE(100)}
                     color={Colors.light.tabIconSelected}
+                    style={{ alignSelf: "center" }}
                 />
                 <ThemedText
                     style={{
@@ -67,7 +74,7 @@ export default function RootLayout() {
                 >
                     Check your internet connection
                 </ThemedText>
-            </ThemedView>
+            </SafeAreaView>
         );
     }
 
@@ -79,7 +86,19 @@ export default function RootLayout() {
             console.log(error, "error - main axios");
             if (error == "[AxiosError: Network Error]") {
                 return (
-                    <ThemedView style={{ flex: 1, justifyContent: "center" }}>
+                    <SafeAreaView
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            backgroundColor: Colors.dark.background,
+                        }}
+                    >
+                        <MaterialCommunityIcons
+                            name="server-network-off"
+                            size={SIZE(100)}
+                            color={Colors.light.tabIconSelected}
+                            style={{ alignSelf: "center" }}
+                        />
                         <ThemedText
                             style={{
                                 textAlign: "center",
@@ -87,9 +106,9 @@ export default function RootLayout() {
                             }}
                             type="title"
                         >
-                            Network Error
+                            Server Error
                         </ThemedText>
-                    </ThemedView>
+                    </SafeAreaView>
                 );
             }
             return Promise.reject(error);
