@@ -65,6 +65,7 @@ const VideoPlayer = ({
     let touchStart = 0;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const toggleControls = () => {
         setShowControls((prev) => !prev);
@@ -165,8 +166,6 @@ const VideoPlayer = ({
         const secs = Math.floor(seconds % 60);
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
-
-    const [initialLoad, setInitialLoad] = useState(true);
 
     useEffect(() => {
         const animeData = history.find(

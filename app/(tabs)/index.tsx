@@ -146,13 +146,14 @@ export const HomeScreen = () => {
                                                     style={{
                                                         color: Colors.light
                                                             .tabIconSelected,
-                                                        fontSize: SIZE(20),
+                                                        fontSize: SIZE(22),
                                                         textShadowColor: "#000",
                                                         textShadowOffset: {
-                                                            width: 1,
-                                                            height: 1,
+                                                            width: SIZE(2),
+                                                            height: SIZE(2),
                                                         },
-                                                        textShadowRadius: 2,
+                                                        textShadowRadius:
+                                                            SIZE(2),
                                                         lineHeight: SIZE(24),
                                                         padding: SIZE(5),
                                                     }}
@@ -186,11 +187,9 @@ export const HomeScreen = () => {
                                                             <View
                                                                 key={index}
                                                                 style={{
-                                                                    borderWidth:
-                                                                        SIZE(1),
                                                                     borderRadius:
                                                                         SIZE(6),
-                                                                    borderColor:
+                                                                    backgroundColor:
                                                                         Colors
                                                                             .light
                                                                             .tabIconSelected,
@@ -200,12 +199,10 @@ export const HomeScreen = () => {
                                                             >
                                                                 <ThemedText
                                                                     style={{
-                                                                        color: Colors
-                                                                            .light
-                                                                            .tabIconSelected,
+                                                                        color: "#fff",
                                                                         fontSize:
                                                                             SIZE(
-                                                                                16
+                                                                                14
                                                                             ),
                                                                         textShadowColor:
                                                                             "#000",
