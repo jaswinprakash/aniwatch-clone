@@ -224,11 +224,12 @@ const SinglePage = () => {
 
         const rangeSize = 50;
         const start = Math.floor(episodeIndex / rangeSize) * rangeSize;
-        const end = start + rangeSize;
+        const end = Math.min(start + rangeSize, episodes.length);
 
         setCurrentRange({ start, end });
         setSelectedRange(`${start + 1}-${end}`);
     };
+
     const handleSearch = (query) => {
         setSearchQuery(query);
         if (query) {
