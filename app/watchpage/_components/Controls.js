@@ -39,6 +39,7 @@ const Controls = ({
     isPlaying,
     nextEpisode,
     prevEpisode,
+    onProgress,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
@@ -189,10 +190,16 @@ const Controls = ({
                     onValueChange={(value) => {
                         setSeekPosition(value[0]);
                     }}
+                    // onSlidingComplete={(value) => {
+                    //     setIsSeeking(false);
+                    //     videoRef.current.seek(value[0]);
+                    //     setCurrentTime(value[0]);
+                    // }}
                     onSlidingComplete={(value) => {
                         setIsSeeking(false);
                         videoRef.current.seek(value[0]);
                         setCurrentTime(value[0]);
+                        onProgress.cancel(); // Cancel pending throttled updates
                     }}
                     minimumTrackTintColor={Colors.light.tabIconSelected}
                     maximumTrackTintColor="#4A4A4A"

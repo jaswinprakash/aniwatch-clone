@@ -59,8 +59,8 @@ const VideoPlayer = ({
     const [showBackwardIndicator, setShowBackwardIndicator] = useState(false);
     const [lastTap, setLastTap] = useState(0);
     const [doubleTapTimeoutId, setDoubleTapTimeoutId] = useState(null);
-    const DOUBLE_TAP_DELAY = 300; // milliseconds
-    const SEEK_AMOUNT = 10; // seconds to seek on double tap
+    const DOUBLE_TAP_DELAY = 300;
+    const SEEK_AMOUNT = 10;
     let touchStart = 0;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
@@ -245,45 +245,35 @@ const VideoPlayer = ({
 
     const handleDoubleTap = (event) => {
         const now = Date.now();
-        const screenWidth = SIZE(400); // Approximate screen width, adjust if needed
+        const screenWidth = SIZE(400);
         const tapX = event.nativeEvent.locationX;
         const isRightSide = tapX > screenWidth / 2;
 
         if (now - lastTap < DOUBLE_TAP_DELAY) {
-            // Double tap detected
             if (isRightSide) {
-                // Double tap on right side - seek forward
                 skip(SEEK_AMOUNT);
                 setShowForwardIndicator(true);
                 setTimeout(() => setShowForwardIndicator(false), 500);
             } else {
-                // Double tap on left side - seek backward
                 skip(-SEEK_AMOUNT);
                 setShowBackwardIndicator(true);
                 setTimeout(() => setShowBackwardIndicator(false), 500);
             }
-
-            // Clear any existing timeout
             if (doubleTapTimeoutId) {
                 clearTimeout(doubleTapTimeoutId);
                 setDoubleTapTimeoutId(null);
             }
         } else {
-            // First tap - set up for potential double tap
-            // Clear any existing timeout first
             if (doubleTapTimeoutId) {
                 clearTimeout(doubleTapTimeoutId);
             }
-
-            // Set a timeout to reset and handle this as a single tap if no second tap occurs
             const timeoutId = setTimeout(() => {
-                toggleControls(); // Regular tap behavior
+                toggleControls();
                 setDoubleTapTimeoutId(null);
             }, DOUBLE_TAP_DELAY);
 
             setDoubleTapTimeoutId(timeoutId);
         }
-
         setLastTap(now);
     };
 
@@ -426,6 +416,7 @@ const VideoPlayer = ({
                                 isPlaying={isPlaying}
                                 nextEpisode={nextEpisode}
                                 prevEpisode={prevEpisode}
+                                onProgress={onProgress}
                             />
                             {showQualityList && (
                                 <SubModal
