@@ -16,7 +16,6 @@ import { SIZE } from "../../../constants/Constants";
 import { router } from "expo-router";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import throttle from "lodash.throttle";
-import useDeviceOrientation from "../../../hooks/useDeviceOrientation";
 import SubModal from "./SubModal";
 import Controls from "./Controls";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
@@ -288,50 +287,6 @@ const VideoPlayer = ({
         setLastTap(now);
     };
 
-    // const toggleFullScreen2 = useCallback(
-    //     async (forceFullScreen = null) => {
-    //         const newFullScreenState = forceFullScreen ?? !isFullScreen;
-    //         setIsFullScreen(newFullScreenState);
-    //         setIsFullscreenContext(newFullScreenState);
-
-    //         if (newFullScreenState) {
-    //             await Promise.all([
-    //                 ScreenOrientation.lockAsync(
-    //                     ScreenOrientation.OrientationLock.LANDSCAPE
-    //                 ),
-    //                 NavigationBar.setVisibilityAsync("hidden"),
-    //                 NavigationBar.setBehaviorAsync("overlay"),
-    //                 NavigationBar.setBackgroundColorAsync("transparent"),
-    //             ]);
-    //         } else {
-    //             await Promise.all([
-    //                 ScreenOrientation.lockAsync(
-    //                     ScreenOrientation.OrientationLock.PORTRAIT
-    //                 ),
-    //                 NavigationBar.setVisibilityAsync("visible"),
-    //                 NavigationBar.setBehaviorAsync("default"),
-    //                 NavigationBar.setBackgroundColorAsync("#000"),
-    //             ]);
-    //         }
-    //     },
-    //     [isFullScreen]
-    // );
-    // useDeviceOrientation(toggleFullScreen2);
-
-    // useEffect(() => {
-    //     if (showControls && !showQualityList && !showSubtitleList) {
-    //         const timeout = setTimeout(() => {
-    //             setShowControls(false);
-    //         }, 3000);
-
-    //         return () => clearTimeout(timeout);
-    //     }
-    // }, [showControls, showQualityList, showSubtitleList]);
-
-    // Add these state variables at the top of your component
-
-    // Add this function to handle the double tap
-
     return (
         <>
             <StatusBar hidden={isFullScreen} style="auto" />
@@ -350,7 +305,12 @@ const VideoPlayer = ({
                             />
                         )}
                         {showBackwardIndicator && (
-                            <View style={[styles.skipIndicator,{left:SIZE(50)}]}>
+                            <View
+                                style={[
+                                    styles.skipIndicator,
+                                    { left: SIZE(50) },
+                                ]}
+                            >
                                 <MaterialIcons
                                     name="replay-10"
                                     size={SIZE(30)}
@@ -359,7 +319,12 @@ const VideoPlayer = ({
                             </View>
                         )}
                         {showForwardIndicator && (
-                            <View style={[styles.skipIndicator,{right:SIZE(50)}]}>
+                            <View
+                                style={[
+                                    styles.skipIndicator,
+                                    { right: SIZE(50) },
+                                ]}
+                            >
                                 <MaterialIcons
                                     name="forward-10"
                                     size={SIZE(30)}

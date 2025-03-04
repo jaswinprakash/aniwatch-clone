@@ -37,7 +37,6 @@
                     "backgroundColor": "#151718"
                 }
             ],
-            "expo-video",
             [
                 "expo-screen-orientation",
                 {
