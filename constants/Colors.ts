@@ -25,6 +25,6 @@ export const Colors = {
         tabIconSelected: tintColorDark,
         black: "#000",
         // backgroundPress: "rgba(140, 82, 255, 0.5)",
-        backgroundPress: "rgba(0, 87, 255, 0.5)",
+        backgroundPress: "rgba(0, 187, 255, 0.5)",
     },
 };

@@ -24,7 +24,6 @@ import DropDownTab from "./DropDownTab";
 import { Dropdown } from "react-native-element-dropdown";
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ToastAndroid } from "react-native";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -132,7 +131,6 @@ const SinglePage = () => {
                 }
             } catch (error) {
                 console.log(error, "axios error - stream");
-                ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
             } finally {
                 setVideoLoading(false);
             }
