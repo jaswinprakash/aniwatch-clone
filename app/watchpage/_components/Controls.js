@@ -125,7 +125,7 @@ const Controls = ({
                             style={{
                                 color: Colors.light.tabIconSelected,
                                 fontSize: SIZE(15),
-                                textShadowColor: "#000",
+                                textShadowColor: Colors.dark.black,
                                 textShadowOffset: { width: 1, height: 1 },
                                 textShadowRadius: 2,
                             }}
@@ -135,7 +135,7 @@ const Controls = ({
                         <ThemedText
                             style={{
                                 color: Colors.light.tabIconSelected,
-                                textShadowColor: "#000",
+                                textShadowColor: Colors.dark.black,
                                 textShadowOffset: { width: 1, height: 1 },
                                 textShadowRadius: 2,
                             }}

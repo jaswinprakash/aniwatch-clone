@@ -334,7 +334,9 @@ const SearchPage = () => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#151718" }}>
+        <SafeAreaView
+            style={{ flex: 1, backgroundColor: Colors.dark.background }}
+        >
             <View style={styles.searchContainer}>
                 <TextInput
                     autoFocus
@@ -457,7 +459,7 @@ const SearchPage = () => {
             >
                 <View
                     style={{
-                        backgroundColor: "#151718",
+                        backgroundColor: Colors.dark.background,
                         borderWidth: SIZE(1),
                         borderColor: Colors.light.tabIconSelected,
                         padding: SIZE(16),

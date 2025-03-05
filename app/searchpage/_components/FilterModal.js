@@ -55,7 +55,7 @@ const FilterModal = ({
                                         style={{
                                             color:
                                                 selectedCategory === category.id
-                                                    ? "#fff"
+                                                    ? Colors.light.white
                                                     : Colors.light
                                                           .tabIconSelected,
                                         }}
@@ -107,7 +107,7 @@ const FilterModal = ({
                                     <ThemedText
                                         style={{
                                             color: selectedGenre.includes(genre)
-                                                ? "#fff"
+                                                ? Colors.light.white
                                                 : Colors.light.tabIconSelected,
                                         }}
                                     >

@@ -27,7 +27,7 @@ const VideoLoader = ({ selectedEpisode }) => {
                 type="subtitle"
                 style={{
                     color: Colors.light.tabIconSelected,
-                    textShadowColor: "#000",
+                    textShadowColor: Colors.dark.black,
                     textShadowOffset: {
                         width: 1,
                         height: 1,

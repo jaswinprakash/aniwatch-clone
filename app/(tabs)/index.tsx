@@ -148,7 +148,8 @@ export const HomeScreen = () => {
                                                         color: Colors.light
                                                             .tabIconSelected,
                                                         fontSize: SIZE(22),
-                                                        textShadowColor: "#000",
+                                                        textShadowColor:
+                                                            Colors.dark.black,
                                                         textShadowOffset: {
                                                             width: SIZE(2),
                                                             height: SIZE(2),
@@ -200,13 +201,17 @@ export const HomeScreen = () => {
                                                             >
                                                                 <ThemedText
                                                                     style={{
-                                                                        color: "#fff",
+                                                                        color: Colors
+                                                                            .light
+                                                                            .white,
                                                                         fontSize:
                                                                             SIZE(
                                                                                 14
                                                                             ),
                                                                         textShadowColor:
-                                                                            "#000",
+                                                                            Colors
+                                                                                .dark
+                                                                                .black,
                                                                         textShadowOffset:
                                                                             {
                                                                                 width: 1,

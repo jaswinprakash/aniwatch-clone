@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         height: SIZE(250),
-        backgroundColor: "#000",
+        backgroundColor: Colors.dark.black,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         padding: SIZE(10),
-        backgroundColor: "#151718",
+        backgroundColor: Colors.dark.background,
         overflow: "hidden",
     },
     selectedItemContainer: {
@@ -687,6 +687,6 @@ const styles = StyleSheet.create({
         fontFamily: "Exo2Regular",
     },
     selectedItemText: {
-        color: "#fff",
+        color: Colors.light.white,
     },
 });

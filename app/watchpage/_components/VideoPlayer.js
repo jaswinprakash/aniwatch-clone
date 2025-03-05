@@ -130,7 +130,7 @@ const VideoPlayer = ({
                 ),
                 NavigationBar.setVisibilityAsync("visible"),
                 NavigationBar.setBehaviorAsync("default"),
-                NavigationBar.setBackgroundColorAsync("#000"),
+                NavigationBar.setBackgroundColorAsync(Colors.dark.black),
             ]);
         }
     };
@@ -142,7 +142,7 @@ const VideoPlayer = ({
             );
             NavigationBar.setVisibilityAsync("visible");
             NavigationBar.setBehaviorAsync("default");
-            NavigationBar.setBackgroundColorAsync("#000");
+            NavigationBar.setBackgroundColorAsync(Colors.dark.black);
         };
     }, []);
 
@@ -361,7 +361,7 @@ const VideoPlayer = ({
                             textStyle={{
                                 fontSize: SIZE(16),
                                 backgroundColor: "transparent",
-                                color: "#fff",
+                                color: Colors.light.white,
                                 fontFamily: "Exo2Regular",
                                 marginBottom: SIZE(3),
                             }}
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     safeArea: {
-        backgroundColor: "#000",
+        backgroundColor: Colors.dark.black,
     },
     fullScreenSafeArea: {
         position: "absolute",
@@ -459,12 +459,12 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "#000",
+        backgroundColor: Colors.dark.black,
         width: "100%",
         height: "100%",
     },
     container: {
-        backgroundColor: "#000",
+        backgroundColor: Colors.dark.black,
         height: SIZE(250),
         width: "100%",
     },

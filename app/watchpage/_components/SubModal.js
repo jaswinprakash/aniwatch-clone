@@ -42,7 +42,7 @@ const SubModal = ({ data, handleChange, handleSet, selectedItem, quality }) => {
                                             ? selectedItem?.label === item.label
                                             : selectedItem === item
                                     )
-                                        ? "#fff"
+                                        ? Colors.light.white
                                         : Colors.light.tabIconSelected,
                                 },
                             ]}
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         marginHorizontal: SIZE(10),
     },
     closeButtonText: {
-        color: "#FFFFFF",
+        color: Colors.light.white,
         fontSize: SIZE(16),
     },
 });

@@ -42,5 +42,5 @@ const styles = StyleSheet.create({
     },
     activeSubTab: { backgroundColor: Colors.light.tabIconSelected },
     subTabText: { fontSize: SIZE(16), color: Colors.light.tabIconSelected },
-    activeSubText: { color: "#fff" },
+    activeSubText: { color: Colors.light.white },
 });

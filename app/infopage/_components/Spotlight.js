@@ -128,7 +128,7 @@ export default Spotlight;
 const styles = StyleSheet.create({
     imageContainer: {
         height: SIZE(250),
-        backgroundColor: "#000",
+        backgroundColor: Colors.dark.black,
         justifyContent: "center",
         alignItems: "center",
     },
