@@ -374,7 +374,7 @@ const VideoPlayer = ({
                                 paddingHorizontal: SIZE(5),
                                 borderRadius: SIZE(5),
                             }}
-                            currentTime={currentTime - 0.1}
+                            currentTime={currentTime + 0.1}
                             selectedsubtitle={{
                                 file: selectedSubtitle?.file,
                             }}

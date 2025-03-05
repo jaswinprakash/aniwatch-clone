@@ -17,6 +17,7 @@ import { router } from "expo-router";
 import FilterModal from "./_components/FilterModal";
 import Modal from "react-native-modal";
 import AppliedFilters from "./_components/AppliedFilters";
+import LottieView from "lottie-react-native";
 
 const SearchPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -331,6 +332,7 @@ const SearchPage = () => {
             />
         );
     };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#151718" }}>
             <View style={styles.searchContainer}>
@@ -407,9 +409,30 @@ const SearchPage = () => {
                 handleSearch={handleSearch}
                 searchQuery={searchQuery}
             />
-            <View style={{ padding: SIZE(16), flex: 1 }}>
-                {renderSearchResults()}
-            </View>
+            {searchLoading ? (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        borderWidth: 1,
+                        alignItems: "center",
+                    }}
+                >
+                    <LottieView
+                        source={require("../../assets/lottie/loader-3.json")}
+                        autoPlay
+                        loop
+                        style={{
+                            width: SIZE(200),
+                            height: SIZE(200),
+                        }}
+                    />
+                </View>
+            ) : (
+                <View style={{ padding: SIZE(16), flex: 1 }}>
+                    {renderSearchResults()}
+                </View>
+            )}
             <Modal
                 isVisible={filterModalVisible}
                 onBackdropPress={() => {
