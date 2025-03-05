@@ -63,7 +63,7 @@ const StoredVideos = ({ id, episode, time }) => {
                         },
                     });
                 }}
-                rippleColor="rgba(140, 82, 255, 0.5)"
+                rippleColor={Colors.dark.backgroundPress}
                 borderless={true}
                 style={{
                     borderRadius: SIZE(10),
@@ -125,7 +125,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                 onPress={() => {
                                     dispatch(deletePlayback(id));
                                 }}
-                                rippleColor="rgba(140, 82, 255, 0.5)"
+                                rippleColor={Colors.dark.backgroundPress}
                                 borderless={true}
                                 style={{
                                     justifyContent: "center",

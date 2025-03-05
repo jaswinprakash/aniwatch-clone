@@ -62,7 +62,7 @@ export const HomeScreen = () => {
                 />
                 <TouchableRipple
                     hitSlop={15}
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     onPress={() => {
                         router.push({
@@ -114,7 +114,9 @@ export const HomeScreen = () => {
                                 data={animeHomeList?.spotlightAnimes}
                                 renderItem={({ item }) => (
                                     <TouchableRipple
-                                        rippleColor="rgba(140, 82, 255, 0.5)"
+                                        rippleColor={
+                                            Colors.dark.backgroundPress
+                                        }
                                         borderless={true}
                                         onPress={() => {
                                             router.push({

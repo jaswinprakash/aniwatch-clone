@@ -27,7 +27,7 @@ const RenderAnime = ({ title, data, info, setAnimeId }) => {
                 renderItem={({ item }) => (
                     <View style={styles.animeItem}>
                         <TouchableRipple
-                            rippleColor="rgba(140, 82, 255, 0.5)"
+                            rippleColor={Colors.dark.backgroundPress}
                             borderless={true}
                             style={{ borderRadius: SIZE(10) }}
                             onPress={() => {

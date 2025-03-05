@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: "50%",
         alignSelf: "center",
-        backgroundColor: "rgba(140, 82, 255, 0.5)",
+        backgroundColor: Colors.dark.backgroundPress,
         borderRadius: SIZE(25),
         padding: SIZE(10),
         marginTop: -SIZE(27),

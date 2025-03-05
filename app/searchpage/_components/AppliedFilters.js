@@ -49,7 +49,7 @@ const AppliedFilters = ({
                                 handleSearch("filter", searchQuery);
                             }}
                             borderless
-                            rippleColor="rgba(140, 82, 255, 0.5)"
+                            rippleColor={Colors.dark.backgroundPress}
                         >
                             <MaterialIcons
                                 name="close"
@@ -72,7 +72,7 @@ const AppliedFilters = ({
                                 handleSearch("filter", searchQuery);
                             }}
                             borderless
-                            rippleColor="rgba(140, 82, 255, 0.5)"
+                            rippleColor={Colors.dark.backgroundPress}
                         >
                             <MaterialIcons
                                 name="close"
@@ -88,7 +88,7 @@ const AppliedFilters = ({
                 style={styles.clearAllButton}
                 onPress={handleClearAll}
                 borderless
-                rippleColor="rgba(140, 82, 255, 0.5)"
+                rippleColor={Colors.dark.backgroundPress}
             >
                 <View style={styles.clearAllContent}>
                     <MaterialIcons
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     filterItem: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "rgba(140, 82, 255, 0.3)",
+        backgroundColor: Colors.dark.backgroundPress,
         borderRadius: SIZE(6),
         paddingHorizontal: SIZE(8),
         paddingVertical: SIZE(4),

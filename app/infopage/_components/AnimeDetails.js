@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.light.tabIconSelected,
         borderRadius: SIZE(5),
         paddingHorizontal: SIZE(5),
-        backgroundColor: "rgba(140, 82, 255, 0.2)",
+        backgroundColor: Colors.dark.backgroundPress,
     },
     titleContainer: {
         flexDirection: "row",

@@ -165,7 +165,7 @@ const SearchPage = () => {
                 estimatedItemSize={50}
                 renderItem={({ item }) => (
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         onPress={() => {
                             router.push({
@@ -492,7 +492,7 @@ const SearchPage = () => {
                         <TouchableRipple
                             onPress={() => handleFilter("clear")}
                             style={{
-                                backgroundColor: "rgba(140, 82, 255, 0.5)",
+                                backgroundColor:{Colors.dark.backgroundPress}
                                 borderRadius: SIZE(10),
                                 padding: SIZE(10),
                             }}
@@ -507,7 +507,7 @@ const SearchPage = () => {
                         <TouchableRipple
                             onPress={() => handleFilter("apply")}
                             style={{
-                                backgroundColor: "rgba(140, 82, 255, 0.5)",
+                                backgroundColor:{Colors.dark.backgroundPress}
                                 borderRadius: SIZE(10),
                                 padding: SIZE(10),
                             }}

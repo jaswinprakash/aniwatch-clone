@@ -153,7 +153,7 @@ const InfoPage = () => {
                                 },
                             });
                         }}
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(6), width: "48%" }}
                     >
@@ -186,7 +186,7 @@ const InfoPage = () => {
                     </TouchableRipple>
                     {/* <TouchableRipple
                         onPress={() => {}}
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(6), width: "48%" }}
                     >

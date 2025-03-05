@@ -10,7 +10,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
         <View style={styles.tabContainer}>
             {servers?.sub?.length > 0 && (
                 <TouchableRipple
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={[
                         styles.tabButton,
@@ -30,7 +30,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
             )}
             {servers?.dub?.length > 0 && (
                 <TouchableRipple
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={[
                         styles.tabButton,
@@ -50,7 +50,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
             )}
             {servers?.raw?.length > 0 && (
                 <TouchableRipple
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={[
                         styles.tabButton,

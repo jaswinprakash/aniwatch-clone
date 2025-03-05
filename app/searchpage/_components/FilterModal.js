@@ -42,7 +42,7 @@ const FilterModal = ({
                                     style={{
                                         backgroundColor:
                                             selectedCategory === category.id
-                                                ? "rgba(140, 82, 255, 0.5)"
+                                                ? Colors.dark.backgroundPress
                                                 : "transparent",
                                         borderRadius: SIZE(10),
                                         padding: SIZE(10),
@@ -95,7 +95,7 @@ const FilterModal = ({
                                         backgroundColor: selectedGenre.includes(
                                             genre
                                         )
-                                            ? "rgba(140, 82, 255, 0.5)"
+                                            ? Colors.dark.backgroundPress
                                             : "transparent",
                                         borderRadius: SIZE(10),
                                         padding: SIZE(10),

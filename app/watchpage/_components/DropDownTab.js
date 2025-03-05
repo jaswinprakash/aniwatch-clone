@@ -9,7 +9,7 @@ const DropDownTab = ({ item, activeSubTab, setActiveSubTab }) => {
     return (
         <>
             <TouchableRipple
-                rippleColor="rgba(140, 82, 255, 0.5)"
+                rippleColor={Colors.dark.backgroundPress}
                 borderless={true}
                 style={[
                     styles.subTabButton,

@@ -541,7 +541,7 @@ const SinglePage = () => {
                             estimatedItemSize={50}
                             renderItem={({ item }) => (
                                 <TouchableRipple
-                                    rippleColor="rgba(140, 82, 255, 0.5)"
+                                    rippleColor={Colors.dark.backgroundPress}
                                     borderless={true}
                                     disabled={selectedEpisode === item?.number}
                                     style={[

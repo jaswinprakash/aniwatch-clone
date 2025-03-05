@@ -100,7 +100,7 @@ const Controls = ({
                     }}
                 >
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(24) }}
                         hitSlop={10}
@@ -145,7 +145,7 @@ const Controls = ({
                     </View>
                 </View>
                 <TouchableRipple
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={{ borderRadius: SIZE(24) }}
                     hitSlop={10}
@@ -221,7 +221,7 @@ const Controls = ({
                 ]}
             >
                 <TouchableRipple
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={{ borderRadius: SIZE(24) }}
                     onPress={() => {
@@ -252,7 +252,7 @@ const Controls = ({
                     }}
                 >
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(30) }}
                         hitSlop={10}
@@ -265,7 +265,7 @@ const Controls = ({
                         />
                     </TouchableRipple>
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(30) }}
                         hitSlop={10}
@@ -278,7 +278,7 @@ const Controls = ({
                         />
                     </TouchableRipple>
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(36) }}
                         hitSlop={10}
@@ -291,7 +291,7 @@ const Controls = ({
                         />
                     </TouchableRipple>
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(30) }}
                         hitSlop={10}
@@ -304,7 +304,7 @@ const Controls = ({
                         />
                     </TouchableRipple>
                     <TouchableRipple
-                        rippleColor="rgba(140, 82, 255, 0.5)"
+                        rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         style={{ borderRadius: SIZE(30) }}
                         hitSlop={10}
@@ -318,7 +318,7 @@ const Controls = ({
                     </TouchableRipple>
                 </View>
                 <TouchableRipple
-                    rippleColor="rgba(140, 82, 255, 0.5)"
+                    rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={{ borderRadius: SIZE(24) }}
                     hitSlop={10}
