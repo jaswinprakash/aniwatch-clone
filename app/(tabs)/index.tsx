@@ -50,7 +50,7 @@ export const HomeScreen = () => {
                     borderColor: Colors.light.tabIconSelected,
                     height: SIZE(60),
                     borderBottomWidth: SIZE(1),
-                    paddingHorizontal: SIZE(16),
+                    paddingRight: SIZE(16),
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
@@ -58,7 +58,7 @@ export const HomeScreen = () => {
                 }}
             >
                 <Image
-                    style={{ height: SIZE(30), width: SIZE(200) }}
+                    style={{ height: "100%", width: SIZE(180) }}
                     source={require("@/assets/images/AnimPlay.png")}
                 />
                 <TouchableRipple
