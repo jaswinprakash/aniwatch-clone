@@ -54,6 +54,7 @@ export const HomeScreen = () => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    backgroundColor: Colors.dark.background,
                 }}
             >
                 <Image
@@ -85,6 +86,7 @@ export const HomeScreen = () => {
                         justifyContent: "center",
                         borderWidth: 1,
                         alignItems: "center",
+                        backgroundColor: Colors.dark.background,
                     }}
                 >
                     <LottieView

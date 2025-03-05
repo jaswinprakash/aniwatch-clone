@@ -139,7 +139,10 @@ export default function RootLayout() {
                                 </View>
                             </SafeAreaProvider>
                         </PaperProvider>
-                        <StatusBar style="auto" />
+                        <StatusBar
+                            style="auto"
+                            backgroundColor={Colors.dark.background}
+                        />
                     </ThemeProvider>
                 </FullscreenProvider>
             </AnimeHistoryProvider>

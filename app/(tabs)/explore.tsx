@@ -25,7 +25,7 @@ const Profile = () => {
                     justifyContent: "center",
                     borderBottomWidth: SIZE(1),
                     borderColor: Colors.light.tabIconSelected,
-                    backgroundColor: "transparent",
+                    backgroundColor: Colors.dark.background,
                 }}
             >
                 <ThemedText
@@ -44,6 +44,7 @@ const Profile = () => {
                         flex: 1,
                         justifyContent: "center",
                         alignItems: "center",
+                        backgroundColor: Colors.dark.background,
                     }}
                 >
                     <LottieView
@@ -54,7 +55,12 @@ const Profile = () => {
                     />
                 </View>
             ) : (
-                <ScrollView style={{ padding: SIZE(16) }}>
+                <ScrollView
+                    style={{
+                        padding: SIZE(16),
+                        backgroundColor: Colors.dark.background,
+                    }}
+                >
                     {history?.map((item, index) => (
                         <StoredVideos
                             key={index}

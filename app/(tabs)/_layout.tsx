@@ -17,7 +17,7 @@ export default function TabLayout() {
             sceneAnimationEnabled={true}
             sceneAnimationType="shifting"
             activeColor={Colors[colorScheme ?? "light"].tint}
-            inactiveColor="gray"
+            inactiveColor="#9BA1A6"
             barStyle={{
                 backgroundColor: Colors[colorScheme ?? "light"].background,
                 height: SIZE(65),
