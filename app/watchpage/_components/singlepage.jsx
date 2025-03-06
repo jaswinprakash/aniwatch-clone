@@ -481,6 +481,7 @@ const SinglePage = () => {
                                         );
                                     }}
                                     dropdownPosition="auto"
+                                    iconColor={Colors.light.tabIconSelected}
                                 />
                             </View>
                             <View>

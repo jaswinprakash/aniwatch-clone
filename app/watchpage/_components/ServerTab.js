@@ -19,6 +19,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
                     onPress={() => setActiveTab("sub")}
                 >
                     <ThemedText
+                        type="subtitle"
                         style={[
                             styles.tabText,
                             activeTab === "sub" && styles.activeText,
@@ -39,6 +40,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
                     onPress={() => setActiveTab("dub")}
                 >
                     <ThemedText
+                        type="subtitle"
                         style={[
                             styles.tabText,
                             activeTab === "dub" && styles.activeText,
@@ -59,6 +61,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
                     onPress={() => setActiveTab("raw")}
                 >
                     <ThemedText
+                        type="subtitle"
                         style={[
                             styles.tabText,
                             activeTab === "raw" && styles.activeText,
@@ -88,6 +91,6 @@ const styles = StyleSheet.create({
         borderColor: "transparent",
     },
     activeTab: { borderColor: Colors.light.tabIconSelected },
-    tabText: { fontSize: SIZE(18), color: "#333" },
+    tabText: { fontSize: SIZE(18), color: "#607d8b" },
     activeText: { color: Colors.light.tabIconSelected },
 });

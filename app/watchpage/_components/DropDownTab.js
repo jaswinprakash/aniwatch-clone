@@ -18,6 +18,7 @@ const DropDownTab = ({ item, activeSubTab, setActiveSubTab }) => {
                 onPress={() => setActiveSubTab(item?.serverName)}
             >
                 <ThemedText
+                    type="subtitle"
                     style={[
                         styles.subTabText,
                         activeSubTab === item?.serverName &&
