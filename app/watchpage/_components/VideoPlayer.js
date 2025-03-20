@@ -332,7 +332,16 @@ const VideoPlayer = ({
                                 }
                             }}
                             ref={videoRef}
-                            source={{ uri: videoUrl, type: "m3u8" }}
+                            source={{
+                                uri: videoUrl,
+                                type: "m3u8",
+                                bufferConfig: {
+                                    minBufferMs: 15000,
+                                    maxBufferMs: 30000,
+                                    bufferForPlaybackMs: 2500,
+                                    bufferForPlaybackAfterRebufferMs: 5000,
+                                },
+                            }}
                             style={styles.video}
                             paused={!isPlaying}
                             onLoad={onLoad}
@@ -356,6 +365,7 @@ const VideoPlayer = ({
                                         : selectedQuality,
                             }}
                             onEnd={nextEpisode}
+                        pic
                         />
                         <Subtitles
                             textStyle={{
