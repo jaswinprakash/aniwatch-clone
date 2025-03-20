@@ -98,8 +98,9 @@ const SinglePage = () => {
             setVideoData(null);
             try {
                 const serverResponse = await apiConfig.get(
-                    `/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${number}`
+                    `/api/v2/hianime/episode/servers?animeEpisodeId=${id}`
                 );
+
                 const servers = serverResponse.data.data;
                 setServers(servers);
 
@@ -122,8 +123,9 @@ const SinglePage = () => {
                 }
 
                 const streamResponse = await apiConfig.get(
-                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}?server=${activeSubTab}&category=${activeTab}`
+                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
                 );
+
                 setVideoData(streamResponse.data.data);
 
                 if (currentPlayingEpisodeId !== id) {
