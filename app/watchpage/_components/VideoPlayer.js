@@ -341,6 +341,10 @@ const VideoPlayer = ({
                                     bufferForPlaybackMs: 2500,
                                     bufferForPlaybackAfterRebufferMs: 5000,
                                 },
+                                headers: {
+                                    Referer: 'https://megacloud.club/',
+                                    'User-Agent': 'AnimPlay/1.0',
+                                },
                             }}
                             style={styles.video}
                             paused={!isPlaying}
