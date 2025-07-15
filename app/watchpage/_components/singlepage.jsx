@@ -4,6 +4,7 @@ import {
     View,
     ImageBackground,
     Text,
+    ToastAndroid,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
@@ -123,8 +124,16 @@ const SinglePage = () => {
                 }
 
                 const streamResponse = await apiConfig.get(
-                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
+                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=hd-2&category=${activeTab}`
                 );
+
+                if (streamResponse.data.data.sources.length === 0) {
+                    ToastAndroid.show(
+                        "No sources available",
+                        ToastAndroid.SHORT
+                    );
+                    return;
+                }
 
                 setVideoData(streamResponse.data.data);
 
