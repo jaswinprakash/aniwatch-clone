@@ -23,7 +23,7 @@ const SubModal = ({ data, handleChange, handleSet, selectedItem, quality }) => {
                             {
                                 backgroundColor: (
                                     !quality
-                                        ? selectedItem?.label === item.label
+                                        ? selectedItem?.lang === item.lang
                                         : selectedItem === item
                                 )
                                     ? Colors.light.tabIconSelected
@@ -39,7 +39,7 @@ const SubModal = ({ data, handleChange, handleSet, selectedItem, quality }) => {
                                 {
                                     color: (
                                         !quality
-                                            ? selectedItem?.label === item.label
+                                            ? selectedItem?.lang === item.lang
                                             : selectedItem === item
                                     )
                                         ? Colors.light.white
@@ -47,7 +47,7 @@ const SubModal = ({ data, handleChange, handleSet, selectedItem, quality }) => {
                                 },
                             ]}
                         >
-                            {quality ? item : item.label}
+                            {quality ? item : item.lang}
                         </ThemedText>
                     </TouchableOpacity>
                 )}

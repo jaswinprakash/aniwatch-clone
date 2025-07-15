@@ -44,7 +44,7 @@ const VideoPlayer = ({
     const [duration, setDuration] = useState(0);
     const [showSubtitleList, setShowSubtitleList] = useState(false);
     const [selectedSubtitle, setSelectedSubtitle] = useState(
-        subtitlesData.find((sub) => sub?.label?.toLowerCase() === "english") ||
+        subtitlesData.find((sub) => sub?.lang?.toLowerCase() === "English") ||
             subtitlesData[0] ||
             null
     );
@@ -390,7 +390,7 @@ const VideoPlayer = ({
                             }}
                             currentTime={currentTime + 0.1}
                             selectedsubtitle={{
-                                file: selectedSubtitle?.file,
+                                file: selectedSubtitle?.url,
                             }}
                         />
 
