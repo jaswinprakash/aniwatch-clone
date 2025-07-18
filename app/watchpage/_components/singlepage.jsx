@@ -25,6 +25,7 @@ import DropDownTab from "./DropDownTab";
 import { Dropdown } from "react-native-element-dropdown";
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SIZES } from "../../../constants/Constants";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -47,6 +48,7 @@ const SinglePage = () => {
         useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
+    const [error, setError] = useState(false);
 
     const getEpisodes = async () => {
         try {
@@ -98,6 +100,7 @@ const SinglePage = () => {
             setVideoLoading(true);
             setVideoData(null);
             try {
+                setError(false);
                 const serverResponse = await apiConfig.get(
                     `/api/v2/hianime/episode/servers?animeEpisodeId=${id}`
                 );
@@ -123,15 +126,20 @@ const SinglePage = () => {
                     }
                 }
 
-                const streamResponse = await apiConfig.get(
-                    `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=hd-2&category=${activeTab}`
-                );
-
-                if (streamResponse.data.data.sources.length === 0) {
-                    ToastAndroid.show(
-                        "No sources available",
-                        ToastAndroid.SHORT
+                const streamResponse = await apiConfig
+                    .get(
+                        `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
+                    )
+                    .catch((error) =>
+                        setTimeout(() => {
+                            setError(true);
+                        }, 1000)
                     );
+
+                if (streamResponse?.data?.data?.sources.length === 0) {
+                    setTimeout(() => {
+                        setError(true);
+                    }, 1000);
                     return;
                 }
 
@@ -142,6 +150,9 @@ const SinglePage = () => {
                 }
             } catch (error) {
                 console.log(error, "axios error - stream");
+                setTimeout(() => {
+                    setError(true);
+                }, 1000);
             } finally {
                 setVideoLoading(false);
             }
@@ -316,6 +327,11 @@ const SinglePage = () => {
                         resizeMode="cover"
                         blurRadius={2}
                     >
+                        {error && !videoLoading && !episodeLoading && (
+                            <ThemedText type="title" style={styles.errorText}>
+                                Unable to play please try again later
+                            </ThemedText>
+                        )}
                         <FastImage
                             style={[
                                 styles.fastImage,
@@ -698,5 +714,21 @@ const styles = StyleSheet.create({
     },
     selectedItemText: {
         color: Colors.light.white,
+    },
+    errorText: {
+        color: Colors.light.error,
+        fontSize: SIZE(20),
+        marginBottom: SIZE(10),
+        position: "absolute",
+        top: SIZES.wp,
+        left: SIZES.wp,
+        alignSelf: "center",
+        textAlign: "center",
+        zIndex: 100,
+        boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px",
+        backgroundColor: "rgba(0, 187, 255, 0.8)",
+        borderRadius: SIZE(6),
+        padding: SIZE(5),
+        lineHeight: SIZE(18),
     },
 });

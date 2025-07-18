@@ -24,6 +24,7 @@ import { Colors } from "@/constants/Colors";
 import useNetworkState from "../hooks/NetworkState";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SIZE } from "@/constants/Constants";
+import * as NavigationBar from "expo-navigation-bar";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -43,6 +44,7 @@ export default function RootLayout() {
     useEffect(() => {
         if (loaded) {
             SplashScreen.hideAsync();
+            NavigationBar.setBackgroundColorAsync(Colors.dark.background);
         }
     }, [loaded]);
 
