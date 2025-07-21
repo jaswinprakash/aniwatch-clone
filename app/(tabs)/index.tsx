@@ -66,7 +66,7 @@ export const HomeScreen = () => {
                     rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     onPress={() => {
-                        router.push({
+                        router.navigate({
                             pathname: "searchpage",
                         });
                     }}
@@ -121,7 +121,7 @@ export const HomeScreen = () => {
                                         }
                                         borderless={true}
                                         onPress={() => {
-                                            router.push({
+                                            router.navigate({
                                                 pathname: "infopage",
                                                 params: {
                                                     id: item.id,

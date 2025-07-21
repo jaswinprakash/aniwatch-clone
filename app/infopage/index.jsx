@@ -138,7 +138,7 @@ const InfoPage = () => {
                 >
                     <TouchableRipple
                         onPress={() => {
-                            router.push({
+                            router.navigate({
                                 pathname: "watchpage",
                                 params: {
                                     id: animeInfo?.anime?.info?.id,

@@ -34,7 +34,7 @@ const RenderAnime = ({ title, data, info, setAnimeId }) => {
                                 if (info) {
                                     setAnimeId(item.id);
                                 } else {
-                                    router.push({
+                                    router.navigate({
                                         pathname: "infopage",
                                         params: {
                                             id: item.id,

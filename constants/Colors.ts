@@ -25,8 +25,39 @@ export const Colors = {
         tabIconDefault: "#9BA1A6",
         tabIconSelected: tintColorDark,
         black: "#000",
-        // backgroundPress: "rgba(140, 82, 255, 0.5)",
         backgroundPress: "rgba(0, 187, 255, 0.5)",
         error: "#f44336",
     },
 };
+
+// const tintColorLight = "#3AFF6F";
+// const tintColorDark = "#3AFF6F";
+
+// export const Colors = {
+//     light: {
+//         text: "#E0E0E0", // Slightly softer white for better readability
+//         background: "#0D1215", // Dark slate base (darker than your current)
+//         tint: tintColorDark,
+//         icon: "#7D8B8F", // Desaturated teal-gray
+//         tabIconDefault: "#7D8B8F",
+//         tabIconSelected: tintColorDark,
+//         black: "#000",
+//         backgroundPress: "rgba(58, 255, 111, 0.2)", // Subtler green press effect
+//         error: "#FF4D4D", // Brighter error red
+//         accentText: tintColorDark, // For highlighting important text
+//         border: "#1E2E24", // Dark green borders
+//     },
+//     dark: {
+//         text: "#E0E0E0", // Slightly softer white for better readability
+//         background: "#0D1215", // Dark slate base (darker than your current)
+//         tint: tintColorDark,
+//         icon: "#7D8B8F", // Desaturated teal-gray
+//         tabIconDefault: "#7D8B8F",
+//         tabIconSelected: tintColorDark,
+//         black: "#000",
+//         backgroundPress: "rgba(58, 255, 111, 0.2)", // Subtler green press effect
+//         error: "#FF4D4D", // Brighter error red
+//         accentText: tintColorDark, // For highlighting important text
+//         border: "#1E2E24", // Dark green borders
+//     },
+// };

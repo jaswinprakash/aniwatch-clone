@@ -34,10 +34,10 @@ TouchableOpacity.defaultProps = {
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        Exo2Regular: require("../assets/fonts/Exo2-Regular.ttf"),
-        Exo2Medium: require("../assets/fonts/Exo2-Medium.ttf"),
-        Exo2SemiBold: require("../assets/fonts/Exo2-SemiBold.ttf"),
-        Exo2Bold: require("../assets/fonts/Exo2-Bold.ttf"),
+        Exo2Regular: require("../assets/fonts/BarlowCondensed-Regular.ttf"),
+        Exo2Medium: require("../assets/fonts/BarlowCondensed-Medium.ttf"),
+        Exo2SemiBold: require("../assets/fonts/BarlowCondensed-SemiBold.ttf"),
+        Exo2Bold: require("../assets/fonts/BarlowCondensed-Bold.ttf"),
     });
     const isConnected = useNetworkState();
 

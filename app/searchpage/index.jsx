@@ -168,7 +168,7 @@ const SearchPage = () => {
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
                         onPress={() => {
-                            router.push({
+                            router.navigate({
                                 pathname: "infopage",
                                 params: {
                                     id: item.id,

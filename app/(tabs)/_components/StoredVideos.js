@@ -54,7 +54,7 @@ const StoredVideos = ({ id, episode, time }) => {
         <View style={{ width: "100%", marginBottom: SIZE(16) }}>
             <TouchableRipple
                 onPress={() => {
-                    router.push({
+                    router.navigate({
                         pathname: "watchpage",
                         params: {
                             id: id,
