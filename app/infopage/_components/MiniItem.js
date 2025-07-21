@@ -37,6 +37,6 @@ const MIniItem = ({ data }) => {
     );
 };
 
-export default MIniItem;
+export default React.memo(MIniItem);
 
 const styles = StyleSheet.create({});

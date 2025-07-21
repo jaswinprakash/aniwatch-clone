@@ -256,30 +256,37 @@ export const HomeScreen = () => {
                         <RenderAnime
                             title="Latest Episode Animes"
                             data={animeHomeList?.latestEpisodeAnimes}
+                            type="recently-updated"
                         />
                         <RenderAnime
                             title="Most Popular Animes"
                             data={animeHomeList?.mostPopularAnimes}
+                            type="most-popular"
                         />
                         <RenderAnime
                             title="Most Favorite Animes"
                             data={animeHomeList?.mostFavoriteAnimes}
+                            type="most-favorite"
                         />
                         <RenderAnime
                             title="Top Airing Animes"
                             data={animeHomeList?.topAiringAnimes}
+                            type="top-airing"
                         />
                         <RenderAnime
                             title="Top Upcoming Animes"
                             data={animeHomeList?.topUpcomingAnimes}
+                            type="top-upcoming"
                         />
                         <RenderAnime
                             title="Trending Animes"
                             data={animeHomeList?.trendingAnimes}
+                            type="ona"
                         />
                         <RenderAnime
                             title="Completed Animes"
                             data={animeHomeList?.latestCompletedAnimes}
+                            type="completed"
                         />
                     </>
                 </ParallaxScrollView>

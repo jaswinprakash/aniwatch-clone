@@ -484,7 +484,7 @@ const SearchPage = () => {
                     />
                 </View>
             ) : (
-                <View style={{ padding: SIZE(16), flex: 1 }}>
+                <View style={{ paddingHorizontal: SIZE(16), flex: 1 }}>
                     {renderSearchResults()}
                 </View>
             )}
@@ -539,7 +539,7 @@ export default SearchPage;
 const styles = StyleSheet.create({
     searchContainer: {
         paddingHorizontal: SIZE(16),
-        paddingBottom: SIZE(11),
+        marginBottom: SIZE(16),
     },
     sectionContainer: {
         marginBottom: SIZE(30),

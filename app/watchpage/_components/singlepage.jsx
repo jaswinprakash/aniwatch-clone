@@ -642,7 +642,7 @@ const SinglePage = () => {
     );
 };
 
-export default SinglePage;
+export default  React.memo(SinglePage);
 
 const styles = StyleSheet.create({
     container: {

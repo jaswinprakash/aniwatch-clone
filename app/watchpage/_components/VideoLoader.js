@@ -41,6 +41,6 @@ const VideoLoader = ({ selectedEpisode }) => {
     );
 };
 
-export default VideoLoader;
+export default React.memo(VideoLoader);
 
 const styles = StyleSheet.create({});

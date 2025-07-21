@@ -5,69 +5,10 @@ import { TouchableRipple } from "react-native-paper";
 import { SIZE } from "../../../constants/Constants";
 import { Colors } from "../../../constants/Colors";
 
-const FilterModal = ({
-    categories,
-    selectedCategory,
-    genres,
-    selectedGenre,
-    handleSelection,
-}) => {
+const FilterCategory = ({ genres, selectedGenre, handleSelection }) => {
     return (
         <View>
             <View style={{ gap: SIZE(20) }}>
-                <View>
-                    <ThemedText
-                        type="subtitle"
-                        style={{
-                            color: Colors.light.tabIconSelected,
-                            marginBottom: SIZE(10),
-                        }}
-                    >
-                        Categories:
-                    </ThemedText>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            gap: SIZE(10),
-                        }}
-                    >
-                        {categories?.map((category, index) => (
-                            <View key={index}>
-                                <TouchableRipple
-                                    rippleColor={Colors.dark.backgroundPress}
-                                    borderless
-                                    onPress={() =>
-                                        handleSelection("category", category.id)
-                                    }
-                                    style={{
-                                        backgroundColor:
-                                            selectedCategory === category.id
-                                                ? Colors.dark.backgroundPress
-                                                : "transparent",
-                                        borderRadius: SIZE(8),
-                                        padding: SIZE(8),
-                                        borderWidth: SIZE(1),
-                                        borderColor:
-                                            Colors.light.tabIconSelected,
-                                    }}
-                                >
-                                    <ThemedText
-                                        style={{
-                                            color:
-                                                selectedCategory === category.id
-                                                    ? Colors.light.white
-                                                    : Colors.light
-                                                          .tabIconSelected,
-                                        }}
-                                    >
-                                        {category.name}
-                                    </ThemedText>
-                                </TouchableRipple>
-                            </View>
-                        ))}
-                    </View>
-                </View>
                 <View>
                     <ThemedText
                         type="subtitle"
@@ -125,6 +66,6 @@ const FilterModal = ({
     );
 };
 
-export default React.memo(FilterModal);
+export default FilterCategory;
 
 const styles = StyleSheet.create({});

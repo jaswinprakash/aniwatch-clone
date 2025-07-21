@@ -21,7 +21,7 @@ const Profile = () => {
             <ThemedView
                 style={{
                     paddingHorizontal: SIZE(16),
-                    height: SIZE(60),
+                    height: SIZE(40),
                     justifyContent: "center",
                     backgroundColor: Colors.dark.background,
                 }}
@@ -55,7 +55,7 @@ const Profile = () => {
             ) : (
                 <ScrollView
                     style={{
-                        padding: SIZE(16),
+                        paddingHorizontal: SIZE(16),
                         backgroundColor: Colors.dark.background,
                     }}
                 >

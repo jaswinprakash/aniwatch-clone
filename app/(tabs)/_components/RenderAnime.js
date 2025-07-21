@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { ThemedView } from "../../../components/ThemedView";
 import { ThemedText } from "../../../components/ThemedText";
@@ -10,7 +10,7 @@ import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 
-const RenderAnime = ({ title, data, info, setAnimeId }) => {
+const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
     const [imageLoading, setImageLoading] = useState(true);
     if (!data) return null;
     const blurhash =
@@ -18,9 +18,27 @@ const RenderAnime = ({ title, data, info, setAnimeId }) => {
 
     return (
         <ThemedView style={styles.sectionContainer}>
-            <ThemedText type="title" style={styles.sectionTitle}>
-                {title}
-            </ThemedText>
+            <View style={styles.sectionHeader}>
+                <ThemedText type="title" style={styles.sectionTitle}>
+                    {title}
+                </ThemedText>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.navigate({
+                            pathname: "listpage",
+                            params: {
+                                type: type,
+                                title: title,
+                            },
+                        });
+                    }}
+                >
+                    <ThemedText type="title" style={styles.sectionLink}>
+                        See all
+                    </ThemedText>
+                </TouchableOpacity>
+            </View>
+
             <FlashList
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
@@ -84,16 +102,25 @@ const RenderAnime = ({ title, data, info, setAnimeId }) => {
     );
 };
 
-export default RenderAnime;
+export default React.memo(RenderAnime);
 
 const styles = StyleSheet.create({
     sectionContainer: {
         marginBottom: SIZE(10),
         height: SIZE(240),
     },
+    sectionHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
     sectionTitle: {
         fontSize: SIZE(20),
         marginBottom: SIZE(10),
+        color: Colors.light.tabIconSelected,
+    },
+    sectionLink: {
+        fontSize: SIZE(14),
         color: Colors.light.tabIconSelected,
     },
     animeItem: {

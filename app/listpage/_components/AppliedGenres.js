@@ -6,26 +6,17 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
 
-const AppliedFilters = ({
-    selectedCategory,
+const AppliedGenres = ({
     selectedGenre,
-    categories,
-    genres,
     handleSelection,
     handleFilter,
-    setSelectedCategory,
     handleSearch,
     searchQuery,
 }) => {
     // If no filters are applied, don't render anything
-    if (!selectedCategory && (!selectedGenre || selectedGenre.length === 0)) {
+    if (!selectedGenre || selectedGenre.length === 0) {
         return null;
     }
-
-    // Find the category name for the selected category ID
-    const categoryName = selectedCategory
-        ? categories.find((cat) => cat.id === selectedCategory)?.name
-        : null;
 
     // Get the genre names
     const genreItems = Array.isArray(selectedGenre) ? selectedGenre : [];
@@ -37,29 +28,6 @@ const AppliedFilters = ({
     return (
         <View style={styles.container}>
             <View style={styles.filtersContainer}>
-                {categoryName && (
-                    <View style={styles.filterItem}>
-                        <ThemedText type="subtitle" style={styles.filterText}>
-                            {categoryName}
-                        </ThemedText>
-                        <TouchableRipple
-                            style={styles.removeIcon}
-                            onPress={() => {
-                                setSelectedCategory("");
-                                handleSearch("filter", searchQuery);
-                            }}
-                            borderless
-                            rippleColor={Colors.dark.backgroundPress}
-                        >
-                            <MaterialIcons
-                                name="close"
-                                size={SIZE(16)}
-                                color={Colors.light.tabIconSelected}
-                            />
-                        </TouchableRipple>
-                    </View>
-                )}
-
                 {genreItems.map((genre) => (
                     <View key={genre} style={styles.filterItem}>
                         <ThemedText type="subtitle" style={styles.filterText}>
@@ -83,7 +51,6 @@ const AppliedFilters = ({
                     </View>
                 ))}
             </View>
-
             <TouchableRipple
                 style={styles.clearAllButton}
                 onPress={handleClearAll}
@@ -153,4 +120,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default React.memo(AppliedFilters);
+export default AppliedGenres;

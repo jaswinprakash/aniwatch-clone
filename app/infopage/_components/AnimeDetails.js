@@ -149,7 +149,7 @@ const AnimeDetails = ({ animeInfo, qTip }) => {
     );
 };
 
-export default AnimeDetails;
+export default React.memo(AnimeDetails);
 
 const styles = StyleSheet.create({
     infoContainer: {

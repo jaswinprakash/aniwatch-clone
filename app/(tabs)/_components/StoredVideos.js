@@ -197,7 +197,7 @@ const StoredVideos = ({ id, episode, time }) => {
     );
 };
 
-export default StoredVideos;
+export default React.memo(StoredVideos);
 
 const styles = StyleSheet.create({
     main: {

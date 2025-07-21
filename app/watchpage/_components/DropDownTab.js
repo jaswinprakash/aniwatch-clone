@@ -32,7 +32,7 @@ const DropDownTab = ({ item, activeSubTab, setActiveSubTab }) => {
     );
 };
 
-export default DropDownTab;
+export default  React.memo(DropDownTab);
 
 const styles = StyleSheet.create({
     subTabButton: {

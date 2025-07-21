@@ -75,7 +75,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
     );
 };
 
-export default ServerTab;
+export default  React.memo(ServerTab);
 
 const styles = StyleSheet.create({
     tabContainer: {

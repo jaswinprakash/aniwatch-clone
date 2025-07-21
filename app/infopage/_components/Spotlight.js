@@ -125,7 +125,7 @@ const Spotlight = ({ animeInfo, qTip }) => {
     );
 };
 
-export default Spotlight;
+export default React.memo(Spotlight);
 
 const styles = StyleSheet.create({
     imageContainer: {

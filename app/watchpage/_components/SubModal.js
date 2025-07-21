@@ -61,7 +61,7 @@ const SubModal = ({ data, handleChange, handleSet, selectedItem, quality }) => {
     );
 };
 
-export default SubModal;
+export default React.memo(SubModal);
 
 const styles = StyleSheet.create({
     modalContainer: {
