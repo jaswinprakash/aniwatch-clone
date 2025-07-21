@@ -47,6 +47,9 @@ const SearchPage = () => {
     ]);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedGenre, setSelectedGenre] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasNextPage, setHasNextPage] = useState(false);
+    const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 
     const handleFilter = async (type) => {
         if (type === "clear") {
@@ -111,6 +114,8 @@ const SearchPage = () => {
                     const response = await apiConfig.get(
                         `/api/v2/hianime/search?q=${searchQuery}&type=${selectedCategory}&genres=${formattedGenres}`
                     );
+                    setCurrentPage(response.data.data.currentPage);
+                    setHasNextPage(response.data.data.hasNextPage);
                     setSearchResults(response.data.data.animes);
                 } catch (error) {
                     console.log(error, "axios error - search perform");
@@ -125,6 +130,29 @@ const SearchPage = () => {
 
         performSearch();
     }, [searchQuery, selectedGenre, selectedCategory]);
+
+    const handleLoadMore = async () => {
+        if (hasNextPage) {
+            setIsFetchingNextPage(true);
+            try {
+                const response = await apiConfig.get(
+                    `/api/v2/hianime/search?q=${searchQuery}&type=${selectedCategory}&genres=${selectedGenre}&page=${
+                        currentPage + 1
+                    }`
+                );
+                setCurrentPage(response.data.data.currentPage);
+                setHasNextPage(response.data.data.hasNextPage);
+                setSearchResults((prev) => [
+                    ...prev,
+                    ...response.data.data.animes,
+                ]);
+            } catch (error) {
+                console.log(error, "axios error - search load more");
+            } finally {
+                setIsFetchingNextPage(false);
+            }
+        }
+    };
 
     const renderSearchResults = () => {
         // Case 1: No query entered
@@ -166,6 +194,16 @@ const SearchPage = () => {
                 data={searchResults}
                 keyExtractor={(item, index) => index.toString()}
                 estimatedItemSize={50}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={
+                    isFetchingNextPage ? (
+                        <ActivityIndicator
+                            color={Colors.light.tabIconSelected}
+                            size="small"
+                        />
+                    ) : null
+                }
                 renderItem={({ item }) => (
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
