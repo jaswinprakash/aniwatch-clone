@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "../../components/ThemedText";
 import { FlashList } from "@shopify/flash-list";
-import { Image } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import FilterModal from "./_components/FilterModal";
@@ -178,160 +178,169 @@ const SearchPage = () => {
                                 },
                             });
                         }}
-                        style={styles.animeItem}
+                        style={[styles.animeItem, { marginBottom: SIZE(16) }]}
                     >
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                            }}
+                        <ImageBackground
+                            style={[
+                                styles.animeItem,
+                                { backgroundColor: "rgba(0, 0, 0, 0.2)" },
+                            ]}
+                            source={{ uri: item.poster }}
+                            contentFit="cover"
+                            blurRadius={1}
+                            placeholder={{ blurhash }}
+                            transition={1000}
                         >
-                            <View>
-                                <Image
-                                    style={styles.animePoster}
-                                    source={{
-                                        uri: item.poster,
-                                    }}
-                                    placeholder={{ blurhash }}
-                                    contentFit="cover"
-                                    transition={1000}
-                                />
-                            </View>
-                            <View style={{ width: "58%" }}>
-                                <ThemedText
-                                    numberOfLines={2}
-                                    type="title"
-                                    style={styles.animeName}
-                                >
-                                    {item.name}
-                                </ThemedText>
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        gap: SIZE(5),
-                                        marginBottom: SIZE(5),
-                                    }}
-                                >
-                                    {item.type && (
-                                        <ThemedText
-                                            type="subtitle"
-                                            style={[
-                                                styles.animeInfo,
-                                                {
-                                                    padding: SIZE(5),
-                                                    borderWidth: SIZE(1),
-                                                    borderColor:
-                                                        Colors.light
-                                                            .tabIconSelected,
-                                                    borderRadius: SIZE(6),
-                                                },
-                                            ]}
-                                        >
-                                            {item.type}
-                                        </ThemedText>
-                                    )}
-                                    {item.duration && (
-                                        <ThemedText
-                                            type="subtitle"
-                                            style={[
-                                                styles.animeInfo,
-                                                {
-                                                    padding: SIZE(5),
-                                                    borderWidth: SIZE(1),
-                                                    borderColor:
-                                                        Colors.light
-                                                            .tabIconSelected,
-                                                    borderRadius: SIZE(6),
-                                                },
-                                            ]}
-                                        >
-                                            {item.duration}
-                                        </ThemedText>
-                                    )}
-                                    {item.rating && (
-                                        <ThemedText
-                                            type="subtitle"
-                                            style={[
-                                                styles.animeInfo,
-                                                {
-                                                    padding: SIZE(5),
-                                                    borderWidth: SIZE(1),
-                                                    borderColor:
-                                                        Colors.light
-                                                            .tabIconSelected,
-                                                    borderRadius: SIZE(6),
-                                                },
-                                            ]}
-                                        >
-                                            {item.rating}
-                                        </ThemedText>
-                                    )}
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <View>
+                                    <Image
+                                        style={styles.animePoster}
+                                        source={{
+                                            uri: item.poster,
+                                        }}
+                                        placeholder={{ blurhash }}
+                                        contentFit="cover"
+                                        transition={1000}
+                                    />
                                 </View>
-                                {item.episodes && (
+                                <View style={{ width: "64%" }}>
+                                    <ThemedText
+                                        numberOfLines={2}
+                                        type="title"
+                                        style={styles.animeName}
+                                    >
+                                        {item.name}
+                                    </ThemedText>
                                     <View
                                         style={{
                                             flexDirection: "row",
                                             gap: SIZE(5),
+                                            marginBottom: SIZE(5),
                                         }}
                                     >
-                                        {item.episodes.dub && (
+                                        {item.type && (
                                             <ThemedText
                                                 type="subtitle"
                                                 style={[
                                                     styles.animeInfo,
                                                     {
                                                         padding: SIZE(5),
-                                                        borderWidth: SIZE(1),
-                                                        borderColor:
+                                                        backgroundColor:
                                                             Colors.light
                                                                 .tabIconSelected,
                                                         borderRadius: SIZE(6),
                                                     },
                                                 ]}
                                             >
-                                                DUB : {item.episodes.dub}
+                                                {item.type}
                                             </ThemedText>
                                         )}
-                                        {item.episodes.dub && (
+                                        {item.duration && (
                                             <ThemedText
                                                 type="subtitle"
                                                 style={[
                                                     styles.animeInfo,
                                                     {
                                                         padding: SIZE(5),
-                                                        borderWidth: SIZE(1),
-                                                        borderColor:
+                                                        backgroundColor:
                                                             Colors.light
                                                                 .tabIconSelected,
                                                         borderRadius: SIZE(6),
                                                     },
                                                 ]}
                                             >
-                                                SUB : {item.episodes.sub}
+                                                {item.duration}
                                             </ThemedText>
                                         )}
-                                        {item.episodes.raw && (
+                                        {item.rating && (
                                             <ThemedText
                                                 type="subtitle"
                                                 style={[
                                                     styles.animeInfo,
                                                     {
                                                         padding: SIZE(5),
-                                                        borderWidth: SIZE(1),
-                                                        borderColor:
+                                                        backgroundColor:
                                                             Colors.light
                                                                 .tabIconSelected,
                                                         borderRadius: SIZE(6),
                                                     },
                                                 ]}
                                             >
-                                                RAW : {item.episodes.raw}
+                                                {item.rating}
                                             </ThemedText>
                                         )}
                                     </View>
-                                )}
+                                    {item.episodes && (
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                gap: SIZE(5),
+                                            }}
+                                        >
+                                            {item.episodes.dub && (
+                                                <ThemedText
+                                                    type="subtitle"
+                                                    style={[
+                                                        styles.animeInfo,
+                                                        {
+                                                            padding: SIZE(5),
+                                                            backgroundColor:
+                                                                Colors.light
+                                                                    .tabIconSelected,
+                                                            borderRadius:
+                                                                SIZE(6),
+                                                        },
+                                                    ]}
+                                                >
+                                                    DUB : {item.episodes.dub}
+                                                </ThemedText>
+                                            )}
+                                            {item.episodes.dub && (
+                                                <ThemedText
+                                                    type="subtitle"
+                                                    style={[
+                                                        styles.animeInfo,
+                                                        {
+                                                            padding: SIZE(5),
+                                                            backgroundColor:
+                                                                Colors.light
+                                                                    .tabIconSelected,
+                                                            borderRadius:
+                                                                SIZE(6),
+                                                        },
+                                                    ]}
+                                                >
+                                                    SUB : {item.episodes.sub}
+                                                </ThemedText>
+                                            )}
+                                            {item.episodes.raw && (
+                                                <ThemedText
+                                                    type="subtitle"
+                                                    style={[
+                                                        styles.animeInfo,
+                                                        {
+                                                            padding: SIZE(5),
+                                                            backgroundColor:
+                                                                Colors.light
+                                                                    .tabIconSelected,
+                                                            borderRadius:
+                                                                SIZE(6),
+                                                        },
+                                                    ]}
+                                                >
+                                                    RAW : {item.episodes.raw}
+                                                </ThemedText>
+                                            )}
+                                        </View>
+                                    )}
+                                </View>
                             </View>
-                        </View>
+                        </ImageBackground>
                     </TouchableRipple>
                 )}
             />
@@ -480,46 +489,6 @@ const SearchPage = () => {
                             handleSelection={handleSelection}
                         />
                     </ScrollView>
-                    {/* <View
-                        style={{
-                            flexDirection: "row",
-                            gap: SIZE(10),
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginTop: SIZE(14),
-                        }}
-                    >
-                        <TouchableRipple
-                            onPress={() => handleFilter("clear")}
-                            style={{
-                                backgroundColor:{Colors.dark.backgroundPress}
-                                borderRadius: SIZE(10),
-                                padding: SIZE(10),
-                            }}
-                        >
-                            <ThemedText
-                                style={{ fontSize: SIZE(14) }}
-                                type="subtitle"
-                            >
-                                Clear Filters
-                            </ThemedText>
-                        </TouchableRipple>
-                        <TouchableRipple
-                            onPress={() => handleFilter("apply")}
-                            style={{
-                                backgroundColor:{Colors.dark.backgroundPress}
-                                borderRadius: SIZE(10),
-                                padding: SIZE(10),
-                            }}
-                        >
-                            <ThemedText
-                                style={{ fontSize: SIZE(14) }}
-                                type="subtitle"
-                            >
-                                Apply Filters
-                            </ThemedText>
-                        </TouchableRipple>
-                    </View> */}
                 </View>
             </Modal>
         </SafeAreaView>
@@ -535,7 +504,7 @@ const styles = StyleSheet.create({
     },
     sectionContainer: {
         marginBottom: SIZE(30),
-        height: SIZE(200),
+        height: SIZE(180),
     },
     sectionTitle: {
         fontSize: SIZE(20),
@@ -546,23 +515,36 @@ const styles = StyleSheet.create({
         marginRight: SIZE(10),
         flexDirection: "row",
         borderRadius: SIZE(10),
-        marginBottom: SIZE(16),
         width: "100%",
+        overflow: "hidden",
     },
     animePoster: {
-        width: SIZE(150),
-        height: SIZE(210),
+        width: SIZE(130),
+        height: SIZE(190),
         borderRadius: SIZE(10),
         marginRight: SIZE(10),
     },
     animeName: {
         marginBottom: SIZE(5),
-        fontSize: SIZE(20),
+        fontSize: SIZE(30),
         color: Colors.light.tabIconSelected,
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: {
+            width: 1,
+            height: 1,
+        },
+        textShadowRadius: 2,
     },
     animeInfo: {
         fontSize: SIZE(12),
-        color: Colors.light.tabIconSelected,
+        color: Colors.light.white,
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: {
+            width: 1,
+            height: 1,
+        },
+        textShadowRadius: 2,
+        lineHeight: SIZE(13),
     },
     placeholderContainer: {
         flex: 1,

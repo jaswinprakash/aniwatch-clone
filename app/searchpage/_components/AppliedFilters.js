@@ -112,8 +112,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        borderBottomWidth: SIZE(0.5),
-        borderBottomColor: Colors.light.tabIconSelected,
     },
     filtersContainer: {
         flexDirection: "row",

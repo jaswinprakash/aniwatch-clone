@@ -7,7 +7,7 @@ import { Colors } from "@/constants/Colors";
 import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Image } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import { useDispatch } from "react-redux";
 import { deletePlayback } from "@/store/playbackSlice";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
@@ -72,80 +72,126 @@ const StoredVideos = ({ id, episode, time }) => {
                     borderRadius: SIZE(10),
                 }}
             >
-                <View style={{ width: "100%" }}>
-                    <View style={styles.main}>
-                        <View style={styles.leftContent}>
-                            <Image
-                                style={styles.imageContainer}
-                                source={{ uri: animeInfo?.anime?.info?.poster }}
-                                placeholder={{ blurhash }}
-                                contentFit="cover"
-                                transition={1000}
-                            />
-                        </View>
-                        <View
-                            style={{
-                                justifyContent: "space-between",
-                                flexDirection: "row",
-                            }}
-                        >
-                            <View style={styles.rightContent}>
-                                <ThemedText
-                                    type="title"
-                                    numberOfLines={2}
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(20),
+                <ImageBackground
+                    style={[
+                        styles.animeItem,
+                        { backgroundColor: "rgba(0, 0, 0, 0.2)" },
+                    ]}
+                    source={{ uri: animeInfo?.anime?.info?.poster }}
+                    contentFit="cover"
+                    blurRadius={1}
+                    placeholder={{ blurhash }}
+                    transition={1000}
+                >
+                    <View style={{ width: "100%" }}>
+                        <View style={styles.main}>
+                            <View style={styles.leftContent}>
+                                <Image
+                                    style={styles.imageContainer}
+                                    source={{
+                                        uri: animeInfo?.anime?.info?.poster,
                                     }}
-                                >
-                                    {animeInfo?.anime?.info?.name}
-                                </ThemedText>
-                                <ThemedText
-                                    type="subtitle"
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(15),
-                                        bottom: SIZE(30),
-                                        position: "absolute",
-                                    }}
-                                >
-                                    Episode - {episode}
-                                </ThemedText>
-                                <ThemedText
-                                    type="subtitle"
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(15),
-                                        bottom: SIZE(10),
-                                        position: "absolute",
-                                    }}
-                                >
-                                    Played time : {formatTime(time)}
-                                </ThemedText>
+                                    placeholder={{ blurhash }}
+                                    contentFit="cover"
+                                    transition={1000}
+                                />
                             </View>
-                            <TouchableRipple
-                                hitSlop={10}
-                                onPress={() => {
-                                    dispatch(deletePlayback(id));
-                                }}
-                                rippleColor={Colors.dark.backgroundPress}
-                                borderless={true}
+                            <View
                                 style={{
-                                    position: "absolute",
-                                    bottom: SIZE(10),
-                                    right: SIZE(40),
-                                    borderRadius: SIZE(5),
+                                    justifyContent: "space-between",
+                                    flexDirection: "row",
                                 }}
                             >
-                                <MaterialIcons
-                                    name="delete-forever"
-                                    size={SIZE(24)}
-                                    color={Colors.light.tabIconSelected}
-                                />
-                            </TouchableRipple>
+                                <View style={styles.rightContent}>
+                                    <ThemedText
+                                        type="title"
+                                        numberOfLines={2}
+                                        style={{
+                                            color: Colors.light.tabIconSelected,
+                                            fontSize: SIZE(20),
+                                            textShadowColor: Colors.dark.black,
+                                            textShadowOffset: {
+                                                width: 1,
+                                                height: 1,
+                                            },
+                                            textShadowRadius: 2,
+                                        }}
+                                    >
+                                        {animeInfo?.anime?.info?.name}
+                                    </ThemedText>
+                                    <ThemedText
+                                        type="subtitle"
+                                        style={{
+                                            color: Colors.light.tabIconSelected,
+                                            fontSize: SIZE(15),
+                                            bottom: SIZE(30),
+                                            position: "absolute",
+                                            textShadowColor: Colors.dark.black,
+                                            textShadowOffset: {
+                                                width: 1,
+                                                height: 1,
+                                            },
+                                            textShadowRadius: 2,
+                                        }}
+                                    >
+                                        Episode - {episode}
+                                    </ThemedText>
+                                    <ThemedText
+                                        type="subtitle"
+                                        style={{
+                                            color: Colors.light.tabIconSelected,
+                                            fontSize: SIZE(15),
+                                            bottom: SIZE(10),
+                                            position: "absolute",
+                                            textShadowColor: Colors.dark.black,
+                                            textShadowOffset: {
+                                                width: 1,
+                                                height: 1,
+                                            },
+                                            textShadowRadius: 2,
+                                        }}
+                                    >
+                                        Played time : {formatTime(time)}
+                                    </ThemedText>
+                                </View>
+                                <TouchableRipple
+                                    hitSlop={10}
+                                    onPress={() => {
+                                        dispatch(deletePlayback(id));
+                                    }}
+                                    rippleColor={Colors.dark.backgroundPress}
+                                    borderless={true}
+                                    style={{
+                                        position: "absolute",
+                                        bottom: SIZE(10),
+                                        right: SIZE(40),
+                                        borderRadius: SIZE(5),
+                                        backgroundColor:
+                                            Colors.light.tabIconSelected,
+                                        height: SIZE(30),
+                                        width: SIZE(30),
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <MaterialIcons
+                                        name="delete-forever"
+                                        size={SIZE(24)}
+                                        color={Colors.dark.text}
+                                        style={{
+                                            textShadowColor: Colors.dark.black,
+                                            textShadowOffset: {
+                                                width: 1,
+                                                height: 1,
+                                            },
+                                            textShadowRadius: 2,
+                                        }}
+                                    />
+                                </TouchableRipple>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </ImageBackground>
             </TouchableRipple>
         </View>
     );
