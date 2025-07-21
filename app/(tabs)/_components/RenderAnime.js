@@ -89,7 +89,7 @@ export default RenderAnime;
 const styles = StyleSheet.create({
     sectionContainer: {
         marginBottom: SIZE(10),
-        height: SIZE(230),
+        height: SIZE(240),
     },
     sectionTitle: {
         fontSize: SIZE(20),
@@ -99,17 +99,17 @@ const styles = StyleSheet.create({
     animeItem: {
         marginRight: SIZE(8),
         alignItems: "center",
-        height: SIZE(230),
+        height: SIZE(240),
     },
     animePoster: {
-        width: SIZE(140),
-        height: SIZE(180),
+        width: SIZE(130),
+        height: SIZE(190),
         borderRadius: SIZE(10),
     },
     animeName: {
         marginTop: SIZE(5),
         textAlign: "center",
-        width: SIZE(140),
+        width: SIZE(130),
         fontSize: SIZE(12),
         color: Colors.light.tabIconSelected,
     },

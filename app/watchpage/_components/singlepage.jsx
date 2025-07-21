@@ -27,6 +27,7 @@ import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SIZES } from "../../../constants/Constants";
 import WebViewPlayer from "./WebViewPlayer";
+import { StatusBar } from "expo-status-bar";
 
 const SinglePage = () => {
     const blurhash =
@@ -297,6 +298,7 @@ const SinglePage = () => {
                     : Constants.statusBarHeight,
             }}
         >
+            <StatusBar style="auto" backgroundColor={Colors.dark.background} />
             {!videoLoading && videoData ? (
                 <VideoPlayer
                     videoUrl={videoData.sources[0].url}

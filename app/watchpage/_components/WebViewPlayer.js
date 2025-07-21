@@ -6,6 +6,7 @@ import WebView from "react-native-webview";
 import { SIZE } from "../../../constants/Constants";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
+import { useFullscreen } from "../../../hooks/FullScreenContext";
 
 const WebViewPlayer = ({
     route,
@@ -22,6 +23,7 @@ const WebViewPlayer = ({
     const webViewRef = useRef(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const wasPlayingRef = useRef(false);
+    const { setIsFullscreenContext } = useFullscreen();
 
     useEffect(() => {
         const animeData = history.find(
@@ -55,6 +57,7 @@ const WebViewPlayer = ({
     }, [isFullscreen]);
 
     const onEnterFullscreen = () => {
+        setIsFullscreenContext(true);
         setIsFullscreen(true);
         ScreenOrientation.lockAsync(
             ScreenOrientation.OrientationLock.LANDSCAPE
@@ -62,6 +65,7 @@ const WebViewPlayer = ({
     };
 
     const onExitFullscreen = () => {
+        setIsFullscreenContext(false);
         setIsFullscreen(false);
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
         if (wasPlayingRef.current) {

@@ -6,7 +6,6 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -34,10 +33,10 @@ TouchableOpacity.defaultProps = {
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const [loaded] = useFonts({
-        Exo2Regular: require("../assets/fonts/BarlowCondensed-Regular.ttf"),
-        Exo2Medium: require("../assets/fonts/BarlowCondensed-Medium.ttf"),
-        Exo2SemiBold: require("../assets/fonts/BarlowCondensed-SemiBold.ttf"),
-        Exo2Bold: require("../assets/fonts/BarlowCondensed-Bold.ttf"),
+        Exo2Regular: require("../assets/fonts/RobotoCondensed-Regular.ttf"),
+        Exo2Medium: require("../assets/fonts/RobotoCondensed-Medium.ttf"),
+        Exo2SemiBold: require("../assets/fonts/RobotoCondensed-SemiBold.ttf"),
+        Exo2Bold: require("../assets/fonts/RobotoCondensed-Bold.ttf"),
     });
     const isConnected = useNetworkState();
 
@@ -141,10 +140,6 @@ export default function RootLayout() {
                                 </View>
                             </SafeAreaProvider>
                         </PaperProvider>
-                        {/* <StatusBar
-                            style="auto"
-                            backgroundColor={"translucent"}
-                        /> */}
                     </ThemeProvider>
                 </FullscreenProvider>
             </AnimeHistoryProvider>
