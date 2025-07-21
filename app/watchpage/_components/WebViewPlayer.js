@@ -5,6 +5,7 @@ import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 import WebView from "react-native-webview";
 import { SIZE } from "../../../constants/Constants";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { StatusBar } from "expo-status-bar";
 
 const WebViewPlayer = ({
     route,
@@ -133,6 +134,7 @@ const WebViewPlayer = ({
         <View
             style={isFullscreen ? styles.fullscreenContainer : styles.container}
         >
+            <StatusBar hidden={isFullscreen} style="auto" />
             {idForWebview && activeTab && (
                 <WebView
                     ref={webViewRef}
@@ -203,7 +205,7 @@ const WebViewPlayer = ({
     );
 };
 
-export default WebViewPlayer;
+export default React.memo(WebViewPlayer);
 
 const styles = StyleSheet.create({
     container: {

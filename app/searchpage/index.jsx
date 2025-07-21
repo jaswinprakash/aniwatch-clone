@@ -197,7 +197,7 @@ const SearchPage = () => {
                                     transition={1000}
                                 />
                             </View>
-                            <View style={{ width: "70%" }}>
+                            <View style={{ width: "58%" }}>
                                 <ThemedText
                                     numberOfLines={2}
                                     type="title"
@@ -422,7 +422,6 @@ const SearchPage = () => {
                     style={{
                         flex: 1,
                         justifyContent: "center",
-                        borderWidth: 1,
                         alignItems: "center",
                     }}
                 >
@@ -533,8 +532,6 @@ const styles = StyleSheet.create({
     searchContainer: {
         paddingHorizontal: SIZE(16),
         paddingBottom: SIZE(11),
-        borderBottomWidth: SIZE(0.5),
-        borderBottomColor: Colors.light.tabIconSelected,
     },
     sectionContainer: {
         marginBottom: SIZE(30),
@@ -548,15 +545,13 @@ const styles = StyleSheet.create({
     animeItem: {
         marginRight: SIZE(10),
         flexDirection: "row",
-        borderWidth: SIZE(1),
-        borderColor: Colors.light.tabIconSelected,
         borderRadius: SIZE(10),
         marginBottom: SIZE(16),
         width: "100%",
     },
     animePoster: {
-        width: SIZE(100),
-        height: SIZE(150),
+        width: SIZE(150),
+        height: SIZE(210),
         borderRadius: SIZE(10),
         marginRight: SIZE(10),
     },

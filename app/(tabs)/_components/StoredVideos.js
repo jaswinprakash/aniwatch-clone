@@ -54,7 +54,7 @@ const StoredVideos = ({ id, episode, time }) => {
         );
     }
     return (
-        <View style={{ width: "100%", marginBottom: SIZE(10) }}>
+        <View style={{ width: "100%", marginBottom: SIZE(20) }}>
             <TouchableRipple
                 onPress={() => {
                     router.navigate({
@@ -70,8 +70,6 @@ const StoredVideos = ({ id, episode, time }) => {
                 borderless={true}
                 style={{
                     borderRadius: SIZE(10),
-                    borderColor: Colors.light.tabIconSelected,
-                    borderWidth: SIZE(1),
                 }}
             >
                 <View style={{ width: "100%" }}>

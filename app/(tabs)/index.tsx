@@ -45,46 +45,50 @@ export const HomeScreen = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View
+            <TouchableRipple
+                hitSlop={15}
+                rippleColor={Colors.dark.backgroundPress}
+                borderless={true}
+                onPress={() => {
+                    router.navigate({
+                        pathname: "searchpage",
+                    });
+                }}
                 style={{
-                    borderColor: Colors.light.tabIconSelected,
-                    height: SIZE(60),
-                    borderBottomWidth: SIZE(1),
-                    paddingRight: SIZE(16),
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                    borderTopLeftRadius: SIZE(20),
+                    borderBottomLeftRadius: SIZE(20),
+                    position: "absolute",
+                    top: SIZE(10),
+                    right: SIZE(0),
+                    zIndex: 100,
+                    backgroundColor: Colors.light.tabIconSelected,
+                    width: SIZE(40),
+                    height: SIZE(40),
+                    justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: Colors.dark.background,
+                    paddingLeft: SIZE(8),
                 }}
             >
-                <Image
-                    style={{ height: "100%", width: SIZE(180) }}
-                    source={require("@/assets/images/AnimPlay.png")}
-                />
-                <TouchableRipple
-                    hitSlop={15}
-                    rippleColor={Colors.dark.backgroundPress}
-                    borderless={true}
-                    onPress={() => {
-                        router.navigate({
-                            pathname: "searchpage",
-                        });
+                <MaterialIcons
+                    name="search"
+                    size={SIZE(30)}
+                    color={Colors.dark.text}
+                    style={{
+                        textShadowColor: Colors.dark.black,
+                        textShadowOffset: {
+                            width: 1,
+                            height: 1,
+                        },
+                        textShadowRadius: 2,
                     }}
-                    style={{ borderRadius: SIZE(15) }}
-                >
-                    <MaterialIcons
-                        name="search"
-                        size={SIZE(30)}
-                        color={Colors.light.tabIconSelected}
-                    />
-                </TouchableRipple>
-            </View>
+                />
+            </TouchableRipple>
+
             {pageLoading ? (
                 <View
                     style={{
                         flex: 1,
                         justifyContent: "center",
-                        borderWidth: 1,
                         alignItems: "center",
                         backgroundColor: Colors.dark.background,
                     }}

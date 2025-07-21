@@ -23,8 +23,6 @@ const Profile = () => {
                     paddingHorizontal: SIZE(16),
                     height: SIZE(60),
                     justifyContent: "center",
-                    borderBottomWidth: SIZE(1),
-                    borderColor: Colors.light.tabIconSelected,
                     backgroundColor: Colors.dark.background,
                 }}
             >

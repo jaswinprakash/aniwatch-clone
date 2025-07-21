@@ -21,8 +21,6 @@ export default function TabLayout() {
             barStyle={{
                 backgroundColor: Colors[colorScheme ?? "light"].background,
                 height: SIZE(65),
-                borderTopWidth: SIZE(1),
-                borderTopColor: Colors.light.tabIconSelected,
             }}
             screenOptions={{ headerShown: false }} // Hide the header
         >
