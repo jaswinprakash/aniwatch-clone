@@ -188,8 +188,6 @@ const styles = StyleSheet.create({
     },
     descScroll: {
         maxHeight: SIZE(100),
-        borderWidth: SIZE(1),
-        borderColor: Colors.light.tabIconSelected,
         borderRadius: SIZE(5),
         paddingHorizontal: SIZE(5),
         backgroundColor: Colors.dark.backgroundPress,

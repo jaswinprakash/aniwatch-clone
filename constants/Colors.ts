@@ -35,7 +35,7 @@ export const Colors = {
 
 // export const Colors = {
 //     light: {
-//         text: "#E0E0E0", // Slightly softer white for better readability
+//         text: "#11181C", // Slightly softer white for better readability
 //         background: "#0D1215", // Dark slate base (darker than your current)
 //         tint: tintColorDark,
 //         icon: "#7D8B8F", // Desaturated teal-gray
@@ -46,6 +46,7 @@ export const Colors = {
 //         error: "#FF4D4D", // Brighter error red
 //         accentText: tintColorDark, // For highlighting important text
 //         border: "#1E2E24", // Dark green borders
+//         white: "#fff",
 //     },
 //     dark: {
 //         text: "#E0E0E0", // Slightly softer white for better readability

@@ -42,11 +42,11 @@ const StoredVideos = ({ id, episode, time }) => {
     if (pageLoading) {
         return (
             <SkeletonLoader
-                height={SIZE(120)}
+                height={SIZE(140)}
                 width={SIZE(100)}
                 style={{
                     width: "100%",
-                    marginBottom: SIZE(10),
+                    marginBottom: SIZE(20),
                     borderRadius: SIZE(10),
                 }}
                 backgroundColor={Colors.dark.background}
