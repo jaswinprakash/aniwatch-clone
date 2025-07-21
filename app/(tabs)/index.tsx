@@ -112,7 +112,7 @@ export const HomeScreen = () => {
                                 autoPlay
                                 autoPlayInterval={3000} // Slide every 3 seconds
                                 width={Dimensions.get("window").width}
-                                height={SIZE(200)} // Adjust height as needed
+                                height={SIZE(300)} // Adjust height as needed
                                 data={animeHomeList?.spotlightAnimes}
                                 renderItem={({ item }) => (
                                     <TouchableRipple
@@ -151,7 +151,7 @@ export const HomeScreen = () => {
                                                     style={{
                                                         color: Colors.light
                                                             .tabIconSelected,
-                                                        fontSize: SIZE(22),
+                                                        fontSize: SIZE(30),
                                                         textShadowColor:
                                                             Colors.dark.black,
                                                         textShadowOffset: {
@@ -160,7 +160,6 @@ export const HomeScreen = () => {
                                                         },
                                                         textShadowRadius:
                                                             SIZE(2),
-                                                        lineHeight: SIZE(24),
                                                         padding: SIZE(5),
                                                     }}
                                                     type="title"
@@ -288,7 +287,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     reactLogo: {
         width: "100%",
-        height: SIZE(200),
+        height: SIZE(300),
     },
     animeInfo: {
         fontSize: SIZE(12),
@@ -297,7 +296,7 @@ const styles = StyleSheet.create({
     },
     carouselContainer: {
         width: "100%",
-        height: SIZE(200), // Adjust height as needed
+        height: SIZE(300), // Adjust height as needed
     },
     carouselImage: {
         width: "100%",

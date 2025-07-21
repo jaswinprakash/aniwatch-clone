@@ -378,6 +378,7 @@ const VideoPlayer = ({
                                 color: Colors.light.white,
                                 fontFamily: "Exo2Regular",
                                 marginBottom: SIZE(3),
+                                lineHeight: SIZE(18),
                             }}
                             containerStyle={{
                                 position: "absolute",

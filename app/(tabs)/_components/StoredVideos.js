@@ -7,12 +7,15 @@ import { Colors } from "@/constants/Colors";
 import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import FastImage from "@d11/react-native-fast-image";
+import { Image } from "expo-image";
 import { useDispatch } from "react-redux";
 import { deletePlayback } from "@/store/playbackSlice";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 
 const StoredVideos = ({ id, episode, time }) => {
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
     const [animeInfo, setAnimeInfo] = useState();
     const [pageLoading, setPageLoading] = useState(true);
     const dispatch = useDispatch();
@@ -39,11 +42,11 @@ const StoredVideos = ({ id, episode, time }) => {
     if (pageLoading) {
         return (
             <SkeletonLoader
-                height={SIZE(152)}
+                height={SIZE(120)}
                 width={SIZE(100)}
                 style={{
                     width: "100%",
-                    marginBottom: SIZE(16),
+                    marginBottom: SIZE(10),
                     borderRadius: SIZE(10),
                 }}
                 backgroundColor={Colors.dark.background}
@@ -51,7 +54,7 @@ const StoredVideos = ({ id, episode, time }) => {
         );
     }
     return (
-        <View style={{ width: "100%", marginBottom: SIZE(16) }}>
+        <View style={{ width: "100%", marginBottom: SIZE(10) }}>
             <TouchableRipple
                 onPress={() => {
                     router.navigate({
@@ -74,12 +77,12 @@ const StoredVideos = ({ id, episode, time }) => {
                 <View style={{ width: "100%" }}>
                     <View style={styles.main}>
                         <View style={styles.leftContent}>
-                            <FastImage
+                            <Image
                                 style={styles.imageContainer}
-                                source={{
-                                    uri: animeInfo?.anime?.info?.poster,
-                                    priority: FastImage.priority.high,
-                                }}
+                                source={{ uri: animeInfo?.anime?.info?.poster }}
+                                placeholder={{ blurhash }}
+                                contentFit="cover"
+                                transition={1000}
                             />
                         </View>
                         <View
@@ -91,7 +94,7 @@ const StoredVideos = ({ id, episode, time }) => {
                             <View style={styles.rightContent}>
                                 <ThemedText
                                     type="title"
-                                    numberOfLines={1}
+                                    numberOfLines={2}
                                     style={{
                                         color: Colors.light.tabIconSelected,
                                         fontSize: SIZE(20),
@@ -104,6 +107,8 @@ const StoredVideos = ({ id, episode, time }) => {
                                     style={{
                                         color: Colors.light.tabIconSelected,
                                         fontSize: SIZE(15),
+                                        bottom: SIZE(30),
+                                        position: "absolute",
                                     }}
                                 >
                                     Episode - {episode}
@@ -113,7 +118,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                     style={{
                                         color: Colors.light.tabIconSelected,
                                         fontSize: SIZE(15),
-                                        bottom: SIZE(65),
+                                        bottom: SIZE(10),
                                         position: "absolute",
                                     }}
                                 >
@@ -128,8 +133,9 @@ const StoredVideos = ({ id, episode, time }) => {
                                 rippleColor={Colors.dark.backgroundPress}
                                 borderless={true}
                                 style={{
-                                    justifyContent: "center",
-                                    alignSelf: "center",
+                                    position: "absolute",
+                                    bottom: SIZE(10),
+                                    right: SIZE(40),
                                     borderRadius: SIZE(5),
                                 }}
                             >
@@ -157,7 +163,7 @@ const styles = StyleSheet.create({
     },
     leftContent: {
         width: SIZE(100),
-        height: SIZE(150),
+        height: SIZE(120),
         borderRadius: SIZE(10),
         marginRight: SIZE(10),
     },
@@ -166,6 +172,7 @@ const styles = StyleSheet.create({
         borderRadius: SIZE(10),
     },
     rightContent: {
-        width: "65%",
+        width: "80%",
+        gap: SIZE(5),
     },
 });

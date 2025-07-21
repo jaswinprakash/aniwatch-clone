@@ -18,7 +18,7 @@ import { SIZE } from "@/constants/Constants";
 import { TextInput, TouchableRipple } from "react-native-paper";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import Constants from "expo-constants";
-import FastImage from "@d11/react-native-fast-image";
+import { Image } from "expo-image";
 import VideoLoader from "./VideoLoader";
 import ServerTab from "./ServerTab";
 import DropDownTab from "./DropDownTab";
@@ -29,6 +29,9 @@ import { SIZES } from "../../../constants/Constants";
 import WebViewPlayer from "./WebViewPlayer";
 
 const SinglePage = () => {
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
     const { isFullscreenContext } = useFullscreen();
     const route = useRoute();
     const [episodes, setEpisodes] = useState([]);
@@ -351,7 +354,7 @@ const SinglePage = () => {
                                 Unable to play please try again later
                             </ThemedText>
                         )}
-                        <FastImage
+                        <Image
                             style={[
                                 styles.fastImage,
                                 {
@@ -361,7 +364,9 @@ const SinglePage = () => {
                                 },
                             ]}
                             source={{ uri: animeInfo?.anime?.info?.poster }}
-                            resizeMode="contain"
+                            placeholder={{ blurhash }}
+                            contentFit="contain"
+                            transition={1000}
                         />
                         {videoLoading && (
                             <VideoLoader selectedEpisode={selectedEpisode} />
@@ -557,6 +562,7 @@ const SinglePage = () => {
                                         fonts: {
                                             bodyLarge: {
                                                 fontFamily: "Exo2Medium",
+                                                paddingBottom: SIZE(5),
                                                 fontSize: SIZE(10),
                                             },
                                         },
@@ -708,10 +714,12 @@ const styles = StyleSheet.create({
     placeholderStyle: {
         color: Colors.light.tabIconSelected,
         fontFamily: "Exo2Regular",
+        lineHeight: SIZE(18),
     },
     selectedTextStyle: {
         color: Colors.light.tabIconSelected,
         fontFamily: "Exo2Regular",
+        lineHeight: SIZE(18),
     },
     dropdownContainer: {
         borderColor: Colors.light.tabIconSelected,
@@ -730,6 +738,7 @@ const styles = StyleSheet.create({
     itemText: {
         color: Colors.light.tabIconSelected,
         fontFamily: "Exo2Regular",
+        lineHeight: SIZE(18),
     },
     selectedItemText: {
         color: Colors.light.white,

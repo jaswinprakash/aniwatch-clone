@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "../../components/ThemedText";
 import { FlashList } from "@shopify/flash-list";
-import FastImage from "@d11/react-native-fast-image";
+import { Image } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import FilterModal from "./_components/FilterModal";
@@ -20,6 +20,9 @@ import AppliedFilters from "./_components/AppliedFilters";
 import LottieView from "lottie-react-native";
 
 const SearchPage = () => {
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [searchLoading, setSearchLoading] = useState(false);
@@ -184,12 +187,14 @@ const SearchPage = () => {
                             }}
                         >
                             <View>
-                                <FastImage
+                                <Image
+                                    style={styles.animePoster}
                                     source={{
                                         uri: item.poster,
-                                        priority: FastImage.priority.normal,
                                     }}
-                                    style={styles.animePoster}
+                                    placeholder={{ blurhash }}
+                                    contentFit="cover"
+                                    transition={1000}
                                 />
                             </View>
                             <View style={{ width: "70%" }}>
@@ -366,6 +371,7 @@ const SearchPage = () => {
                             bodyLarge: {
                                 fontFamily: "Exo2Medium",
                                 fontSize: SIZE(10),
+                                paddingBottom: SIZE(5),
                             },
                         },
                     }}

@@ -36,25 +36,25 @@ export function ThemedText({
 const styles = StyleSheet.create({
     default: {
         fontSize: SIZE(16),
-        lineHeight: SIZE(24),
+        lineHeight: SIZE(18),
         fontFamily: "Exo2Regular",
     },
     defaultSemiBold: {
         fontSize: SIZE(16),
-        lineHeight: SIZE(24),
+        lineHeight: SIZE(18),
         fontFamily: "Exo2SemiBold",
     },
     title: {
         fontSize: SIZE(32),
-        lineHeight: SIZE(32),
         fontFamily: "Exo2Bold",
     },
     subtitle: {
-        fontSize: SIZE(20),
+        fontSize: SIZE(18),
         fontFamily: "Exo2Bold",
+        lineHeight: SIZE(18),
     },
     link: {
-        lineHeight: SIZE(30),
+        lineHeight: SIZE(18),
         fontSize: SIZE(16),
         fontFamily: "Exo2Regular",
         color: "#0a7ea4",

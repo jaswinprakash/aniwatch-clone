@@ -1,7 +1,7 @@
 import { StyleSheet, View, ScrollView, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import FastImage from "@d11/react-native-fast-image";
+import { Image } from "expo-image";
 import { SIZE } from "../../constants/Constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Colors";
@@ -18,6 +18,9 @@ import RenderAnime from "../(tabs)/_components/RenderAnime";
 import LottieView from "lottie-react-native";
 
 const InfoPage = () => {
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
     const route = useRoute();
     const [animeInfo, setAnimeInfo] = useState(null);
     const [qTip, setQtip] = useState(null);
@@ -88,16 +91,22 @@ const InfoPage = () => {
     }
     const renderVoiceActorItem = ({ item }) => (
         <View style={styles.voiceActorItem}>
-            <FastImage
-                source={{ uri: item.character.poster }}
+            <Image
                 style={styles.characterImage}
+                source={{ uri: item.character.poster }}
+                placeholder={{ blurhash }}
+                contentFit="cover"
+                transition={1000}
             />
             <ThemedText type="subtitle" style={styles.characterName}>
                 {item.character.name}
             </ThemedText>
-            <FastImage
-                source={{ uri: item.voiceActor.poster }}
+            <Image
                 style={styles.voiceActorImage}
+                source={{ uri: item.voiceActor.poster }}
+                placeholder={{ blurhash }}
+                contentFit="cover"
+                transition={1000}
             />
             <ThemedText type="subtitle" style={styles.voiceActorName}>
                 {item.voiceActor.name}

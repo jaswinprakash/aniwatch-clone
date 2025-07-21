@@ -6,13 +6,15 @@ import LottieView from "lottie-react-native";
 import { SIZE } from "../../../constants/Constants";
 import { TouchableRipple } from "react-native-paper";
 import { FlashList } from "@shopify/flash-list";
-import FastImage from "@d11/react-native-fast-image";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 
 const RenderAnime = ({ title, data, info, setAnimeId }) => {
     const [imageLoading, setImageLoading] = useState(true);
     if (!data) return null;
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
     return (
         <ThemedView style={styles.sectionContainer}>
@@ -58,14 +60,12 @@ const RenderAnime = ({ title, data, info, setAnimeId }) => {
                                         }}
                                     />
                                 )}
-                                <FastImage
-                                    source={{
-                                        uri: item.poster,
-                                        priority: FastImage.priority.high,
-                                    }}
+                                <Image
                                     style={styles.animePoster}
-                                    onLoadStart={() => setImageLoading(true)}
-                                    onLoadEnd={() => setImageLoading(false)}
+                                    source={{ uri: item.poster }}
+                                    placeholder={{ blurhash }}
+                                    contentFit="cover"
+                                    transition={1000}
                                 />
                             </>
                         </TouchableRipple>
@@ -88,8 +88,8 @@ export default RenderAnime;
 
 const styles = StyleSheet.create({
     sectionContainer: {
-        marginBottom: SIZE(30),
-        height: SIZE(260),
+        marginBottom: SIZE(10),
+        height: SIZE(230),
     },
     sectionTitle: {
         fontSize: SIZE(20),
@@ -97,19 +97,19 @@ const styles = StyleSheet.create({
         color: Colors.light.tabIconSelected,
     },
     animeItem: {
-        marginRight: SIZE(10),
+        marginRight: SIZE(8),
         alignItems: "center",
-        height: SIZE(260),
+        height: SIZE(230),
     },
     animePoster: {
-        width: SIZE(150),
-        height: SIZE(220),
+        width: SIZE(140),
+        height: SIZE(180),
         borderRadius: SIZE(10),
     },
     animeName: {
         marginTop: SIZE(5),
         textAlign: "center",
-        width: SIZE(120),
+        width: SIZE(140),
         fontSize: SIZE(12),
         color: Colors.light.tabIconSelected,
     },
