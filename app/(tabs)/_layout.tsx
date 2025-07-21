@@ -15,7 +15,7 @@ export default function TabLayout() {
     return (
         <MaterialTabs.Navigator
             sceneAnimationEnabled={true}
-            sceneAnimationType="shifting"
+            sceneAnimationType="fade"
             activeColor={Colors[colorScheme ?? "light"].tint}
             inactiveColor="#607d8b"
             barStyle={{

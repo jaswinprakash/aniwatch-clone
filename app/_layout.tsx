@@ -127,9 +127,12 @@ export default function RootLayout() {
                     >
                         <PaperProvider>
                             <SafeAreaProvider>
-                                <View style={{ flex: 1 }}>
+                                <View style={{backgroundColor: Colors.dark.background, flex: 1 }}>
                                     <Stack
-                                        screenOptions={{ headerShown: false }}
+                                        screenOptions={{
+                                            headerShown: false,
+                                            animation: "fade",
+                                        }}
                                     >
                                         <Stack.Screen
                                             name="(tabs)"
