@@ -45,8 +45,8 @@ const FilterModal = ({
                                             selectedCategory === category.id
                                                 ? Colors.dark.backgroundPress
                                                 : "transparent",
-                                        borderRadius: SIZE(10),
-                                        padding: SIZE(10),
+                                        borderRadius: SIZE(8),
+                                        padding: SIZE(8),
                                         borderWidth: SIZE(1),
                                         borderColor:
                                             Colors.light.tabIconSelected,
@@ -99,8 +99,8 @@ const FilterModal = ({
                                         )
                                             ? Colors.dark.backgroundPress
                                             : "transparent",
-                                        borderRadius: SIZE(10),
-                                        padding: SIZE(10),
+                                        borderRadius: SIZE(8),
+                                        padding: SIZE(8),
                                         borderWidth: SIZE(1),
                                         borderColor:
                                             Colors.light.tabIconSelected,

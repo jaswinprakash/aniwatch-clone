@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
         fontSize: SIZE(12),
         color: Colors.light.tabIconSelected,
         marginRight: SIZE(4),
+        lineHeight: SIZE(13),
     },
     removeIcon: {
         borderRadius: SIZE(12),

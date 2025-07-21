@@ -445,19 +445,14 @@ const SearchPage = () => {
                 isVisible={filterModalVisible}
                 onBackdropPress={() => {
                     setFilterModalVisible(false);
-                    // handleFilter("clear");
                 }}
                 onBackButtonPress={() => {
                     setFilterModalVisible(false);
-                    // handleFilter("clear");
                 }}
-                propagateSwipe={true}
                 useNativeDriverForBackdrop={true}
-                useNativeDriver={false}
-                animationIn={"slideInUp"}
-                animationOut={"slideOutDown"}
-                animationInTiming={500}
-                animationOutTiming={500}
+                useNativeDriver={true}
+                animationIn={"fadeInUp"}
+                animationOut={"fadeOutDown"}
                 style={{
                     margin: 0,
                     justifyContent: "flex-end",
