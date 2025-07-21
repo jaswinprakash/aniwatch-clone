@@ -441,7 +441,7 @@ const VideoPlayer = ({
                                     quality={true}
                                 />
                             )}
-                            {showSubtitleList && (
+                            {showSubtitleList && subtitlesData && (
                                 <SubModal
                                     data={subtitlesData}
                                     handleChange={(item) =>

@@ -6,7 +6,7 @@ import {
     Text,
     ToastAndroid,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { apiConfig } from "../../../AxiosConfig";
 import { FlashList } from "@shopify/flash-list";
@@ -26,6 +26,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SIZES } from "../../../constants/Constants";
+import WebViewPlayer from "./WebViewPlayer";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -49,6 +50,7 @@ const SinglePage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState(false);
+    const [idForWebview, setIdForWebview] = useState(null);
 
     const getEpisodes = async () => {
         try {
@@ -136,12 +138,10 @@ const SinglePage = () => {
                         }, 1000)
                     );
 
-                if (streamResponse?.data?.data?.sources.length === 0) {
-                    setTimeout(() => {
-                        setError(true);
-                    }, 1000);
-                    return;
-                }
+                // console.log(streamResponse, "streamResponse");
+
+                const episodeId = id.split("?ep=")[1];
+                setIdForWebview(episodeId);
 
                 setVideoData(streamResponse.data.data);
 
@@ -261,6 +261,7 @@ const SinglePage = () => {
             setSearchResults([]);
         }
     };
+
     if (pageLoading) {
         return (
             <SafeAreaView
@@ -312,6 +313,24 @@ const SinglePage = () => {
                     setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
                     animeId={route?.params?.id}
                 />
+            ) : !videoLoading && !videoData ? (
+                <View
+                    style={{
+                        height: SIZE(250),
+                        width: "100%",
+                        backgroundColor: "#000",
+                    }}
+                >
+                    <WebViewPlayer
+                        idForWebview={idForWebview}
+                        activeTab={activeTab}
+                        route={route}
+                        episodes={episodes}
+                        selectedEpisode={selectedEpisode}
+                        setSelectedEpisode={setSelectedEpisode}
+                        startStream={startStream}
+                    />
+                </View>
             ) : (
                 <ThemedView style={styles.imageContainer}>
                     <ImageBackground
