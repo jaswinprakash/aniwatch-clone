@@ -170,8 +170,7 @@ const InfoPage = () => {
                             style={{
                                 flexDirection: "row",
                                 alignItems: "center",
-                                borderColor: Colors.light.tabIconSelected,
-                                borderWidth: SIZE(1),
+                                backgroundColor: Colors.light.tabIconSelected,
                                 borderRadius: SIZE(6),
                                 height: SIZE(40),
                                 justifyContent: "center",
@@ -180,7 +179,15 @@ const InfoPage = () => {
                             <MaterialIcons
                                 name="play-circle-outline"
                                 size={SIZE(20)}
-                                color={Colors.light.tabIconSelected}
+                                color={Colors.light.white}
+                                style={{
+                                    textShadowColor: Colors.dark.black,
+                                    textShadowOffset: {
+                                        width: 1,
+                                        height: 1,
+                                    },
+                                    textShadowRadius: 2,
+                                }}
                             />
                             <ThemedText type="subtitle" style={styles.playText}>
                                 {playbackInfo
@@ -224,8 +231,8 @@ const InfoPage = () => {
                         {qTip?.anime?.episodes?.sub && (
                             <View
                                 style={{
-                                    borderWidth: SIZE(1),
-                                    borderColor: Colors.light.tabIconSelected,
+                                    backgroundColor:
+                                        Colors.light.tabIconSelected,
                                     borderRadius: SIZE(6),
                                     height: SIZE(40),
                                     paddingHorizontal: SIZE(10),
@@ -235,7 +242,13 @@ const InfoPage = () => {
                             >
                                 <ThemedText
                                     style={{
-                                        color: Colors.light.tabIconSelected,
+                                        color: Colors.light.white,
+                                        textShadowColor: Colors.dark.black,
+                                        textShadowOffset: {
+                                            width: 1,
+                                            height: 1,
+                                        },
+                                        textShadowRadius: 2,
                                     }}
                                 >
                                     SUB : {qTip?.anime?.episodes?.sub}
@@ -245,8 +258,8 @@ const InfoPage = () => {
                         {qTip?.anime?.episodes?.dub && (
                             <View
                                 style={{
-                                    borderWidth: SIZE(1),
-                                    borderColor: Colors.light.tabIconSelected,
+                                    backgroundColor:
+                                        Colors.light.tabIconSelected,
                                     borderRadius: SIZE(6),
                                     height: SIZE(40),
                                     paddingHorizontal: SIZE(10),
@@ -256,7 +269,13 @@ const InfoPage = () => {
                             >
                                 <ThemedText
                                     style={{
-                                        color: Colors.light.tabIconSelected,
+                                        color: Colors.light.white,
+                                        textShadowColor: Colors.dark.black,
+                                        textShadowOffset: {
+                                            width: 1,
+                                            height: 1,
+                                        },
+                                        textShadowRadius: 2,
                                     }}
                                 >
                                     DUB : {qTip?.anime?.episodes?.dub}
@@ -308,8 +327,14 @@ const styles = StyleSheet.create({
     },
     playText: {
         fontSize: SIZE(13),
-        color: Colors.light.tabIconSelected,
+        color: Colors.light.white,
         marginLeft: SIZE(5),
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: {
+            width: 1,
+            height: 1,
+        },
+        textShadowRadius: 2,
     },
     episodeContainer: {
         flexDirection: "row",

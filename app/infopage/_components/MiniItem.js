@@ -9,8 +9,7 @@ const MIniItem = ({ data }) => {
         <View
             style={{
                 borderRadius: SIZE(5),
-                borderWidth: SIZE(1),
-                borderColor: Colors.light.tabIconSelected,
+                backgroundColor: Colors.light.tabIconSelected,
                 height: SIZE(30),
                 minWidth: SIZE(30),
                 paddingHorizontal: SIZE(5),
@@ -22,7 +21,14 @@ const MIniItem = ({ data }) => {
                 type="subtitle"
                 style={{
                     fontSize: SIZE(12),
-                    color: Colors.light.tabIconSelected,
+                    color: Colors.light.white,
+                    textShadowColor: Colors.dark.black,
+                    textShadowOffset: {
+                        width: 1,
+                        height: 1,
+                    },
+                    textShadowRadius: 2,
+                    lineHeight: SIZE(13),
                 }}
             >
                 {data}

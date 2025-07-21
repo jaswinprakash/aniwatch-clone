@@ -45,44 +45,46 @@ export const HomeScreen = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <TouchableRipple
-                hitSlop={15}
-                rippleColor={Colors.dark.backgroundPress}
-                borderless={true}
-                onPress={() => {
-                    router.navigate({
-                        pathname: "searchpage",
-                    });
-                }}
-                style={{
-                    borderTopLeftRadius: SIZE(20),
-                    borderBottomLeftRadius: SIZE(20),
-                    position: "absolute",
-                    top: SIZE(10),
-                    right: SIZE(0),
-                    zIndex: 100,
-                    backgroundColor: Colors.light.tabIconSelected,
-                    width: SIZE(40),
-                    height: SIZE(40),
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingLeft: SIZE(8),
-                }}
-            >
-                <MaterialIcons
-                    name="search"
-                    size={SIZE(30)}
-                    color={Colors.dark.text}
-                    style={{
-                        textShadowColor: Colors.dark.black,
-                        textShadowOffset: {
-                            width: 1,
-                            height: 1,
-                        },
-                        textShadowRadius: 2,
+            {!pageLoading && (
+                <TouchableRipple
+                    hitSlop={15}
+                    rippleColor={Colors.dark.backgroundPress}
+                    borderless={true}
+                    onPress={() => {
+                        router.navigate({
+                            pathname: "searchpage",
+                        });
                     }}
-                />
-            </TouchableRipple>
+                    style={{
+                        borderTopLeftRadius: SIZE(20),
+                        borderBottomLeftRadius: SIZE(20),
+                        position: "absolute",
+                        top: SIZE(10),
+                        right: SIZE(0),
+                        zIndex: 100,
+                        backgroundColor: Colors.light.tabIconSelected,
+                        width: SIZE(40),
+                        height: SIZE(40),
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingLeft: SIZE(8),
+                    }}
+                >
+                    <MaterialIcons
+                        name="search"
+                        size={SIZE(30)}
+                        color={Colors.dark.text}
+                        style={{
+                            textShadowColor: Colors.dark.black,
+                            textShadowOffset: {
+                                width: 1,
+                                height: 1,
+                            },
+                            textShadowRadius: 2,
+                        }}
+                    />
+                </TouchableRipple>
+            )}
 
             {pageLoading ? (
                 <View

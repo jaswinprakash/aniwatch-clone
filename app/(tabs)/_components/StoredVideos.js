@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     },
     leftContent: {
         width: SIZE(100),
-        height: SIZE(120),
+        height: SIZE(140),
         borderRadius: SIZE(10),
         marginRight: SIZE(10),
     },

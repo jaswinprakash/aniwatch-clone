@@ -695,6 +695,12 @@ const styles = StyleSheet.create({
     },
     episodeText: {
         fontSize: SIZE(16),
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: {
+            width: 1,
+            height: 1,
+        },
+        textShadowRadius: 2,
     },
 
     subTabContainer: {
@@ -744,6 +750,13 @@ const styles = StyleSheet.create({
     },
     selectedItemText: {
         color: Colors.light.white,
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: {
+            width: 1,
+            height: 1,
+        },
+        textShadowRadius: 2,
+        fontFamily: "Exo2Regular",
     },
     errorText: {
         color: Colors.light.error,

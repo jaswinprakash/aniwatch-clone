@@ -366,8 +366,9 @@ const SearchPage = () => {
                     onChangeText={(text) => handleSearch("search", text)}
                     outlineStyle={{
                         borderColor: Colors.light.tabIconSelected,
-                        borderRadius: SIZE(10),
+                        borderRadius: SIZE(8),
                         fontSize: SIZE(10),
+                        borderWidth: SIZE(1),
                     }}
                     outlineColor={Colors.light.tabIconSelected}
                     textColor={Colors.light.tabIconSelected}
@@ -519,8 +520,8 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     animePoster: {
-        width: SIZE(130),
-        height: SIZE(190),
+        width: SIZE(120),
+        height: SIZE(170),
         borderRadius: SIZE(10),
         marginRight: SIZE(10),
     },
