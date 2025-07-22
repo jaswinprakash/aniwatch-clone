@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-    View,
-    Image,
-    StyleSheet,
-    ActivityIndicator,
-    Dimensions,
-    ImageBackground,
-} from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { apiConfig } from "../../AxiosConfig";
 import { router } from "expo-router";
@@ -20,9 +13,12 @@ import RenderAnime from "./_components/RenderAnime";
 import Carousel from "react-native-reanimated-carousel";
 import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
-import { ThemedView } from "@/components/ThemedView";
+import { ImageBackground } from "expo-image";
 
 export const HomeScreen = () => {
+    const blurhash =
+        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
     const [animeHomeList, setAnimeHomeList] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
     const [imageLoading, setImageLoading] = useState(true);
@@ -136,9 +132,11 @@ export const HomeScreen = () => {
                                         }}
                                     >
                                         <ImageBackground
+                                            style={[styles.carouselImage]}
                                             source={{ uri: item.poster }}
-                                            style={styles.carouselImage}
-                                            resizeMode="cover"
+                                            contentFit="cover"
+                                            placeholder={{ blurhash }}
+                                            transition={1000}
                                         >
                                             <LinearGradient
                                                 colors={[

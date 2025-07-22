@@ -7,6 +7,7 @@ import { SIZE } from "../../../constants/Constants";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
+import { useKeepAwake } from "expo-keep-awake";
 
 const WebViewPlayer = ({
     route,
@@ -25,6 +26,7 @@ const WebViewPlayer = ({
     const wasPlayingRef = useRef(false);
     const { setIsFullscreenContext } = useFullscreen();
 
+    useKeepAwake(isFullscreen ? "fullscreen-video" : undefined);
     useEffect(() => {
         const animeData = history.find(
             (item) =>
