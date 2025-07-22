@@ -5,6 +5,7 @@ import {
     ImageBackground,
     Text,
     Image,
+    Switch,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
@@ -26,7 +27,7 @@ import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SIZES } from "../../constants/Constants";
 import WebViewPlayer from "./_components/WebViewPlayer";
-import { StatusBar } from "expo-status-bar";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -51,6 +52,7 @@ const SinglePage = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState(false);
     const [idForWebview, setIdForWebview] = useState(null);
+    const [webviewOn, setWebviewOn] = useState(false);
 
     const getEpisodes = async () => {
         try {
@@ -142,11 +144,7 @@ const SinglePage = () => {
                     .get(
                         `/api/stream?id=${id}&server=${activeSubTab}&type=${activeTab}`
                     )
-                    .catch((error) =>
-                        setTimeout(() => {
-                            setError(true);
-                        }, 1000)
-                    );
+                    .catch((error) => {});
 
                 const streamingData =
                     streamResponseTwo.data.results.streamingLink;
@@ -291,6 +289,10 @@ const SinglePage = () => {
         }
     };
 
+    const toggleSwitch = () => {
+        setWebviewOn(!webviewOn);
+    };
+
     if (pageLoading) {
         return (
             <SafeAreaView
@@ -326,43 +328,45 @@ const SinglePage = () => {
         >
             {/* <StatusBar style="auto" backgroundColor={Colors.dark.background} /> */}
             {!videoLoading && videoData ? (
-                <VideoPlayer
-                    videoUrl={videoData.sources[0].url}
-                    // subtitlesData={videoData?.tracks?.filter(
-                    //     (track) => track?.lang
-                    // )}
-                    subtitlesData={videoData?.tracks}
-                    onLoadStart={() => setVideoLoading(true)}
-                    onReadyForDisplay={() => setVideoLoading(false)}
-                    availableQualities={availableQualities}
-                    title={animeInfo?.anime?.info?.name}
-                    selectedEpisode={selectedEpisode}
-                    episodes={episodes}
-                    setSelectedEpisode={setSelectedEpisode}
-                    selectedEpisodeId={selectedEpisodeId}
-                    currentPlayingEpisodeId={currentPlayingEpisodeId}
-                    startStream={startStream}
-                    setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
-                    animeId={route?.params?.id}
-                />
-            ) : !videoLoading && !videoData ? (
-                <View
-                    style={{
-                        height: SIZE(250),
-                        width: "100%",
-                        backgroundColor: "#000",
-                    }}
-                >
-                    <WebViewPlayer
-                        idForWebview={idForWebview}
-                        activeTab={activeTab}
-                        route={route}
-                        episodes={episodes}
+                !webviewOn ? (
+                    <VideoPlayer
+                        videoUrl={videoData.sources[0].url}
+                        // subtitlesData={videoData?.tracks?.filter(
+                        //     (track) => track?.lang
+                        // )}
+                        subtitlesData={videoData?.tracks}
+                        onLoadStart={() => setVideoLoading(true)}
+                        onReadyForDisplay={() => setVideoLoading(false)}
+                        availableQualities={availableQualities}
+                        title={animeInfo?.anime?.info?.name}
                         selectedEpisode={selectedEpisode}
+                        episodes={episodes}
                         setSelectedEpisode={setSelectedEpisode}
+                        selectedEpisodeId={selectedEpisodeId}
+                        currentPlayingEpisodeId={currentPlayingEpisodeId}
                         startStream={startStream}
+                        setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
+                        animeId={route?.params?.id}
                     />
-                </View>
+                ) : (
+                    <View
+                        style={{
+                            height: SIZE(250),
+                            width: "100%",
+                            backgroundColor: "#000",
+                        }}
+                    >
+                        <WebViewPlayer
+                            idForWebview={idForWebview}
+                            activeTab={activeTab}
+                            route={route}
+                            episodes={episodes}
+                            selectedEpisode={selectedEpisode}
+                            setSelectedEpisode={setSelectedEpisode}
+                            startStream={startStream}
+                        />
+                    </View>
+                )
             ) : (
                 <ThemedView style={styles.imageContainer}>
                     <ImageBackground
@@ -562,6 +566,31 @@ const SinglePage = () => {
                                     iconColor={Colors.light.tabIconSelected}
                                 />
                             </View>
+                            <View>
+                                <MaterialCommunityIcons
+                                    name={
+                                        webviewOn ? "web-check" : "web-remove"
+                                    }
+                                    size={SIZE(20)}
+                                    color={webviewOn ? "#3AFF6F" : "#f44336"}
+                                    style={{ alignSelf: "center" }}
+                                />
+                                <Switch
+                                    trackColor={{
+                                        false: "#f44336",
+                                        true: "#3AFF6F",
+                                    }}
+                                    thumbColor={
+                                        webviewOn
+                                            ? Colors.light.tabIconSelected
+                                            : "#fff"
+                                    }
+                                    ios_backgroundColor="#3e3e3e"
+                                    onValueChange={toggleSwitch}
+                                    value={webviewOn}
+                                />
+                            </View>
+
                             <View>
                                 <TextInput
                                     contentStyle={{
