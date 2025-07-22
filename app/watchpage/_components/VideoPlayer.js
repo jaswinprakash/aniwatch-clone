@@ -20,7 +20,8 @@ import SubModal from "./SubModal";
 import Controls from "./Controls";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { TouchableRipple } from "react-native-paper";
 
 const VideoPlayer = ({
     videoUrl,
@@ -34,6 +35,8 @@ const VideoPlayer = ({
     animeId,
     currentPlayingEpisodeId,
     setCurrentPlayingEpisodeId,
+    intro,
+    outro,
 }) => {
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
@@ -45,7 +48,7 @@ const VideoPlayer = ({
     const [duration, setDuration] = useState(0);
     const [showSubtitleList, setShowSubtitleList] = useState(false);
     const [selectedSubtitle, setSelectedSubtitle] = useState(
-        subtitlesData.find((sub) => sub?.label?.toLowerCase() === "English") ||
+        subtitlesData.find((sub) => sub?.label?.toLowerCase() === "english") ||
             subtitlesData[0] ||
             null
     );
@@ -67,9 +70,33 @@ const VideoPlayer = ({
     const history = useAnimeHistory();
     const [initialLoad, setInitialLoad] = useState(true);
     const [subSyncValue, setSubSyncValue] = useState(0.2);
+    const [showSkipIntro, setShowSkipIntro] = useState(false);
+    const [showSkipOutro, setShowSkipOutro] = useState(false);
 
     const toggleControls = () => {
         setShowControls((prev) => !prev);
+    };
+
+    const checkForIntroOutro = (currentTime) => {
+        if (intro && currentTime >= intro.start && currentTime <= intro.end) {
+            setShowSkipIntro(true);
+        } else {
+            setShowSkipIntro(false);
+        }
+
+        if (outro && currentTime >= outro.start && currentTime <= outro.end) {
+            setShowSkipOutro(true);
+        } else {
+            setShowSkipOutro(false);
+        }
+    };
+
+    const skipSegment = (segment) => {
+        if (segment === "intro" && intro) {
+            videoRef.current.seek(intro.end);
+        } else if (segment === "outro" && outro) {
+            videoRef.current.seek(outro.end);
+        }
     };
 
     useEffect(() => {
@@ -212,6 +239,7 @@ const VideoPlayer = ({
     const onProgress = useRef(
         throttle((data) => {
             if (!isSeeking) {
+                checkForIntroOutro(data.currentTime);
                 const currentTime = data.currentTime;
                 setCurrentTime(currentTime);
                 throttledUpdate(animeId, selectedEpisode, currentTime);
@@ -463,6 +491,30 @@ const VideoPlayer = ({
                                 handleSet={() => setShowSubtitleList(false)}
                                 selectedItem={selectedSubtitle}
                             />
+                        )}
+                        {(showSkipIntro || showSkipOutro) && (
+                            <TouchableRipple
+                                rippleColor={Colors.dark.backgroundPress}
+                                borderless={true}
+                                style={{
+                                    borderRadius: SIZE(24),
+                                    position: "absolute",
+                                    bottom: SIZE(80),
+                                    right: SIZE(20),
+                                }}
+                                hitSlop={20}
+                                onPress={() => {
+                                    showSkipIntro
+                                        ? skipSegment("intro")
+                                        : skipSegment("outro");
+                                }}
+                            >
+                                <MaterialCommunityIcons
+                                    name="skip-forward"
+                                    size={SIZE(40)}
+                                    color={Colors.light.tabIconSelected}
+                                />
+                            </TouchableRipple>
                         )}
                     </View>
                 </View>

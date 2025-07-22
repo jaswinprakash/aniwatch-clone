@@ -144,7 +144,11 @@ const SinglePage = () => {
                     .get(
                         `/api/stream?id=${id}&server=${activeSubTab}&type=${activeTab}`
                     )
-                    .catch((error) => {});
+                    .catch((error) => {
+                        setTimeout(() => {
+                            setError(true);
+                        }, 1000);
+                    });
 
                 const streamingData =
                     streamResponseTwo.data.results.streamingLink;
@@ -154,6 +158,17 @@ const SinglePage = () => {
                     originalUrl
                 )}`;
 
+                const validSubtitleTracks = (streamingData.tracks || []).filter(
+                    (track) => {
+                        return (
+                            track?.kind === "captions" &&
+                            track?.file &&
+                            !track?.file.includes("thumbnails") &&
+                            track?.file.endsWith(".vtt")
+                        );
+                    }
+                );
+
                 const videoData = {
                     sources: [
                         {
@@ -161,7 +176,7 @@ const SinglePage = () => {
                             quality: "auto",
                         },
                     ],
-                    tracks: streamingData.tracks || [],
+                    tracks: validSubtitleTracks,
                     intro: streamingData.intro,
                     outro: streamingData.outro,
                 };
@@ -177,9 +192,9 @@ const SinglePage = () => {
                 }
             } catch (error) {
                 console.log(error, "axios error - stream");
-                setTimeout(() => {
-                    setError(true);
-                }, 1000);
+                // setTimeout(() => {
+                //     setError(true);
+                // }, 1000);
             } finally {
                 setVideoLoading(false);
             }
@@ -335,6 +350,8 @@ const SinglePage = () => {
                         //     (track) => track?.lang
                         // )}
                         subtitlesData={videoData?.tracks}
+                        intro={videoData?.intro}
+                        outro={videoData?.outro}
                         onLoadStart={() => setVideoLoading(true)}
                         onReadyForDisplay={() => setVideoLoading(false)}
                         availableQualities={availableQualities}
