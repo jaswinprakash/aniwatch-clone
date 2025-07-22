@@ -1,27 +1,18 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Image, ImageBackground } from "react-native";
+import { useEffect, useState } from "react";
 import { apiConfig } from "../../AxiosConfig";
-import { SIZE, SIZES } from "../../constants/Constants";
+import { SIZE } from "../../constants/Constants";
 import { Colors } from "../../constants/Colors";
-import {
-    ActivityIndicator,
-    TextInput,
-    TouchableRipple,
-} from "react-native-paper";
+import { ActivityIndicator, TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FlashList } from "@shopify/flash-list";
-import { Image, ImageBackground } from "expo-image";
-import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import { useRoute } from "@react-navigation/native";
 
 const ListPage = () => {
-    const blurhash =
-        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
     const route = useRoute();
     const [currentPage, setCurrentPage] = useState(1);
     const [hasNextPage, setHasNextPage] = useState(false);
@@ -152,10 +143,8 @@ const ListPage = () => {
                                     { backgroundColor: "rgba(0, 0, 0, 0.2)" },
                                 ]}
                                 source={{ uri: item.poster }}
-                                contentFit="cover"
-                                blurRadius={1}
-                                placeholder={{ blurhash }}
-                                transition={1000}
+                                blurRadius={2}
+                                resizeMode="cover"
                             >
                                 <View
                                     style={{
@@ -169,9 +158,7 @@ const ListPage = () => {
                                             source={{
                                                 uri: item.poster,
                                             }}
-                                            placeholder={{ blurhash }}
-                                            contentFit="cover"
-                                            transition={1000}
+                                            resizeMode="cover"
                                         />
                                     </View>
                                     <View style={{ width: "64%" }}>

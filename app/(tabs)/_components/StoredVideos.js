@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image, ImageBackground } from "react-native";
 import React, { useEffect, useState } from "react";
 import { apiConfig } from "@/AxiosConfig";
 import { ThemedText } from "@/components/ThemedText";
@@ -7,15 +7,11 @@ import { Colors } from "@/constants/Colors";
 import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Image, ImageBackground } from "expo-image";
 import { useDispatch } from "react-redux";
 import { deletePlayback } from "@/store/playbackSlice";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 
 const StoredVideos = ({ id, episode, time }) => {
-    const blurhash =
-        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
     const [animeInfo, setAnimeInfo] = useState();
     const [pageLoading, setPageLoading] = useState(true);
     const dispatch = useDispatch();
@@ -78,10 +74,8 @@ const StoredVideos = ({ id, episode, time }) => {
                         { backgroundColor: "rgba(0, 0, 0, 0.2)" },
                     ]}
                     source={{ uri: animeInfo?.anime?.info?.poster }}
-                    contentFit="cover"
-                    blurRadius={1}
-                    placeholder={{ blurhash }}
-                    transition={1000}
+                    resizeMode="cover"
+                    blurRadius={2}
                 >
                     <View style={{ width: "100%" }}>
                         <View style={styles.main}>
@@ -91,9 +85,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                     source={{
                                         uri: animeInfo?.anime?.info?.poster,
                                     }}
-                                    placeholder={{ blurhash }}
-                                    contentFit="cover"
-                                    transition={1000}
+                                    resizeMode="cover"
                                 />
                             </View>
                             <View

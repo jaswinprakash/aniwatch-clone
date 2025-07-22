@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { ThemedView } from "../../../components/ThemedView";
 import { ThemedText } from "../../../components/ThemedText";
@@ -8,13 +8,10 @@ import { TouchableRipple } from "react-native-paper";
 import { FlashList } from "@shopify/flash-list";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
-import { Image } from "expo-image";
 
 const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
     const [imageLoading, setImageLoading] = useState(true);
     if (!data) return null;
-    const blurhash =
-        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
     return (
         <ThemedView style={styles.sectionContainer}>
@@ -81,9 +78,10 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
                                 <Image
                                     style={styles.animePoster}
                                     source={{ uri: item.poster }}
-                                    placeholder={{ blurhash }}
-                                    contentFit="cover"
-                                    transition={1000}
+                                    resizeMode="cover"
+                                    onLoadEnd={() => {
+                                        setImageLoading(false);
+                                    }}
                                 />
                             </>
                         </TouchableRipple>

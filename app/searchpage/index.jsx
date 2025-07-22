@@ -1,7 +1,13 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+    ScrollView,
+    StyleSheet,
+    Image,
+    ImageBackground,
+    View,
+} from "react-native";
+import { useEffect, useState } from "react";
 import { apiConfig } from "../../AxiosConfig";
-import { SIZE, SIZES } from "../../constants/Constants";
+import { SIZE } from "../../constants/Constants";
 import { Colors } from "../../constants/Colors";
 import {
     ActivityIndicator,
@@ -11,7 +17,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "../../components/ThemedText";
 import { FlashList } from "@shopify/flash-list";
-import { Image, ImageBackground } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import FilterModal from "./_components/FilterModal";
@@ -20,9 +25,6 @@ import AppliedFilters from "./_components/AppliedFilters";
 import LottieView from "lottie-react-native";
 
 const SearchPage = () => {
-    const blurhash =
-        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [searchLoading, setSearchLoading] = useState(false);
@@ -224,10 +226,8 @@ const SearchPage = () => {
                                 { backgroundColor: "rgba(0, 0, 0, 0.2)" },
                             ]}
                             source={{ uri: item.poster }}
-                            contentFit="cover"
-                            blurRadius={1}
-                            placeholder={{ blurhash }}
-                            transition={1000}
+                            resizeMode="cover"
+                            blurRadius={2}
                         >
                             <View
                                 style={{
@@ -241,9 +241,7 @@ const SearchPage = () => {
                                         source={{
                                             uri: item.poster,
                                         }}
-                                        placeholder={{ blurhash }}
-                                        contentFit="cover"
-                                        transition={1000}
+                                        resizeMode="cover"
                                     />
                                 </View>
                                 <View style={{ width: "64%" }}>

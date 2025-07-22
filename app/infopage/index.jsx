@@ -1,12 +1,10 @@
-import { StyleSheet, View, ScrollView, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, View, ScrollView, FlatList, Image } from "react-native";
+import { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import { Image } from "expo-image";
 import { SIZE } from "../../constants/Constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/Colors";
 import { apiConfig } from "../../AxiosConfig";
-import { FlashList } from "@shopify/flash-list";
 import { ThemedText } from "../../components/ThemedText";
 import { TouchableRipple } from "react-native-paper";
 import Spotlight from "./_components/Spotlight";
@@ -18,9 +16,6 @@ import RenderAnime from "../(tabs)/_components/RenderAnime";
 import LottieView from "lottie-react-native";
 
 const InfoPage = () => {
-    const blurhash =
-        "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
     const route = useRoute();
     const [animeInfo, setAnimeInfo] = useState(null);
     const [qTip, setQtip] = useState(null);
@@ -94,9 +89,7 @@ const InfoPage = () => {
             <Image
                 style={styles.characterImage}
                 source={{ uri: item.character.poster }}
-                placeholder={{ blurhash }}
-                contentFit="cover"
-                transition={1000}
+                resizeMode="cover"
             />
             <ThemedText type="subtitle" style={styles.characterName}>
                 {item.character.name}
@@ -104,9 +97,7 @@ const InfoPage = () => {
             <Image
                 style={styles.voiceActorImage}
                 source={{ uri: item.voiceActor.poster }}
-                placeholder={{ blurhash }}
-                contentFit="cover"
-                transition={1000}
+                resizeMode="cover"
             />
             <ThemedText type="subtitle" style={styles.voiceActorName}>
                 {item.voiceActor.name}

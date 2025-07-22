@@ -44,7 +44,7 @@ const VideoPlayer = ({
     const [duration, setDuration] = useState(0);
     const [showSubtitleList, setShowSubtitleList] = useState(false);
     const [selectedSubtitle, setSelectedSubtitle] = useState(
-        subtitlesData.find((sub) => sub?.lang?.toLowerCase() === "English") ||
+        subtitlesData.find((sub) => sub?.label?.toLowerCase() === "English") ||
             subtitlesData[0] ||
             null
     );
@@ -278,185 +278,181 @@ const VideoPlayer = ({
     };
 
     return (
-        <>
+        <View style={[styles.container, isFullScreen && styles.fullScreen]}>
             <StatusBar hidden={isFullScreen} style="auto" />
-            <View style={[styles.container, isFullScreen && styles.fullScreen]}>
-                <TouchableWithoutFeedback
-                    onPress={(event) => handleDoubleTap(event)}
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                >
-                    <View style={styles.videoContainer}>
-                        {isLoading && (
+            <TouchableWithoutFeedback
+                onPress={(event) => handleDoubleTap(event)}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+            >
+                <View style={styles.videoContainer}>
+                    {isLoading && (
+                        <ActivityIndicator
+                            size={"large"}
+                            color={Colors.light.tabIconSelected}
+                            style={styles.loader}
+                        />
+                    )}
+                    {showBackwardIndicator && (
+                        <View
+                            style={[styles.skipIndicator, { left: SIZE(50) }]}
+                        >
+                            <MaterialIcons
+                                name="replay-10"
+                                size={SIZE(30)}
+                                color={Colors.light.tabIconSelected}
+                            />
+                        </View>
+                    )}
+                    {showForwardIndicator && (
+                        <View
+                            style={[styles.skipIndicator, { right: SIZE(50) }]}
+                        >
+                            <MaterialIcons
+                                name="forward-10"
+                                size={SIZE(30)}
+                                color={Colors.light.tabIconSelected}
+                            />
+                        </View>
+                    )}
+
+                    <Video
+                        onBuffer={(data) => {
+                            if (data.isBuffering) {
+                                setIsLoading(true);
+                            } else {
+                                setIsLoading(false);
+                            }
+                        }}
+                        ref={videoRef}
+                        source={{
+                            uri: videoUrl,
+                            type: "m3u8",
+                            bufferConfig: {
+                                minBufferMs: 15000,
+                                maxBufferMs: 30000,
+                                bufferForPlaybackMs: 2500,
+                                bufferForPlaybackAfterRebufferMs: 5000,
+                            },
+                            // headers: {
+                            //     Referer: "https://megaplay.buzz/",
+                            //     "User-Agent":
+                            //         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                            // },
+                        }}
+                        style={styles.video}
+                        paused={!isPlaying}
+                        onLoad={onLoad}
+                        onProgress={onProgress}
+                        resizeMode="contain"
+                        renderLoader={() => (
                             <ActivityIndicator
                                 size={"large"}
                                 color={Colors.light.tabIconSelected}
                                 style={styles.loader}
                             />
                         )}
-                        {showBackwardIndicator && (
-                            <View
-                                style={[
-                                    styles.skipIndicator,
-                                    { left: SIZE(50) },
-                                ]}
-                            >
-                                <MaterialIcons
-                                    name="replay-10"
-                                    size={SIZE(30)}
-                                    color={Colors.light.tabIconSelected}
-                                />
-                            </View>
-                        )}
-                        {showForwardIndicator && (
-                            <View
-                                style={[
-                                    styles.skipIndicator,
-                                    { right: SIZE(50) },
-                                ]}
-                            >
-                                <MaterialIcons
-                                    name="forward-10"
-                                    size={SIZE(30)}
-                                    color={Colors.light.tabIconSelected}
-                                />
-                            </View>
-                        )}
+                        selectedVideoTrack={{
+                            type:
+                                selectedQuality === "auto"
+                                    ? "auto"
+                                    : "resolution",
+                            value:
+                                selectedQuality === "auto"
+                                    ? undefined
+                                    : selectedQuality,
+                        }}
+                        onEnd={nextEpisode}
+                    />
+                    <Subtitles
+                        textStyle={{
+                            fontSize: SIZE(18),
+                            backgroundColor: "transparent",
+                            color: Colors.light.white,
+                            fontFamily: "Exo2Regular",
+                            marginBottom: SIZE(3),
+                            textShadowColor: Colors.dark.black,
+                            textShadowOffset: {
+                                width: 2,
+                                height: 2,
+                            },
+                            textShadowRadius: 3,
+                        }}
+                        containerStyle={{
+                            position: "absolute",
+                            bottom: SIZE(20),
+                            zIndex: 1000,
+                            alignSelf: "center",
+                            justifyContent: "center",
+                            paddingHorizontal: SIZE(5),
+                            borderRadius: SIZE(5),
+                            backgroundColor: "transparent",
+                        }}
+                        currentTime={currentTime + 0.2}
+                        selectedsubtitle={{
+                            file: selectedSubtitle?.file,
+                        }}
+                    />
 
-                        <Video
-                            onBuffer={(data) => {
-                                if (data.isBuffering) {
-                                    setIsLoading(true);
-                                } else {
-                                    setIsLoading(false);
-                                }
-                            }}
-                            ref={videoRef}
-                            source={{
-                                uri: videoUrl,
-                                type: "m3u8",
-                                bufferConfig: {
-                                    minBufferMs: 15000,
-                                    maxBufferMs: 30000,
-                                    bufferForPlaybackMs: 2500,
-                                    bufferForPlaybackAfterRebufferMs: 5000,
-                                },
-                                headers: {
-                                    Referer: "https://megacloud.club/",
-                                    "User-Agent": "AnimPlay/1.0",
-                                },
-                            }}
-                            style={styles.video}
-                            paused={!isPlaying}
-                            onLoad={onLoad}
+                    <View
+                        style={[
+                            styles.controlsOverlay,
+                            {
+                                backgroundColor: showControls
+                                    ? "rgba(0, 0, 0, 0.5)"
+                                    : null,
+                            },
+                        ]}
+                    >
+                        <Controls
+                            showControls={showControls}
+                            toggleFullScreen={toggleFullScreen}
+                            isFullScreen={isFullScreen}
+                            router={router}
+                            showQualityList={showQualityList}
+                            setShowQualityList={setShowQualityList}
+                            setShowSubtitleList={setShowSubtitleList}
+                            skip={skip}
+                            togglePlayPause={togglePlayPause}
+                            formatTime={formatTime}
+                            isSeeking={isSeeking}
+                            seekPosition={seekPosition}
+                            currentTime={currentTime}
+                            setIsSeeking={setIsSeeking}
+                            setSeekPosition={setSeekPosition}
+                            setCurrentTime={setCurrentTime}
+                            videoRef={videoRef}
+                            duration={duration}
+                            showSubtitleList={showSubtitleList}
+                            selectedSubtitle={selectedSubtitle}
+                            title={title}
+                            selectedEpisode={selectedEpisode}
+                            isPlaying={isPlaying}
+                            nextEpisode={nextEpisode}
+                            prevEpisode={prevEpisode}
                             onProgress={onProgress}
-                            resizeMode="contain"
-                            renderLoader={() => (
-                                <ActivityIndicator
-                                    size={"large"}
-                                    color={Colors.light.tabIconSelected}
-                                    style={styles.loader}
-                                />
-                            )}
-                            selectedVideoTrack={{
-                                type:
-                                    selectedQuality === "auto"
-                                        ? "auto"
-                                        : "resolution",
-                                value:
-                                    selectedQuality === "auto"
-                                        ? undefined
-                                        : selectedQuality,
-                            }}
-                            onEnd={nextEpisode}
-                            pic
                         />
-                        <Subtitles
-                            textStyle={{
-                                fontSize: SIZE(16),
-                                backgroundColor: "transparent",
-                                color: Colors.light.white,
-                                fontFamily: "Exo2Regular",
-                                marginBottom: SIZE(3),
-                                lineHeight: SIZE(18),
-                            }}
-                            containerStyle={{
-                                position: "absolute",
-                                bottom: SIZE(20),
-                                zIndex: 1000,
-                                alignSelf: "center",
-                                justifyContent: "center",
-                                paddingHorizontal: SIZE(5),
-                                borderRadius: SIZE(5),
-                            }}
-                            currentTime={currentTime + 0.1}
-                            selectedsubtitle={{
-                                file: selectedSubtitle?.url,
-                            }}
-                        />
-
-                        <View
-                            style={[
-                                styles.controlsOverlay,
-                                {
-                                    backgroundColor: showControls
-                                        ? "rgba(0, 0, 0, 0.5)"
-                                        : null,
-                                },
-                            ]}
-                        >
-                            <Controls
-                                showControls={showControls}
-                                toggleFullScreen={toggleFullScreen}
-                                isFullScreen={isFullScreen}
-                                router={router}
-                                showQualityList={showQualityList}
-                                setShowQualityList={setShowQualityList}
-                                setShowSubtitleList={setShowSubtitleList}
-                                skip={skip}
-                                togglePlayPause={togglePlayPause}
-                                formatTime={formatTime}
-                                isSeeking={isSeeking}
-                                seekPosition={seekPosition}
-                                currentTime={currentTime}
-                                setIsSeeking={setIsSeeking}
-                                setSeekPosition={setSeekPosition}
-                                setCurrentTime={setCurrentTime}
-                                videoRef={videoRef}
-                                duration={duration}
-                                showSubtitleList={showSubtitleList}
-                                selectedSubtitle={selectedSubtitle}
-                                title={title}
-                                selectedEpisode={selectedEpisode}
-                                isPlaying={isPlaying}
-                                nextEpisode={nextEpisode}
-                                prevEpisode={prevEpisode}
-                                onProgress={onProgress}
+                        {showQualityList && (
+                            <SubModal
+                                data={availableQualities}
+                                handleChange={(item) => changeQuality(item)}
+                                handleSet={() => setShowQualityList(false)}
+                                selectedItem={selectedQuality}
+                                quality={true}
                             />
-                            {showQualityList && (
-                                <SubModal
-                                    data={availableQualities}
-                                    handleChange={(item) => changeQuality(item)}
-                                    handleSet={() => setShowQualityList(false)}
-                                    selectedItem={selectedQuality}
-                                    quality={true}
-                                />
-                            )}
-                            {showSubtitleList && subtitlesData && (
-                                <SubModal
-                                    data={subtitlesData}
-                                    handleChange={(item) =>
-                                        selectSubtitle(item)
-                                    }
-                                    handleSet={() => setShowSubtitleList(false)}
-                                    selectedItem={selectedSubtitle}
-                                />
-                            )}
-                        </View>
+                        )}
+                        {showSubtitleList && subtitlesData && (
+                            <SubModal
+                                data={subtitlesData}
+                                handleChange={(item) => selectSubtitle(item)}
+                                handleSet={() => setShowSubtitleList(false)}
+                                selectedItem={selectedSubtitle}
+                            />
+                        )}
                     </View>
-                </TouchableWithoutFeedback>
-            </View>
-        </>
+                </View>
+            </TouchableWithoutFeedback>
+        </View>
     );
 };
 

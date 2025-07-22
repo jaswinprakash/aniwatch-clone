@@ -4,11 +4,11 @@ import {
     View,
     ImageBackground,
     Text,
-    ToastAndroid,
+    Image,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import { apiConfig } from "../../../AxiosConfig";
+import { apiConfig, streamApi } from "../../../AxiosConfig";
 import { FlashList } from "@shopify/flash-list";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -18,7 +18,6 @@ import { SIZE } from "@/constants/Constants";
 import { TextInput, TouchableRipple } from "react-native-paper";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import Constants from "expo-constants";
-import { Image } from "expo-image";
 import VideoLoader from "./VideoLoader";
 import ServerTab from "./ServerTab";
 import DropDownTab from "./DropDownTab";
@@ -142,12 +141,41 @@ const SinglePage = () => {
                         }, 1000)
                     );
 
-                // console.log(streamResponse, "streamResponse");
+                const streamResponseTwo = await streamApi
+                    .get(
+                        `/api/stream?id=${id}&server=${activeSubTab}&type=${activeTab}`
+                    )
+                    .catch((error) =>
+                        setTimeout(() => {
+                            setError(true);
+                        }, 1000)
+                    );
+
+                const streamingData =
+                    streamResponseTwo.data.results.streamingLink;
+
+                const originalUrl = streamingData.link.file;
+                const proxyUrl = `https://m3u8-woad.vercel.app/m3u8-proxy?url=${encodeURIComponent(
+                    originalUrl
+                )}`;
+
+                const videoData = {
+                    sources: [
+                        {
+                            url: proxyUrl,
+                            quality: "auto",
+                        },
+                    ],
+                    tracks: streamingData.tracks || [],
+                    intro: streamingData.intro,
+                    outro: streamingData.outro,
+                };
 
                 const episodeId = id.split("?ep=")[1];
                 setIdForWebview(episodeId);
 
-                setVideoData(streamResponse.data.data);
+                // setVideoData(streamResponse.data.data);
+                setVideoData(videoData);
 
                 if (currentPlayingEpisodeId !== id) {
                     setCurrentPlayingEpisodeId(id);
@@ -302,9 +330,10 @@ const SinglePage = () => {
             {!videoLoading && videoData ? (
                 <VideoPlayer
                     videoUrl={videoData.sources[0].url}
-                    subtitlesData={videoData?.tracks?.filter(
-                        (track) => track?.lang
-                    )}
+                    // subtitlesData={videoData?.tracks?.filter(
+                    //     (track) => track?.lang
+                    // )}
+                    subtitlesData={videoData?.tracks}
                     onLoadStart={() => setVideoLoading(true)}
                     onReadyForDisplay={() => setVideoLoading(false)}
                     availableQualities={availableQualities}
@@ -366,9 +395,7 @@ const SinglePage = () => {
                                 },
                             ]}
                             source={{ uri: animeInfo?.anime?.info?.poster }}
-                            placeholder={{ blurhash }}
-                            contentFit="contain"
-                            transition={1000}
+                            resizeMode="contain"
                         />
                         {videoLoading && (
                             <VideoLoader selectedEpisode={selectedEpisode} />
@@ -642,7 +669,7 @@ const SinglePage = () => {
     );
 };
 
-export default  React.memo(SinglePage);
+export default React.memo(SinglePage);
 
 const styles = StyleSheet.create({
     container: {
