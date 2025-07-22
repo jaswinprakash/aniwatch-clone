@@ -130,7 +130,7 @@ const VideoPlayer = ({
                 ),
                 NavigationBar.setVisibilityAsync("visible"),
                 NavigationBar.setBehaviorAsync("default"),
-                NavigationBar.setBackgroundColorAsync(Colors.dark.black),
+                NavigationBar.setBackgroundColorAsync(Colors.dark.background),
             ]);
         }
     };
@@ -142,7 +142,7 @@ const VideoPlayer = ({
             );
             NavigationBar.setVisibilityAsync("visible");
             NavigationBar.setBehaviorAsync("default");
-            NavigationBar.setBackgroundColorAsync(Colors.dark.black);
+            NavigationBar.setBackgroundColorAsync(Colors.dark.background);
         };
     }, []);
 
