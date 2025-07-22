@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     },
     sectionLink: {
         fontSize: SIZE(14),
-        color: Colors.light.tabIconSelected,
+        color: Colors.light.white,
         marginBottom: SIZE(10),
     },
     animeItem: {
