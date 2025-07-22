@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, ImageBackground } from "react-native";
+import { StyleSheet, View, Image, ImageBackground, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { apiConfig } from "@/AxiosConfig";
 import { ThemedText } from "@/components/ThemedText";
@@ -10,10 +10,16 @@ import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import { deletePlayback } from "@/store/playbackSlice";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
-
+import CustomAlert from "./CustomAlert";
 const StoredVideos = ({ id, episode, time }) => {
     const [animeInfo, setAnimeInfo] = useState();
     const [pageLoading, setPageLoading] = useState(true);
+    const [showAlert, setShowAlert] = useState(false);
+
+    const handleDelete = () => {
+        setShowAlert(true);
+    };
+
     const dispatch = useDispatch();
     const getAnimeInfo = async () => {
         try {
@@ -149,7 +155,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                 <TouchableRipple
                                     hitSlop={10}
                                     onPress={() => {
-                                        dispatch(deletePlayback(id));
+                                        handleDelete();
                                     }}
                                     rippleColor={Colors.dark.backgroundPress}
                                     borderless={true}
@@ -185,6 +191,18 @@ const StoredVideos = ({ id, episode, time }) => {
                     </View>
                 </ImageBackground>
             </TouchableRipple>
+            <CustomAlert
+                visible={showAlert}
+                title={`Delete ${animeInfo?.anime?.info?.name}?`}
+                message="Are you sure you want to delete this playback?"
+                cancelText="Cancel"
+                confirmText="Delete"
+                onCancel={() => setShowAlert(false)}
+                onConfirm={() => {
+                    dispatch(deletePlayback(id));
+                    setShowAlert(false);
+                }}
+            />
         </View>
     );
 };

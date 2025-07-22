@@ -22,6 +22,7 @@ import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { TouchableRipple } from "react-native-paper";
+import { ThemedText } from "../../../components/ThemedText";
 
 const VideoPlayer = ({
     videoUrl,
@@ -497,9 +498,8 @@ const VideoPlayer = ({
                                 rippleColor={Colors.dark.backgroundPress}
                                 borderless={true}
                                 style={{
-                                    borderRadius: SIZE(24),
                                     position: "absolute",
-                                    bottom: SIZE(80),
+                                    bottom: SIZE(100),
                                     right: SIZE(20),
                                 }}
                                 hitSlop={20}
@@ -509,11 +509,23 @@ const VideoPlayer = ({
                                         : skipSegment("outro");
                                 }}
                             >
-                                <MaterialCommunityIcons
-                                    name="skip-forward"
-                                    size={SIZE(40)}
-                                    color={Colors.light.tabIconSelected}
-                                />
+                                <View>
+                                    <MaterialCommunityIcons
+                                        name="skip-forward"
+                                        size={SIZE(40)}
+                                        color={Colors.light.tabIconSelected}
+                                    />
+                                    <ThemedText
+                                        style={{
+                                            fontSize: SIZE(12),
+                                            color: Colors.light.tabIconSelected,
+                                        }}
+                                    >
+                                        {showSkipIntro
+                                            ? "Skip Intro"
+                                            : "Skip Outro"}
+                                    </ThemedText>
+                                </View>
                             </TouchableRipple>
                         )}
                     </View>

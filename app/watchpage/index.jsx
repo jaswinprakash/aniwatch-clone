@@ -134,11 +134,11 @@ const SinglePage = () => {
                     .get(
                         `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
                     )
-                    .catch((error) =>
-                        setTimeout(() => {
-                            setError(true);
-                        }, 1000)
-                    );
+                    .catch((error) => {
+                        // setTimeout(() => {
+                        //     setError(true);
+                        // }, 1000)
+                    });
 
                 const streamResponseTwo = await streamApi
                     .get(
@@ -190,13 +190,14 @@ const SinglePage = () => {
                 if (currentPlayingEpisodeId !== id) {
                     setCurrentPlayingEpisodeId(id);
                 }
+                setVideoLoading(false);
             } catch (error) {
                 console.log(error, "axios error - stream");
                 // setTimeout(() => {
                 //     setError(true);
                 // }, 1000);
             } finally {
-                setVideoLoading(false);
+                // setVideoLoading(false);
             }
         },
         [activeSubTab, activeTab, currentPlayingEpisodeId]
