@@ -8,7 +8,7 @@ import Animated, {
     withTiming,
     Easing,
 } from "react-native-reanimated";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { ThemedText } from "../../../components/ThemedText";
 import { Slider } from "@miblanchard/react-native-slider";
 import { TouchableRipple } from "react-native-paper";
@@ -40,6 +40,8 @@ const Controls = ({
     nextEpisode,
     prevEpisode,
     onProgress,
+    handleSubtitleSync,
+    subSyncValue,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
@@ -118,7 +120,7 @@ const Controls = ({
                             color={Colors.light.tabIconSelected}
                         />
                     </TouchableRipple>
-                    <View style={{ width: "80%" }}>
+                    <View style={{ width: "72%" }}>
                         <ThemedText
                             numberOfLines={1}
                             type="title"
@@ -144,26 +146,91 @@ const Controls = ({
                         </ThemedText>
                     </View>
                 </View>
-                <TouchableRipple
-                    rippleColor={Colors.dark.backgroundPress}
-                    borderless={true}
-                    style={{ borderRadius: SIZE(24) }}
-                    hitSlop={10}
-                    onPress={() => {
-                        if (showQualityList) {
-                            setShowQualityList(false);
-                        } else {
-                            setShowQualityList(true);
-                        }
-                        setShowSubtitleList(false);
-                    }}
-                >
-                    <MaterialIcons
-                        name="high-quality"
-                        size={SIZE(24)}
-                        color={Colors.light.tabIconSelected}
-                    />
-                </TouchableRipple>
+                <View>
+                    <TouchableRipple
+                        rippleColor={Colors.dark.backgroundPress}
+                        borderless={true}
+                        style={{ borderRadius: SIZE(24) }}
+                        hitSlop={10}
+                        onPress={() => {
+                            if (showQualityList) {
+                                setShowQualityList(false);
+                            } else {
+                                setShowQualityList(true);
+                            }
+                            setShowSubtitleList(false);
+                        }}
+                    >
+                        <MaterialIcons
+                            name="high-quality"
+                            size={SIZE(24)}
+                            color={Colors.light.tabIconSelected}
+                        />
+                    </TouchableRipple>
+                    <View
+                        style={{
+                            position: "absolute",
+                            right: SIZE(50),
+                            gap: SIZE(10),
+                            bottom: SIZE(-10),
+                            flexDirection: "row",
+                            alignItems: "center",
+                        }}
+                    >
+                        <TouchableRipple
+                            rippleColor={Colors.dark.backgroundPress}
+                            borderless={true}
+                            style={{ borderRadius: SIZE(24) }}
+                            hitSlop={20}
+                            onPress={() => {
+                                handleSubtitleSync("+");
+                            }}
+                        >
+                            <FontAwesome
+                                name="plus-circle"
+                                size={SIZE(24)}
+                                color={Colors.light.tabIconSelected}
+                            />
+                        </TouchableRipple>
+                        <View>
+                            <ThemedText
+                                type="subtitle"
+                                style={{
+                                    color: Colors.light.tabIconSelected,
+                                    fontSize: SIZE(15),
+                                    textAlign: "center",
+                                    marginBottom: SIZE(-5),
+                                }}
+                            >
+                                {subSyncValue}
+                            </ThemedText>
+                            <ThemedText
+                                type="subtitle"
+                                style={{
+                                    color: Colors.light.tabIconSelected,
+                                    fontSize: SIZE(8),
+                                }}
+                            >
+                                Sub Sync
+                            </ThemedText>
+                        </View>
+                        <TouchableRipple
+                            rippleColor={Colors.dark.backgroundPress}
+                            borderless={true}
+                            style={{ borderRadius: SIZE(24) }}
+                            hitSlop={20}
+                            onPress={() => {
+                                handleSubtitleSync("-");
+                            }}
+                        >
+                            <FontAwesome
+                                name="minus-circle"
+                                size={SIZE(24)}
+                                color={Colors.light.tabIconSelected}
+                            />
+                        </TouchableRipple>
+                    </View>
+                </View>
             </Animated.View>
             {/* Play/Pause and Skip Buttons */}
             <Animated.View
@@ -335,7 +402,7 @@ const Controls = ({
     );
 };
 
-export default  React.memo(Controls);
+export default React.memo(Controls);
 
 const styles = StyleSheet.create({
     centerControls: {

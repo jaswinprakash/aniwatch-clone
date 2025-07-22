@@ -39,6 +39,7 @@ const VideoPlayer = ({
     const { setIsFullscreenContext } = useFullscreen();
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [showControls, setShowControls] = useState(true);
+    const [controlsTimeout, setControlsTimeout] = useState(null);
     const [isPlaying, setIsPlaying] = useState(true);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -65,6 +66,7 @@ const VideoPlayer = ({
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
     const [initialLoad, setInitialLoad] = useState(true);
+    const [subSyncValue, setSubSyncValue] = useState(0.2);
 
     const toggleControls = () => {
         setShowControls((prev) => !prev);
@@ -77,6 +79,13 @@ const VideoPlayer = ({
             );
         };
     }, []);
+
+    const handleSubtitleSync = (data) => {
+        setSubSyncValue((prev) => {
+            const newValue = data === "+" ? prev + 0.1 : prev - 0.1;
+            return parseFloat(newValue.toFixed(1));
+        });
+    };
 
     useEffect(() => {
         const backAction = () => {
@@ -392,7 +401,7 @@ const VideoPlayer = ({
                             borderRadius: SIZE(5),
                             backgroundColor: "transparent",
                         }}
-                        currentTime={currentTime + 0.2}
+                        currentTime={currentTime + subSyncValue}
                         selectedsubtitle={{
                             file: selectedSubtitle?.file,
                         }}
@@ -435,6 +444,8 @@ const VideoPlayer = ({
                             nextEpisode={nextEpisode}
                             prevEpisode={prevEpisode}
                             onProgress={onProgress}
+                            handleSubtitleSync={handleSubtitleSync}
+                            subSyncValue={subSyncValue}
                         />
                         {showQualityList && (
                             <SubModal
