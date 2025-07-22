@@ -287,6 +287,7 @@ const InfoPage = () => {
                             keyExtractor={(item) => item.character.id}
                             horizontal
                             showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ paddingHorizontal: SIZE(16) }}
                         />
                     </View>
                 )}
@@ -308,13 +309,13 @@ export default InfoPage;
 const styles = StyleSheet.create({
     relatedAnimesContainer: {
         marginTop: SIZE(16),
-        paddingHorizontal: SIZE(16),
         marginBottom: SIZE(16),
     },
     sectionTitle: {
         fontSize: SIZE(20),
         color: Colors.light.tabIconSelected,
         marginBottom: SIZE(12),
+        paddingHorizontal: SIZE(16),
     },
     playText: {
         fontSize: SIZE(13),
@@ -332,9 +333,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: SIZE(5),
     },
-    voiceActorsContainer: {
-        paddingHorizontal: SIZE(16),
-    },
+    voiceActorsContainer: {},
     voiceActorItem: {
         width: SIZE(120),
         alignItems: "center",

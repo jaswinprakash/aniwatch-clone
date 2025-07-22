@@ -17,13 +17,15 @@ import { store } from "../store/store";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AnimeHistoryProvider } from "../store/AnimeHistoryContext";
 import { apiConfig } from "@/AxiosConfig";
-import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import useNetworkState from "../hooks/NetworkState";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SIZE } from "@/constants/Constants";
 import * as NavigationBar from "expo-navigation-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 TouchableOpacity.defaultProps = {
@@ -118,38 +120,47 @@ export default function RootLayout() {
 
     return (
         <Provider store={store}>
-            <AnimeHistoryProvider>
-                <FullscreenProvider>
-                    <ThemeProvider
-                        value={
-                            colorScheme === "dark" ? DarkTheme : DefaultTheme
-                        }
-                    >
-                        <PaperProvider>
-                            <SafeAreaProvider>
-                                <View
-                                    style={{
-                                        backgroundColor: Colors.dark.background,
-                                        flex: 1,
-                                    }}
-                                >
-                                    <Stack
-                                        screenOptions={{
-                                            headerShown: false,
+            <GestureHandlerRootView>
+                <AnimeHistoryProvider>
+                    <FullscreenProvider>
+                        <ThemeProvider
+                            value={
+                                colorScheme === "dark"
+                                    ? DarkTheme
+                                    : DefaultTheme
+                            }
+                        >
+                            <PaperProvider>
+                                <SafeAreaProvider>
+                                    {/* <StatusBar
+                                        style="auto"
+                                        backgroundColor={"transparent"}
+                                    /> */}
+                                    <View
+                                        style={{
+                                            backgroundColor:
+                                                Colors.dark.background,
+                                            flex: 1,
                                         }}
                                     >
-                                        <Stack.Screen
-                                            name="(tabs)"
-                                            options={{ headerShown: false }}
-                                        />
-                                        <Stack.Screen name="+not-found" />
-                                    </Stack>
-                                </View>
-                            </SafeAreaProvider>
-                        </PaperProvider>
-                    </ThemeProvider>
-                </FullscreenProvider>
-            </AnimeHistoryProvider>
+                                        <Stack
+                                            screenOptions={{
+                                                headerShown: false,
+                                            }}
+                                        >
+                                            <Stack.Screen
+                                                name="(tabs)"
+                                                options={{ headerShown: false }}
+                                            />
+                                            <Stack.Screen name="+not-found" />
+                                        </Stack>
+                                    </View>
+                                </SafeAreaProvider>
+                            </PaperProvider>
+                        </ThemeProvider>
+                    </FullscreenProvider>
+                </AnimeHistoryProvider>
+            </GestureHandlerRootView>
         </Provider>
     );
 }

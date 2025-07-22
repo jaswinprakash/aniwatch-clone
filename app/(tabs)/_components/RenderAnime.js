@@ -41,6 +41,7 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
                 keyExtractor={(item, index) => index.toString()}
                 estimatedItemSize={50}
                 horizontal
+                contentContainerStyle={{ paddingHorizontal: SIZE(16) }}
                 renderItem={({ item }) => (
                     <View style={styles.animeItem}>
                         <TouchableRipple
@@ -105,12 +106,13 @@ export default React.memo(RenderAnime);
 const styles = StyleSheet.create({
     sectionContainer: {
         marginBottom: SIZE(10),
-        height: SIZE(240),
+        height: SIZE(251),
     },
     sectionHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        paddingHorizontal: SIZE(16),
     },
     sectionTitle: {
         fontSize: SIZE(20),

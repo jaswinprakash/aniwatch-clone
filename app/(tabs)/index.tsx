@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Dimensions, ImageBackground } from "react-native";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { apiConfig } from "../../AxiosConfig";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { TouchableRipple } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import RenderAnime from "./_components/RenderAnime";
 import Carousel from "react-native-reanimated-carousel";
 import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
+import { ScrollView } from "react-native-gesture-handler";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
@@ -141,7 +140,7 @@ export const HomeScreen = () => {
     });
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
             {!pageLoading && (
                 <TouchableRipple
                     hitSlop={15}
@@ -203,28 +202,27 @@ export const HomeScreen = () => {
                     />
                 </View>
             ) : (
-                <ParallaxScrollView
-                    headerBackgroundColor={{
-                        light: "#A1CEDC",
-                        dark: "#1D3D47",
-                    }}
-                    headerImage={
-                        <View style={styles.carouselContainer}>
-                            <Carousel
-                                loop
-                                autoPlay
-                                autoPlayInterval={3000} // Slide every 3 seconds
-                                width={Dimensions.get("window").width}
-                                height={SIZE(300)} // Adjust height as needed
-                                data={animeHomeList?.spotlightAnimes}
-                                renderItem={({ item }) => (
-                                    <CarouselItem item={item} />
-                                )}
-                            />
-                        </View>
-                    }
-                >
-                    <>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.carouselContainer}>
+                        <Carousel
+                            loop
+                            autoPlay
+                            autoPlayInterval={3000} // Slide every 3 seconds
+                            width={Dimensions.get("window").width}
+                            height={SIZE(300)} // Adjust height as needed
+                            data={animeHomeList?.spotlightAnimes}
+                            renderItem={({ item }) => (
+                                <CarouselItem item={item} />
+                            )}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            backgroundColor: Colors.dark.background,
+                            overflow: "visible",
+                            paddingTop: SIZE(20),
+                        }}
+                    >
                         <RenderAnime
                             title="Latest Episode Animes"
                             data={animeHomeList?.latestEpisodeAnimes}
@@ -260,10 +258,10 @@ export const HomeScreen = () => {
                             data={animeHomeList?.latestCompletedAnimes}
                             type="completed"
                         />
-                    </>
-                </ParallaxScrollView>
+                    </View>
+                </ScrollView>
             )}
-        </SafeAreaView>
+        </View>
     );
 };
 
