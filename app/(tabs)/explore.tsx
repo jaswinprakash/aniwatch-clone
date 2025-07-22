@@ -15,7 +15,7 @@ const Profile = () => {
     return (
         <SafeAreaView
             style={{
-                flex: 1,
+                flex: 1, backgroundColor: Colors.dark.background 
             }}
         >
             <ThemedView

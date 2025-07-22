@@ -324,7 +324,7 @@ const SinglePage = () => {
                     : Constants.statusBarHeight,
             }}
         >
-            <StatusBar style="auto" backgroundColor={Colors.dark.background} />
+            {/* <StatusBar style="auto" backgroundColor={Colors.dark.background} /> */}
             {!videoLoading && videoData ? (
                 <VideoPlayer
                     videoUrl={videoData.sources[0].url}

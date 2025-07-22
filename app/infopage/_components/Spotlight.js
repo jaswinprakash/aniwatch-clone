@@ -7,6 +7,7 @@ import { Colors } from "../../../constants/Colors";
 import { ThemedText } from "../../../components/ThemedText";
 import { ThemedView } from "../../../components/ThemedView";
 import MiniItem from "./MiniItem";
+import Constants from "expo-constants";
 
 const Spotlight = ({ animeInfo, qTip }) => {
     return (
@@ -24,12 +25,17 @@ const Spotlight = ({ animeInfo, qTip }) => {
                 />
                 <LinearGradient
                     colors={[
+                        "rgba(0, 0, 0, 0.9)",
+                        "rgba(0, 0, 0, 0.8)",
+                        "rgba(0, 0, 0, 0.7)",
                         "rgba(0, 0, 0, 0.6)",
                         "rgba(0, 0, 0, 0.5)",
                         "rgba(0, 0, 0, 0.4)",
                         "rgba(0, 0, 0, 0.3)",
                         "rgba(0, 0, 0, 0.2)",
                         "rgba(0, 0, 0, 0.1)",
+                        "rgba(0, 0, 0, 0.05)",
+                        "rgba(0, 0, 0, 0.01)",
                         "transparent",
                     ]}
                     start={{ x: 0, y: 0 }}
@@ -68,12 +74,16 @@ const Spotlight = ({ animeInfo, qTip }) => {
                 <LinearGradient
                     colors={[
                         "transparent",
-                        "rgba(0, 0, 0, 0.1)",
-                        "rgba(0, 0, 0, 0.2)",
-                        "rgba(0, 0, 0, 0.3)",
-                        "rgba(0, 0, 0, 0.4)",
-                        "rgba(0, 0, 0, 0.5)",
-                        "rgba(0, 0, 0, 0.6)",
+                        "rgba(10, 25, 41, 0.1)",
+                        "rgba(10, 25, 41, 0.2)",
+                        "rgba(10, 25, 41, 0.3)",
+                        "rgba(10, 25, 41, 0.4)",
+                        "rgba(10, 25, 41, 0.5)",
+                        "rgba(10, 25, 41, 0.6)",
+                        "rgba(10, 25, 41, 0.7)",
+                        "rgba(10, 25, 41, 0.8)",
+                        "rgba(10, 25, 41, 0.9)",
+                        "rgba(10, 25, 41, 1.0)",
                     ]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
@@ -123,7 +133,7 @@ export default React.memo(Spotlight);
 
 const styles = StyleSheet.create({
     imageContainer: {
-        height: SIZE(250),
+        height: SIZE(350),
         backgroundColor: Colors.dark.black,
         justifyContent: "center",
         alignItems: "center",
@@ -156,6 +166,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
         gap: SIZE(5),
+        marginTop: Constants.statusBarHeight - 6,
     },
     bottomGradient: {
         position: "absolute",

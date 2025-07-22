@@ -62,7 +62,7 @@ const ListPage = () => {
 
     if (pageLoading) {
         return (
-            <View
+            <SafeAreaView
                 style={{
                     flex: 1,
                     justifyContent: "center",
@@ -79,7 +79,7 @@ const ListPage = () => {
                         height: SIZE(200),
                     }}
                 />
-            </View>
+            </SafeAreaView>
         );
     }
     return (

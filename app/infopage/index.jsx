@@ -115,7 +115,7 @@ const InfoPage = () => {
         );
 
     return (
-        <SafeAreaView
+        <View
             style={{
                 flex: 1,
                 backgroundColor: Colors.dark.background,
@@ -287,7 +287,9 @@ const InfoPage = () => {
                             keyExtractor={(item) => item.character.id}
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: SIZE(16) }}
+                            contentContainerStyle={{
+                                paddingHorizontal: SIZE(16),
+                            }}
                         />
                     </View>
                 )}
@@ -300,7 +302,7 @@ const InfoPage = () => {
                     />
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 
