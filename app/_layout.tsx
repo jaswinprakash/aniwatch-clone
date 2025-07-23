@@ -130,9 +130,7 @@ export default function RootLayout() {
                         >
                             <PaperProvider>
                                 <SafeAreaProvider>
-                                    <StatusBar
-                                        style="auto"
-                                    />
+                                    <StatusBar style="auto" />
                                     <View
                                         style={{
                                             backgroundColor:

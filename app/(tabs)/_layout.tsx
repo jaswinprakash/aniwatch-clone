@@ -1,57 +1,102 @@
-import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/Colors";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { SIZE } from "@/constants/Constants";
-import HomeScreen from "./index"; // Create or import HomeScreen
-import Profile from "./explore"; // Create or import Profile
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { CommonActions } from "@react-navigation/native";
+import { BottomNavigation } from "react-native-paper";
+import Profile from "./explore";
+import HomeScreen from "./index";
 
-const MaterialTabs = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
 
     return (
-        <MaterialTabs.Navigator
-            sceneAnimationEnabled={true}
-            sceneAnimationType="shifting"
-            activeColor={Colors[colorScheme ?? "light"].tint}
-            inactiveColor="#607d8b"
-            barStyle={{
-                backgroundColor: Colors[colorScheme ?? "light"].background,
-                height: SIZE(80),
+        <Tab.Navigator
+            screenOptions={{
+                headerShown: false,
+                animation: "shift",
             }}
-            screenOptions={{ headerShown: false }} // Hide the header
+            tabBar={({ navigation, state, descriptors, insets }) => (
+                <BottomNavigation.Bar
+                    navigationState={state}
+                    safeAreaInsets={insets}
+                    activeColor={Colors[colorScheme ?? "light"].tint}
+                    inactiveColor="#607d8b"
+                    style={{
+                        backgroundColor:
+                            Colors[colorScheme ?? "light"].background,
+                        height: SIZE(80),
+                    }}
+                    onTabPress={({ route, preventDefault }) => {
+                        const event = navigation.emit({
+                            type: "tabPress",
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
+
+                        if (event.defaultPrevented) {
+                            preventDefault();
+                        } else {
+                            navigation.dispatch({
+                                ...CommonActions.navigate(
+                                    route.name,
+                                    route.params
+                                ),
+                                target: state.key,
+                            });
+                        }
+                    }}
+                    renderIcon={({ route, focused, color }) => {
+                        const { options } = descriptors[route.key];
+                        if (options.tabBarIcon) {
+                            return options.tabBarIcon({
+                                focused,
+                                color,
+                                size: SIZE(24),
+                            });
+                        }
+                        return null;
+                    }}
+                    getLabelText={({ route }) => {
+                        const { options } = descriptors[route.key];
+                        return (
+                            (options.tabBarLabel as string) ||
+                            (options.title as string) ||
+                            route.name
+                        );
+                    }}
+                    shifting={true}
+                    labeled={true}
+                />
+            )}
         >
-            <MaterialTabs.Screen
+            <Tab.Screen
                 name="Home"
-                component={HomeScreen} // Use your screen component instead of Tabs
+                component={HomeScreen}
                 options={{
                     tabBarLabel: "Home",
-                    tabBarIcon: ({ color }) => (
-                        <FontAwesome5
-                            size={SIZE(24)}
-                            name="home"
-                            color={color}
-                        />
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome5 name="home" color={color} size={size} />
                     ),
                 }}
             />
-            <MaterialTabs.Screen
+            <Tab.Screen
                 name="History"
-                component={Profile} // Use your screen component instead of Tabs
+                component={Profile}
                 options={{
                     tabBarLabel: "History",
-                    tabBarIcon: ({ color }) => (
+                    tabBarIcon: ({ color, size }) => (
                         <FontAwesome5
-                            size={SIZE(24)}
                             name="history"
                             color={color}
+                            size={size}
                         />
                     ),
                 }}
             />
-        </MaterialTabs.Navigator>
+        </Tab.Navigator>
     );
 }
