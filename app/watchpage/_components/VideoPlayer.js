@@ -23,6 +23,7 @@ import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { TouchableRipple } from "react-native-paper";
 import { ThemedText } from "../../../components/ThemedText";
+import PlayerLoader from "./PlayerLoader";
 
 const VideoPlayer = ({
     videoUrl,
@@ -38,6 +39,10 @@ const VideoPlayer = ({
     setCurrentPlayingEpisodeId,
     intro,
     outro,
+    uri,
+    videoLoading,
+    error,
+    episodeLoading,
 }) => {
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
@@ -48,11 +53,7 @@ const VideoPlayer = ({
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [showSubtitleList, setShowSubtitleList] = useState(false);
-    const [selectedSubtitle, setSelectedSubtitle] = useState(
-        subtitlesData.find((sub) => sub?.label?.toLowerCase() === "english") ||
-            subtitlesData[0] ||
-            null
-    );
+    const [selectedSubtitle, setSelectedSubtitle] = useState(null);
     const [isSeeking, setIsSeeking] = useState(false);
     const [seekPosition, setSeekPosition] = useState(0);
     const [controlsVisible, setControlsVisible] = useState(true);
@@ -114,17 +115,6 @@ const VideoPlayer = ({
         resetControlsTimeout();
     };
 
-    useEffect(() => {
-        return () => {
-            ScreenOrientation.lockAsync(
-                ScreenOrientation.OrientationLock.PORTRAIT
-            );
-            if (controlsTimeoutRef.current) {
-                clearTimeout(controlsTimeoutRef.current);
-            }
-        };
-    }, []);
-
     const handleSubtitleSync = (data) => {
         setSubSyncValue((prev) => {
             const newValue = data === "+" ? prev + 0.1 : prev - 0.1;
@@ -132,26 +122,6 @@ const VideoPlayer = ({
         });
         resetControlsTimeout();
     };
-
-    useEffect(() => {
-        const backAction = () => {
-            if (isFullScreen) {
-                toggleFullScreen();
-            } else {
-                router.back();
-            }
-            return true;
-        };
-
-        const backHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
-            backAction
-        );
-
-        return () => {
-            backHandler.remove();
-        };
-    }, [isFullScreen]);
 
     const handleTouchStart = (event) => {
         touchStart = event.nativeEvent.pageY;
@@ -191,17 +161,6 @@ const VideoPlayer = ({
         resetControlsTimeout();
     };
 
-    useEffect(() => {
-        return () => {
-            ScreenOrientation.lockAsync(
-                ScreenOrientation.OrientationLock.PORTRAIT
-            );
-            NavigationBar.setVisibilityAsync("visible");
-            NavigationBar.setBehaviorAsync("default");
-            NavigationBar.setBackgroundColorAsync(Colors.dark.background);
-        };
-    }, []);
-
     const togglePlayPause = () => {
         setIsPlaying(!isPlaying);
         resetControlsTimeout();
@@ -224,51 +183,6 @@ const VideoPlayer = ({
         const secs = Math.floor(seconds % 60);
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
-
-    useEffect(() => {
-        const animeData = history.find(
-            (item) =>
-                item.animeId === animeId &&
-                item.episodeNumber === selectedEpisode
-        );
-
-        if (animeData) {
-            setCurrentTime(animeData.currentTime);
-        } else {
-            setCurrentTime(0);
-        }
-    }, [animeId, selectedEpisode]);
-
-    useEffect(() => {
-        if (epId !== currentPlayingEpisodeId) {
-            setCurrentPlayingEpisodeId(epId);
-            setInitialLoad(true);
-        }
-    }, [epId]);
-
-    const onLoad = (data) => {
-        setDuration(data.duration);
-
-        if (initialLoad) {
-            if (currentTime > 0) {
-                videoRef.current.seek(currentTime);
-            } else {
-                videoRef.current.seek(0);
-            }
-            setInitialLoad(false);
-        }
-    };
-
-    const onProgress = useRef(
-        throttle((data) => {
-            if (!isSeeking) {
-                checkForIntroOutro(data.currentTime);
-                const currentTime = data.currentTime;
-                setCurrentTime(currentTime);
-                throttledUpdate(animeId, selectedEpisode, currentTime);
-            }
-        }, 1000)
-    ).current;
 
     const changeQuality = (resolution) => {
         setSelectedQuality(resolution);
@@ -340,6 +254,106 @@ const VideoPlayer = ({
         setLastTap(now);
     };
 
+    useEffect(() => {
+        const backAction = () => {
+            if (isFullScreen) {
+                toggleFullScreen();
+            } else {
+                router.back();
+            }
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+        );
+
+        return () => {
+            backHandler.remove();
+        };
+    }, [isFullScreen]);
+
+    useEffect(() => {
+        return () => {
+            ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT
+            );
+            NavigationBar.setVisibilityAsync("visible");
+            NavigationBar.setBehaviorAsync("default");
+            NavigationBar.setBackgroundColorAsync(Colors.dark.background);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (subtitlesData && subtitlesData.length > 0) {
+            setSelectedSubtitle(
+                subtitlesData.find(
+                    (sub) => sub?.label?.toLowerCase() === "english"
+                ) ||
+                    subtitlesData[0] ||
+                    null
+            );
+        }
+    }, [subtitlesData]);
+
+    useEffect(() => {
+        return () => {
+            ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT
+            );
+            if (controlsTimeoutRef.current) {
+                clearTimeout(controlsTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (epId !== currentPlayingEpisodeId) {
+            setCurrentPlayingEpisodeId(epId);
+            setInitialLoad(true);
+        }
+    }, [epId]);
+
+    useEffect(() => {
+        setCurrentTime(0);
+
+        const animeData = history.find(
+            (item) =>
+                item.animeId === animeId &&
+                item.episodeNumber === selectedEpisode
+        );
+
+        if (animeData) {
+            setCurrentTime(animeData.currentTime);
+        }
+    }, [animeId, selectedEpisode, history]);
+
+    const onLoad = (data) => {
+        setDuration(data.duration);
+
+        if (initialLoad) {
+            if (currentTime > 0) {
+                videoRef.current.seek(currentTime);
+            } else {
+                videoRef.current.seek(0);
+            }
+            setInitialLoad(false);
+        }
+    };
+
+    const onProgress = useCallback(
+        throttle((data) => {
+            if (!isSeeking && selectedEpisode) {
+                checkForIntroOutro(data.currentTime);
+                const currentTime = data.currentTime;
+                setCurrentTime(currentTime);
+                throttledUpdate(animeId, selectedEpisode, currentTime);
+            }
+        }, 1000),
+        [isSeeking, selectedEpisode, animeId, throttledUpdate]
+    );
+
     return (
         <View style={[styles.container, isFullScreen && styles.fullScreen]}>
             <StatusBar
@@ -382,58 +396,62 @@ const VideoPlayer = ({
                             />
                         </View>
                     )}
-
-                    <Video
-                        onBuffer={(data) => {
-                            if (data.isBuffering) {
-                                setIsLoading(true);
-                            } else {
-                                setIsLoading(false);
-                                setTimeout(() => {
-                                    setShowControls(false);
-                                }, 2000);
-                            }
-                        }}
-                        ref={videoRef}
-                        source={{
-                            uri: videoUrl,
-                            type: "m3u8",
-                            bufferConfig: {
-                                minBufferMs: 15000,
-                                maxBufferMs: 30000,
-                                bufferForPlaybackMs: 2500,
-                                bufferForPlaybackAfterRebufferMs: 5000,
-                            },
-                            // headers: {
-                            //     Referer: "https://megaplay.buzz/",
-                            //     "User-Agent":
-                            //         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-                            // },
-                        }}
-                        style={styles.video}
-                        paused={!isPlaying}
-                        onLoad={onLoad}
-                        onProgress={onProgress}
-                        resizeMode="contain"
-                        renderLoader={() => (
-                            <ActivityIndicator
-                                size={"large"}
-                                color={Colors.light.tabIconSelected}
-                                style={styles.loader}
-                            />
-                        )}
-                        selectedVideoTrack={{
-                            type:
-                                selectedQuality === "auto"
-                                    ? "auto"
-                                    : "resolution",
-                            value:
-                                selectedQuality === "auto"
-                                    ? undefined
-                                    : selectedQuality,
-                        }}
-                        onEnd={nextEpisode}
-                    />
+                    {videoLoading ? (
+                        <PlayerLoader
+                            uri={uri}
+                            videoLoading={videoLoading}
+                            selectedEpisode={selectedEpisode}
+                            error={error}
+                            episodeLoading={episodeLoading}
+                        />
+                    ) : (
+                        <Video
+                            onBuffer={(data) => {
+                                if (data.isBuffering) {
+                                    setIsLoading(true);
+                                } else {
+                                    setIsLoading(false);
+                                    setTimeout(() => {
+                                        setShowControls(false);
+                                    }, 2000);
+                                }
+                            }}
+                            ref={videoRef}
+                            source={{
+                                uri: videoUrl,
+                                type: "m3u8",
+                                bufferConfig: {
+                                    minBufferMs: 15000,
+                                    maxBufferMs: 30000,
+                                    bufferForPlaybackMs: 2500,
+                                    bufferForPlaybackAfterRebufferMs: 5000,
+                                },
+                            }}
+                            style={styles.video}
+                            paused={!isPlaying}
+                            onLoad={onLoad}
+                            onProgress={onProgress}
+                            resizeMode="contain"
+                            renderLoader={() => (
+                                <ActivityIndicator
+                                    size={"large"}
+                                    color={Colors.light.tabIconSelected}
+                                    style={styles.loader}
+                                />
+                            )}
+                            selectedVideoTrack={{
+                                type:
+                                    selectedQuality === "auto"
+                                        ? "auto"
+                                        : "resolution",
+                                value:
+                                    selectedQuality === "auto"
+                                        ? undefined
+                                        : selectedQuality,
+                            }}
+                            onEnd={nextEpisode}
+                        />
+                    )}
                     <Subtitles
                         textStyle={{
                             fontSize: SIZE(18),

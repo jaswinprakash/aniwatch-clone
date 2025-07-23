@@ -342,87 +342,53 @@ const SinglePage = () => {
                     : Constants.statusBarHeight,
             }}
         >
-            {/* <StatusBar style="auto" backgroundColor={Colors.dark.background} /> */}
-            {!videoLoading && videoData ? (
-                !webviewOn ? (
-                    <VideoPlayer
-                        videoUrl={videoData.sources[0].url}
-                        // subtitlesData={videoData?.tracks?.filter(
-                        //     (track) => track?.lang
-                        // )}
-                        subtitlesData={videoData?.tracks}
-                        intro={videoData?.intro}
-                        outro={videoData?.outro}
-                        onLoadStart={() => setVideoLoading(true)}
-                        onReadyForDisplay={() => setVideoLoading(false)}
-                        availableQualities={availableQualities}
-                        title={animeInfo?.anime?.info?.name}
-                        selectedEpisode={selectedEpisode}
-                        episodes={episodes}
-                        setSelectedEpisode={setSelectedEpisode}
-                        selectedEpisodeId={selectedEpisodeId}
-                        currentPlayingEpisodeId={currentPlayingEpisodeId}
-                        startStream={startStream}
-                        setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
-                        animeId={route?.params?.id}
-                    />
-                ) : (
-                    <View
-                        style={{
-                            height: SIZE(250),
-                            width: "100%",
-                            backgroundColor: "#000",
-                        }}
-                    >
-                        <WebViewPlayer
-                            idForWebview={idForWebview}
-                            activeTab={activeTab}
-                            route={route}
-                            episodes={episodes}
-                            selectedEpisode={selectedEpisode}
-                            setSelectedEpisode={setSelectedEpisode}
-                            startStream={startStream}
-                        />
-                    </View>
-                )
+            {!webviewOn ? (
+                <VideoPlayer
+                    videoUrl={videoData?.sources[0]?.url}
+                    subtitlesData={videoData?.tracks}
+                    intro={videoData?.intro}
+                    outro={videoData?.outro}
+                    onLoadStart={() => setVideoLoading(true)}
+                    onReadyForDisplay={() => setVideoLoading(false)}
+                    availableQualities={availableQualities}
+                    title={animeInfo?.anime?.info?.name}
+                    selectedEpisode={selectedEpisode}
+                    episodes={episodes}
+                    setSelectedEpisode={setSelectedEpisode}
+                    selectedEpisodeId={selectedEpisodeId}
+                    currentPlayingEpisodeId={currentPlayingEpisodeId}
+                    startStream={startStream}
+                    setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
+                    animeId={route?.params?.id}
+                    uri={animeInfo?.anime?.info?.poster}
+                    videoLoading={videoLoading}
+                    error={error}
+                    episodeLoading={episodeLoading}
+                />
             ) : (
-                <ThemedView style={styles.imageContainer}>
-                    <ImageBackground
-                        style={[
-                            styles.backgroundImage,
-                            {
-                                position: videoLoading
-                                    ? "absolute"
-                                    : "relative",
-                            },
-                        ]}
-                        source={{ uri: animeInfo?.anime?.info?.poster }}
-                        resizeMode="cover"
-                        blurRadius={2}
-                    >
-                        {error && !videoLoading && !episodeLoading && (
-                            <ThemedText type="title" style={styles.errorText}>
-                                Unable to play please try again later
-                            </ThemedText>
-                        )}
-                        <Image
-                            style={[
-                                styles.fastImage,
-                                {
-                                    position: videoLoading
-                                        ? "absolute"
-                                        : "relative",
-                                },
-                            ]}
-                            source={{ uri: animeInfo?.anime?.info?.poster }}
-                            resizeMode="contain"
-                        />
-                        {videoLoading && (
-                            <VideoLoader selectedEpisode={selectedEpisode} />
-                        )}
-                    </ImageBackground>
-                </ThemedView>
+                <View
+                    style={{
+                        height: SIZE(250),
+                        width: "100%",
+                        backgroundColor: "#000",
+                    }}
+                >
+                    <WebViewPlayer
+                        idForWebview={idForWebview}
+                        activeTab={activeTab}
+                        route={route}
+                        episodes={episodes}
+                        selectedEpisode={selectedEpisode}
+                        setSelectedEpisode={setSelectedEpisode}
+                        startStream={startStream}
+                        uri={animeInfo?.anime?.info?.poster}
+                        videoLoading={videoLoading}
+                        error={error}
+                        episodeLoading={episodeLoading}
+                    />
+                </View>
             )}
+
             <ThemedView style={styles.container}>
                 <ThemedText
                     type="title"

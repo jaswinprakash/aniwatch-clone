@@ -8,6 +8,7 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import { useKeepAwake } from "expo-keep-awake";
+import PlayerLoader from "./PlayerLoader";
 
 const WebViewPlayer = ({
     route,
@@ -17,6 +18,10 @@ const WebViewPlayer = ({
     startStream,
     idForWebview,
     activeTab,
+    uri,
+    videoLoading,
+    error,
+    episodeLoading,
 }) => {
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
@@ -141,71 +146,83 @@ const WebViewPlayer = ({
             style={isFullscreen ? styles.fullscreenContainer : styles.container}
         >
             <StatusBar hidden={isFullscreen} style="auto" />
-            {idForWebview && activeTab && (
-                <WebView
-                    ref={webViewRef}
-                    source={{
-                        uri: `https://megaplay.buzz/stream/s-2/${idForWebview}/${activeTab}`,
-                        headers: {
-                            Referer: "https://megaplay.buzz/",
-                            "User-Agent":
-                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-                        },
-                    }}
-                    style={styles.webview}
-                    javaScriptEnabled
-                    domStorageEnabled
-                    allowsFullscreenVideo
-                    mediaPlaybackRequiresUserAction={false}
-                    injectedJavaScript={INJECTED_JAVASCRIPT}
-                    onMessage={(event) => {
-                        try {
-                            const data = JSON.parse(event.nativeEvent.data);
-                            switch (data.type) {
-                                case "timeupdate":
-                                    wasPlayingRef.current = data.isPlaying;
-                                    throttledUpdate(
-                                        route?.params?.id,
-                                        selectedEpisode,
-                                        data.currentTime
-                                    );
-                                    break;
-                                case "ended":
-                                    nextEpisode();
-                                    break;
-                                case "fullscreen":
-                                    if (data.isFullscreen) {
-                                        onEnterFullscreen();
-                                    } else {
-                                        webViewRef.current.injectJavaScript(`
+            {videoLoading ? (
+                <PlayerLoader
+                    uri={uri}
+                    videoLoading={videoLoading}
+                    selectedEpisode={selectedEpisode}
+                    error={error}
+                    episodeLoading={episodeLoading}
+                />
+            ) : (
+                idForWebview &&
+                activeTab && (
+                    <WebView
+                        ref={webViewRef}
+                        source={{
+                            uri: `https://megaplay.buzz/stream/s-2/${idForWebview}/${activeTab}`,
+                            headers: {
+                                Referer: "https://megaplay.buzz/",
+                                "User-Agent":
+                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                            },
+                        }}
+                        style={styles.webview}
+                        javaScriptEnabled
+                        domStorageEnabled
+                        allowsFullscreenVideo
+                        mediaPlaybackRequiresUserAction={false}
+                        injectedJavaScript={INJECTED_JAVASCRIPT}
+                        onMessage={(event) => {
+                            try {
+                                const data = JSON.parse(event.nativeEvent.data);
+                                switch (data.type) {
+                                    case "timeupdate":
+                                        wasPlayingRef.current = data.isPlaying;
+                                        throttledUpdate(
+                                            route?.params?.id,
+                                            selectedEpisode,
+                                            data.currentTime
+                                        );
+                                        break;
+                                    case "ended":
+                                        nextEpisode();
+                                        break;
+                                    case "fullscreen":
+                                        if (data.isFullscreen) {
+                                            onEnterFullscreen();
+                                        } else {
+                                            webViewRef.current
+                                                .injectJavaScript(`
                                             var video = document.querySelector('video');
                                             if (video) video.pause();
                                             true;
                                         `);
 
-                                        onExitFullscreen();
-                                    }
-                                    break;
+                                            onExitFullscreen();
+                                        }
+                                        break;
+                                }
+                            } catch (error) {
+                                console.error(
+                                    "Error parsing message from WebView:",
+                                    error
+                                );
                             }
-                        } catch (error) {
-                            console.error(
-                                "Error parsing message from WebView:",
-                                error
-                            );
-                        }
-                    }}
-                    // onNavigationStateChange={(webViewState) => {
-                    //     if (
-                    //         webViewState.url.includes("https://megaplay.buzz")
-                    //     ) {
-                    //         webViewRef.current.injectJavaScript(`
-                    //             var video = document.querySelector('video');
-                    //             if (video) video.pause();
-                    //             true;
-                    //         `);
-                    //     }
-                    // }}
-                />
+                        }}
+                        // onNavigationStateChange={(webViewState) => {
+                        //     if (
+                        //         webViewState.url.includes("https://megaplay.buzz")
+                        //     ) {
+                        //         webViewRef.current.injectJavaScript(`
+                        //             var video = document.querySelector('video');
+                        //             if (video) video.pause();
+                        //             true;
+                        //         `);
+                        //     }
+                        // }}
+                    />
+                )
             )}
         </View>
     );
