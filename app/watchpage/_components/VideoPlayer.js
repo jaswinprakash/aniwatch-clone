@@ -89,7 +89,7 @@ const VideoPlayer = ({
         if (isPlaying && !isLoading) {
             controlsTimeoutRef.current = setTimeout(() => {
                 setShowControls(false);
-            }, 3000);
+            }, 5000);
         }
     };
 
