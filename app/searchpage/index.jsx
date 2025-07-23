@@ -5,7 +5,7 @@ import {
     ImageBackground,
     View,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiConfig } from "../../AxiosConfig";
 import { SIZE } from "../../constants/Constants";
 import { Colors } from "../../constants/Colors";
@@ -99,39 +99,55 @@ const SearchPage = () => {
         setSearchLoading(true);
     };
 
-    useEffect(() => {
-        const performSearch = async () => {
-            setSearchLoading(true);
-            if (searchQuery) {
-                const formattedGenres =
-                    Array.isArray(selectedGenre) && selectedGenre.length > 0
-                        ? selectedGenre
-                              .map((genre) =>
-                                  genre.toLowerCase().replace(/\s+/g, "-")
-                              )
-                              .join(",")
-                        : "";
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    };
 
-                try {
-                    const response = await apiConfig.get(
-                        `/api/v2/hianime/search?q=${searchQuery}&type=${selectedCategory}&genres=${formattedGenres}`
-                    );
-                    setCurrentPage(response.data.data.currentPage);
-                    setHasNextPage(response.data.data.hasNextPage);
-                    setSearchResults(response.data.data.animes);
-                } catch (error) {
-                    console.log(error, "axios error - search perform");
-                } finally {
+    const debouncedSearch = useMemo(
+        () =>
+            debounce(async (query, genre, category) => {
+                setSearchLoading(true);
+                if (query) {
+                    const formattedGenres =
+                        Array.isArray(genre) && genre.length > 0
+                            ? genre
+                                  .map((g) =>
+                                      g.toLowerCase().replace(/\s+/g, "-")
+                                  )
+                                  .join(",")
+                            : "";
+
+                    try {
+                        const response = await apiConfig.get(
+                            `/api/v2/hianime/search?q=${query}&type=${category}&genres=${formattedGenres}`
+                        );
+                        setCurrentPage(response.data.data.currentPage);
+                        setHasNextPage(response.data.data.hasNextPage);
+                        setSearchResults(response.data.data.animes);
+                    } catch (error) {
+                        console.log(error, "axios error - search perform");
+                    } finally {
+                        setSearchLoading(false);
+                    }
+                } else {
+                    setSearchResults([]);
                     setSearchLoading(false);
                 }
-            } else {
-                setSearchResults([]);
-                setSearchLoading(false);
-            }
-        };
+            }, 300),
+        []
+    );
 
-        performSearch();
-    }, [searchQuery, selectedGenre, selectedCategory]);
+    useEffect(() => {
+        debouncedSearch(searchQuery, selectedGenre, selectedCategory);
+
+        return () => {
+            debouncedSearch.cancel?.();
+        };
+    }, [searchQuery, selectedGenre, selectedCategory, debouncedSearch]);
 
     const handleLoadMore = async () => {
         if (hasNextPage) {
@@ -495,7 +511,7 @@ const SearchPage = () => {
                     setFilterModalVisible(false);
                 }}
                 useNativeDriverForBackdrop={true}
-                useNativeDriver={true}
+                useNativeDriver={false}
                 animationIn={"fadeInUp"}
                 animationOut={"fadeOutDown"}
                 style={{
