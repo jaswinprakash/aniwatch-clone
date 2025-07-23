@@ -20,7 +20,7 @@ export default function TabLayout() {
             inactiveColor="#607d8b"
             barStyle={{
                 backgroundColor: Colors[colorScheme ?? "light"].background,
-                height: SIZE(65),
+                height: SIZE(80),
             }}
             screenOptions={{ headerShown: false }} // Hide the header
         >
