@@ -8,7 +8,11 @@ import Animated, {
     withTiming,
     Easing,
 } from "react-native-reanimated";
-import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import {
+    MaterialIcons,
+    FontAwesome,
+    MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { ThemedText } from "../../../components/ThemedText";
 import { Slider } from "@miblanchard/react-native-slider";
 import { TouchableRipple } from "react-native-paper";
@@ -43,10 +47,28 @@ const Controls = ({
     handleSubtitleSync,
     subSyncValue,
     resetControlsTimeout,
+    setScreenMode,
+    screenMode,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
     const controlsBottom = useSharedValue(0);
+
+    const toggleScreenMode = () => {
+        resetControlsTimeout();
+        setScreenMode((prevMode) => {
+            switch (prevMode) {
+                case "contain":
+                    return "cover";
+                case "cover":
+                    return "stretch";
+                case "stretch":
+                    return "contain";
+                default:
+                    return "contain";
+            }
+        });
+    };
 
     const animateControls = (visible) => {
         controlsOpacity.value = withTiming(visible ? 1 : 0, {
@@ -386,19 +408,65 @@ const Controls = ({
                         />
                     </TouchableRipple>
                 </View>
-                <TouchableRipple
-                    rippleColor={Colors.dark.backgroundPress}
-                    borderless={true}
-                    style={{ borderRadius: SIZE(24) }}
-                    hitSlop={10}
-                    onPress={toggleFullScreen}
+                <View
+                    style={{
+                        flexDirection: "row",
+                        gap: SIZE(20),
+                        // alignItems: "center",
+                    }}
                 >
-                    <MaterialIcons
-                        name={isFullScreen ? "fullscreen-exit" : "fullscreen"}
-                        size={SIZE(24)}
-                        color={Colors.light.tabIconSelected}
-                    />
-                </TouchableRipple>
+                    {isFullScreen && (
+                        <TouchableRipple
+                            rippleColor={Colors.dark.backgroundPress}
+                            borderless={true}
+                            style={{
+                                borderRadius: SIZE(5),
+                                width: SIZE(40),
+                                marginLeft: SIZE(-60),
+                            }}
+                            hitSlop={10}
+                            onPress={() => {
+                                toggleScreenMode();
+                            }}
+                        >
+                            <View style={{ alignItems: "center" }}>
+                                <MaterialIcons
+                                    name={"fit-screen"}
+                                    size={SIZE(24)}
+                                    color={Colors.light.tabIconSelected}
+                                />
+                                <ThemedText
+                                    style={{
+                                        fontSize: SIZE(12),
+                                        color: Colors.light.tabIconSelected,
+                                        marginTop: SIZE(-5),
+                                    }}
+                                >
+                                    {screenMode === "stretch"
+                                        ? "Stretch"
+                                        : screenMode === "contain"
+                                        ? "Original"
+                                        : "Zoom Fit"}
+                                </ThemedText>
+                            </View>
+                        </TouchableRipple>
+                    )}
+                    <TouchableRipple
+                        rippleColor={Colors.dark.backgroundPress}
+                        borderless={true}
+                        style={{ borderRadius: SIZE(24) }}
+                        hitSlop={10}
+                        onPress={toggleFullScreen}
+                    >
+                        <MaterialIcons
+                            name={
+                                isFullScreen ? "fullscreen-exit" : "fullscreen"
+                            }
+                            size={SIZE(24)}
+                            color={Colors.light.tabIconSelected}
+                        />
+                    </TouchableRipple>
+                </View>
             </Animated.View>
         </>
     );

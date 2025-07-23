@@ -75,6 +75,7 @@ const VideoPlayer = ({
     const [showSkipIntro, setShowSkipIntro] = useState(false);
     const [showSkipOutro, setShowSkipOutro] = useState(false);
     const controlsTimeoutRef = useRef(null);
+    const [screenMode, setScreenMode] = useState("contain");
 
     const toggleControls = () => {
         setShowControls(!showControls);
@@ -431,7 +432,7 @@ const VideoPlayer = ({
                             paused={!isPlaying}
                             onLoad={onLoad}
                             onProgress={onProgress}
-                            resizeMode="contain"
+                            resizeMode={screenMode}
                             renderLoader={() => (
                                 <ActivityIndicator
                                     size={"large"}
@@ -522,6 +523,8 @@ const VideoPlayer = ({
                             handleSubtitleSync={handleSubtitleSync}
                             subSyncValue={subSyncValue}
                             resetControlsTimeout={resetControlsTimeout}
+                            setScreenMode={setScreenMode}
+                            screenMode={screenMode}
                         />
                         {showQualityList && (
                             <SubModal
