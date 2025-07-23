@@ -42,6 +42,7 @@ const Controls = ({
     onProgress,
     handleSubtitleSync,
     subSyncValue,
+    resetControlsTimeout,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
@@ -256,6 +257,7 @@ const Controls = ({
                     }}
                     onValueChange={(value) => {
                         setSeekPosition(value[0]);
+                        resetControlsTimeout();
                     }}
                     // onSlidingComplete={(value) => {
                     //     setIsSeeking(false);

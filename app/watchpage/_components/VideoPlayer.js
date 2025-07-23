@@ -73,9 +73,22 @@ const VideoPlayer = ({
     const [subSyncValue, setSubSyncValue] = useState(0.2);
     const [showSkipIntro, setShowSkipIntro] = useState(false);
     const [showSkipOutro, setShowSkipOutro] = useState(false);
+    const controlsTimeoutRef = useRef(null);
 
     const toggleControls = () => {
-        setShowControls((prev) => !prev);
+        setShowControls(!showControls);
+        resetControlsTimeout();
+    };
+
+    const resetControlsTimeout = () => {
+        if (controlsTimeoutRef.current) {
+            clearTimeout(controlsTimeoutRef.current);
+        }
+        if (isPlaying && !isLoading) {
+            controlsTimeoutRef.current = setTimeout(() => {
+                setShowControls(false);
+            }, 3000);
+        }
     };
 
     const checkForIntroOutro = (currentTime) => {
@@ -98,6 +111,7 @@ const VideoPlayer = ({
         } else if (segment === "outro" && outro) {
             videoRef.current.seek(outro.end);
         }
+        resetControlsTimeout();
     };
 
     useEffect(() => {
@@ -105,6 +119,9 @@ const VideoPlayer = ({
             ScreenOrientation.lockAsync(
                 ScreenOrientation.OrientationLock.PORTRAIT
             );
+            if (controlsTimeoutRef.current) {
+                clearTimeout(controlsTimeoutRef.current);
+            }
         };
     }, []);
 
@@ -113,6 +130,7 @@ const VideoPlayer = ({
             const newValue = data === "+" ? prev + 0.1 : prev - 0.1;
             return parseFloat(newValue.toFixed(1));
         });
+        resetControlsTimeout();
     };
 
     useEffect(() => {
@@ -170,6 +188,7 @@ const VideoPlayer = ({
                 NavigationBar.setBackgroundColorAsync(Colors.dark.background),
             ]);
         }
+        resetControlsTimeout();
     };
 
     useEffect(() => {
@@ -185,16 +204,19 @@ const VideoPlayer = ({
 
     const togglePlayPause = () => {
         setIsPlaying(!isPlaying);
+        resetControlsTimeout();
     };
 
     const skip = (seconds) => {
         const newTime = currentTime + seconds;
         videoRef.current.seek(Math.max(0, Math.min(newTime, duration)));
+        resetControlsTimeout();
     };
 
     const selectSubtitle = (subtitle) => {
         setSelectedSubtitle(subtitle);
         setShowSubtitleList(false);
+        resetControlsTimeout();
     };
 
     const formatTime = (seconds) => {
@@ -251,6 +273,7 @@ const VideoPlayer = ({
     const changeQuality = (resolution) => {
         setSelectedQuality(resolution);
         setShowQualityList(false);
+        resetControlsTimeout();
     };
 
     const nextEpisode = () => {
@@ -265,6 +288,7 @@ const VideoPlayer = ({
         } else {
             console.log("No next episode available.");
         }
+        resetControlsTimeout();
     };
 
     const prevEpisode = () => {
@@ -279,6 +303,7 @@ const VideoPlayer = ({
         } else {
             console.log("No previous episode available.");
         }
+        resetControlsTimeout();
     };
 
     const handleDoubleTap = (event) => {
@@ -364,6 +389,9 @@ const VideoPlayer = ({
                                 setIsLoading(true);
                             } else {
                                 setIsLoading(false);
+                                setTimeout(() => {
+                                    setShowControls(false);
+                                }, 2000);
                             }
                         }}
                         ref={videoRef}
@@ -475,6 +503,7 @@ const VideoPlayer = ({
                             onProgress={onProgress}
                             handleSubtitleSync={handleSubtitleSync}
                             subSyncValue={subSyncValue}
+                            resetControlsTimeout={resetControlsTimeout}
                         />
                         {showQualityList && (
                             <SubModal
