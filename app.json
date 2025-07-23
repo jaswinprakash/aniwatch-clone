@@ -5,21 +5,19 @@
         "version": "1.0.4",
         "orientation": "portrait",
         "icon": "./assets/images/ap.png",
-        "scheme": "myapp",
+        "scheme": "animplay",
         "userInterfaceStyle": "dark",
         "newArchEnabled": true,
         "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.animplay"
+            "supportsTablet": true
         },
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/images/ap.png",
                 "backgroundColor": "#ffffff"
             },
-            "package": "com.animplay",
-            "softwareKeyboardLayoutMode": "pan",
-            "allowsFullscreenVideo": true
+            "edgeToEdgeEnabled": true,
+            "package": "com.animplay"
         },
         "web": {
             "bundler": "metro",

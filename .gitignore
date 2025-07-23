@@ -10,6 +10,7 @@ web-build/
 expo-env.d.ts
 
 # Native
+.kotlin/
 *.orig.*
 *.jks
 *.p8
@@ -34,10 +35,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
-
-# Ignore JVM crash logs
-hs_err_pid*.log
-replay_pid*.log
-
 
 app-example

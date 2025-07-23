@@ -1,3 +1,9 @@
+import { apiConfig } from "@/AxiosConfig";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
+import { SIZE } from "@/constants/Constants";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
     DarkTheme,
     DefaultTheme,
@@ -6,25 +12,18 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { SafeAreaView, TouchableOpacity, View } from "react-native";
-import { Provider as PaperProvider } from "react-native-paper";
-import { FullscreenProvider } from "../hooks/FullScreenContext";
-import { Provider } from "react-redux";
-import { store } from "../store/store";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AnimeHistoryProvider } from "../store/AnimeHistoryContext";
-import { apiConfig } from "@/AxiosConfig";
-import { ThemedText } from "@/components/ThemedText";
-import { Colors } from "@/constants/Colors";
-import useNetworkState from "../hooks/NetworkState";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { SIZE } from "@/constants/Constants";
-import * as NavigationBar from "expo-navigation-bar";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider as PaperProvider } from "react-native-paper";
+import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { FullscreenProvider } from "../hooks/FullScreenContext";
+import useNetworkState from "../hooks/NetworkState";
+import { AnimeHistoryProvider } from "../store/AnimeHistoryContext";
+import { store } from "../store/store";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -45,7 +44,6 @@ export default function RootLayout() {
     useEffect(() => {
         if (loaded) {
             SplashScreen.hideAsync();
-            NavigationBar.setBackgroundColorAsync(Colors.dark.background);
         }
     }, [loaded]);
 
@@ -134,7 +132,6 @@ export default function RootLayout() {
                                 <SafeAreaProvider>
                                     <StatusBar
                                         style="auto"
-                                        backgroundColor={"transparent"}
                                     />
                                     <View
                                         style={{

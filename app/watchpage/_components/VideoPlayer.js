@@ -1,29 +1,29 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Colors } from "@/constants/Colors";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import * as NavigationBar from "expo-navigation-bar";
+import { router } from "expo-router";
+import * as ScreenOrientation from "expo-screen-orientation";
+import { StatusBar } from "expo-status-bar";
+import throttle from "lodash.throttle";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-    View,
-    StyleSheet,
-    TouchableWithoutFeedback,
     ActivityIndicator,
     BackHandler,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    View,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import Video from "react-native-video";
-import * as ScreenOrientation from "expo-screen-orientation";
-import { Colors } from "@/constants/Colors";
-import * as NavigationBar from "expo-navigation-bar";
-import Subtitles from "./Subtitles";
-import { SIZE } from "../../../constants/Constants";
-import { router } from "expo-router";
-import { useFullscreen } from "../../../hooks/FullScreenContext";
-import throttle from "lodash.throttle";
-import SubModal from "./SubModal";
-import Controls from "./Controls";
-import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
-import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { TouchableRipple } from "react-native-paper";
+import Video from "react-native-video";
 import { ThemedText } from "../../../components/ThemedText";
+import { SIZE } from "../../../constants/Constants";
+import { useFullscreen } from "../../../hooks/FullScreenContext";
+import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
+import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
+import Controls from "./Controls";
 import PlayerLoader from "./PlayerLoader";
+import SubModal from "./SubModal";
+import Subtitles from "./Subtitles";
 
 const VideoPlayer = ({
     videoUrl,
@@ -146,8 +146,6 @@ const VideoPlayer = ({
                     ScreenOrientation.OrientationLock.LANDSCAPE
                 ),
                 NavigationBar.setVisibilityAsync("hidden"),
-                NavigationBar.setBehaviorAsync("overlay"),
-                NavigationBar.setBackgroundColorAsync("transparent"),
             ]);
         } else {
             await Promise.all([
@@ -155,8 +153,6 @@ const VideoPlayer = ({
                     ScreenOrientation.OrientationLock.PORTRAIT
                 ),
                 NavigationBar.setVisibilityAsync("visible"),
-                NavigationBar.setBehaviorAsync("default"),
-                NavigationBar.setBackgroundColorAsync(Colors.dark.background),
             ]);
         }
         resetControlsTimeout();
@@ -281,8 +277,6 @@ const VideoPlayer = ({
                 ScreenOrientation.OrientationLock.PORTRAIT
             );
             NavigationBar.setVisibilityAsync("visible");
-            NavigationBar.setBehaviorAsync("default");
-            NavigationBar.setBackgroundColorAsync(Colors.dark.background);
         };
     }, []);
 
@@ -357,11 +351,7 @@ const VideoPlayer = ({
 
     return (
         <View style={[styles.container, isFullScreen && styles.fullScreen]}>
-            <StatusBar
-                hidden={isFullScreen}
-                style="auto"
-                backgroundColor={Colors.dark.background}
-            />
+            <StatusBar hidden={isFullScreen} style="auto" />
             <TouchableWithoutFeedback
                 onPress={(event) => handleDoubleTap(event)}
                 onTouchStart={handleTouchStart}
