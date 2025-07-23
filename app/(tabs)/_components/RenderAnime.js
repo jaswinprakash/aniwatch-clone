@@ -106,7 +106,7 @@ export default React.memo(RenderAnime);
 const styles = StyleSheet.create({
     sectionContainer: {
         marginBottom: SIZE(10),
-        height: SIZE(251),
+        height: SIZE(255),
     },
     sectionHeader: {
         flexDirection: "row",

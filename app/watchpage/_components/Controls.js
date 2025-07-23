@@ -1,20 +1,17 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect } from "react";
-import { SIZE } from "../../../constants/Constants";
-import { Colors } from "../../../constants/Colors";
+import { StyleSheet, View } from "react-native";
 import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
     Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
 } from "react-native-reanimated";
-import {
-    MaterialIcons,
-    FontAwesome,
-    MaterialCommunityIcons,
-} from "@expo/vector-icons";
 import { ThemedText } from "../../../components/ThemedText";
-import { Slider } from "@miblanchard/react-native-slider";
+import { Colors } from "../../../constants/Colors";
+import { SIZE } from "../../../constants/Constants";
+import { Slider } from "@react-native-assets/slider";
+
 import { TouchableRipple } from "react-native-paper";
 
 const Controls = ({
@@ -268,33 +265,30 @@ const Controls = ({
                     {formatTime(isSeeking ? seekPosition : currentTime)}
                 </ThemedText>
                 <Slider
-                    containerStyle={styles.progressBar}
-                    hitSlop={20}
-                    value={isSeeking ? seekPosition : currentTime}
+                    style={styles.progressBar}
+                    trackStyle={{
+                        height: SIZE(5),
+                        borderRadius: SIZE(5),
+                    }}
+                    value={currentTime}
                     minimumValue={0}
                     maximumValue={duration}
-                    onSlidingStart={(value) => {
-                        setIsSeeking(true);
-                        setSeekPosition(value[0]);
+                    step={1}
+                    thumbStyle={{
+                        width: SIZE(15),
+                        height: SIZE(15),
                     }}
+                    enabled={true}
+                    slideOnTap={true}
+                    thumbTintColor={Colors.light.tabIconSelected}
                     onValueChange={(value) => {
-                        setSeekPosition(value[0]);
+                        setCurrentTime(value);
+                        setSeekPosition(value);
+                        videoRef.current.seek(value);
                         resetControlsTimeout();
                     }}
-                    // onSlidingComplete={(value) => {
-                    //     setIsSeeking(false);
-                    //     videoRef.current.seek(value[0]);
-                    //     setCurrentTime(value[0]);
-                    // }}
-                    onSlidingComplete={(value) => {
-                        setIsSeeking(false);
-                        videoRef.current.seek(value[0]);
-                        setCurrentTime(value[0]);
-                        onProgress.cancel(); // Cancel pending throttled updates
-                    }}
                     minimumTrackTintColor={Colors.light.tabIconSelected}
-                    maximumTrackTintColor="#4A4A4A"
-                    thumbTintColor={Colors.light.tabIconSelected}
+                    maximumTrackTintColor={"#4A4A4A"}
                 />
                 <ThemedText type="subtitle" style={styles.timeText}>
                     {formatTime(duration)}

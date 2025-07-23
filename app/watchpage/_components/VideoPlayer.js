@@ -4,7 +4,6 @@ import * as NavigationBar from "expo-navigation-bar";
 import { router } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
-import throttle from "lodash.throttle";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
@@ -78,11 +77,15 @@ const VideoPlayer = ({
     const [screenMode, setScreenMode] = useState("contain");
 
     const toggleControls = () => {
-        setShowControls(!showControls);
-        resetControlsTimeout();
+        if (showControls) {
+            setShowControls(false);
+        } else {
+            resetControlsTimeout();
+        }
     };
 
     const resetControlsTimeout = () => {
+        setShowControls(true);
         if (controlsTimeoutRef.current) {
             clearTimeout(controlsTimeoutRef.current);
         }
@@ -312,7 +315,6 @@ const VideoPlayer = ({
 
     useEffect(() => {
         setCurrentTime(0);
-
         const animeData = history.find(
             (item) =>
                 item.animeId === animeId &&
@@ -338,15 +340,15 @@ const VideoPlayer = ({
     };
 
     const onProgress = useCallback(
-        throttle((data) => {
-            if (!isSeeking && selectedEpisode) {
+        (data) => {
+            if (selectedEpisode) {
                 checkForIntroOutro(data.currentTime);
                 const currentTime = data.currentTime;
                 setCurrentTime(currentTime);
                 throttledUpdate(animeId, selectedEpisode, currentTime);
             }
-        }, 1000),
-        [isSeeking, selectedEpisode, animeId, throttledUpdate]
+        },
+        [selectedEpisode, animeId, throttledUpdate]
     );
 
     return (
@@ -443,132 +445,148 @@ const VideoPlayer = ({
                             onEnd={nextEpisode}
                         />
                     )}
-                    <Subtitles
-                        textStyle={{
-                            fontSize: SIZE(18),
-                            backgroundColor: "transparent",
-                            color: Colors.light.white,
-                            fontFamily: "Exo2Regular",
-                            marginBottom: SIZE(3),
-                            textShadowColor: Colors.dark.black,
-                            textShadowOffset: {
-                                width: 2,
-                                height: 2,
-                            },
-                            textShadowRadius: 3,
-                        }}
-                        containerStyle={{
-                            position: "absolute",
-                            bottom: SIZE(20),
-                            zIndex: 1000,
-                            alignSelf: "center",
-                            justifyContent: "center",
-                            paddingHorizontal: SIZE(5),
-                            borderRadius: SIZE(5),
-                            backgroundColor: "transparent",
-                        }}
-                        currentTime={currentTime + subSyncValue}
-                        selectedsubtitle={{
-                            file: selectedSubtitle?.file,
-                        }}
-                    />
-
-                    <View
-                        style={[
-                            styles.controlsOverlay,
-                            {
-                                backgroundColor: showControls
-                                    ? "rgba(0, 0, 0, 0.5)"
-                                    : null,
-                            },
-                        ]}
-                    >
-                        <Controls
-                            showControls={showControls}
-                            toggleFullScreen={toggleFullScreen}
-                            isFullScreen={isFullScreen}
-                            router={router}
-                            showQualityList={showQualityList}
-                            setShowQualityList={setShowQualityList}
-                            setShowSubtitleList={setShowSubtitleList}
-                            skip={skip}
-                            togglePlayPause={togglePlayPause}
-                            formatTime={formatTime}
-                            isSeeking={isSeeking}
-                            seekPosition={seekPosition}
-                            currentTime={currentTime}
-                            setIsSeeking={setIsSeeking}
-                            setSeekPosition={setSeekPosition}
-                            setCurrentTime={setCurrentTime}
-                            videoRef={videoRef}
-                            duration={duration}
-                            showSubtitleList={showSubtitleList}
-                            selectedSubtitle={selectedSubtitle}
-                            title={title}
-                            selectedEpisode={selectedEpisode}
-                            isPlaying={isPlaying}
-                            nextEpisode={nextEpisode}
-                            prevEpisode={prevEpisode}
-                            onProgress={onProgress}
-                            handleSubtitleSync={handleSubtitleSync}
-                            subSyncValue={subSyncValue}
-                            resetControlsTimeout={resetControlsTimeout}
-                            setScreenMode={setScreenMode}
-                            screenMode={screenMode}
-                        />
-                        {showQualityList && (
-                            <SubModal
-                                data={availableQualities}
-                                handleChange={(item) => changeQuality(item)}
-                                handleSet={() => setShowQualityList(false)}
-                                selectedItem={selectedQuality}
-                                quality={true}
-                            />
-                        )}
-                        {showSubtitleList && subtitlesData && (
-                            <SubModal
-                                data={subtitlesData}
-                                handleChange={(item) => selectSubtitle(item)}
-                                handleSet={() => setShowSubtitleList(false)}
-                                selectedItem={selectedSubtitle}
-                            />
-                        )}
-                        {(showSkipIntro || showSkipOutro) && (
-                            <TouchableRipple
-                                rippleColor={Colors.dark.backgroundPress}
-                                borderless={true}
-                                style={{
+                    {!videoLoading ? (
+                        <>
+                            <Subtitles
+                                textStyle={{
+                                    fontSize: SIZE(18),
+                                    backgroundColor: "transparent",
+                                    color: Colors.light.white,
+                                    fontFamily: "Exo2Regular",
+                                    marginBottom: SIZE(3),
+                                    textShadowColor: Colors.dark.black,
+                                    textShadowOffset: {
+                                        width: 2,
+                                        height: 2,
+                                    },
+                                    textShadowRadius: 3,
+                                }}
+                                containerStyle={{
                                     position: "absolute",
-                                    bottom: SIZE(100),
-                                    right: SIZE(20),
+                                    bottom: SIZE(20),
+                                    zIndex: 1000,
+                                    alignSelf: "center",
+                                    justifyContent: "center",
+                                    paddingHorizontal: SIZE(5),
+                                    borderRadius: SIZE(5),
+                                    backgroundColor: "transparent",
                                 }}
-                                hitSlop={20}
-                                onPress={() => {
-                                    showSkipIntro
-                                        ? skipSegment("intro")
-                                        : skipSegment("outro");
+                                currentTime={currentTime + subSyncValue}
+                                selectedsubtitle={{
+                                    file: selectedSubtitle?.file,
                                 }}
+                            />
+                            <View
+                                style={[
+                                    styles.controlsOverlay,
+                                    {
+                                        backgroundColor: showControls
+                                            ? "rgba(0, 0, 0, 0.5)"
+                                            : null,
+                                    },
+                                ]}
                             >
-                                <View>
-                                    <MaterialCommunityIcons
-                                        name="skip-forward"
-                                        size={SIZE(40)}
-                                        color={Colors.light.tabIconSelected}
+                                <Controls
+                                    showControls={showControls}
+                                    toggleFullScreen={toggleFullScreen}
+                                    isFullScreen={isFullScreen}
+                                    router={router}
+                                    showQualityList={showQualityList}
+                                    setShowQualityList={setShowQualityList}
+                                    setShowSubtitleList={setShowSubtitleList}
+                                    skip={skip}
+                                    togglePlayPause={togglePlayPause}
+                                    formatTime={formatTime}
+                                    isSeeking={isSeeking}
+                                    seekPosition={seekPosition}
+                                    currentTime={currentTime}
+                                    setIsSeeking={setIsSeeking}
+                                    setSeekPosition={setSeekPosition}
+                                    setCurrentTime={setCurrentTime}
+                                    videoRef={videoRef}
+                                    duration={duration}
+                                    showSubtitleList={showSubtitleList}
+                                    selectedSubtitle={selectedSubtitle}
+                                    title={title}
+                                    selectedEpisode={selectedEpisode}
+                                    isPlaying={isPlaying}
+                                    nextEpisode={nextEpisode}
+                                    prevEpisode={prevEpisode}
+                                    onProgress={onProgress}
+                                    handleSubtitleSync={handleSubtitleSync}
+                                    subSyncValue={subSyncValue}
+                                    resetControlsTimeout={resetControlsTimeout}
+                                    setScreenMode={setScreenMode}
+                                    screenMode={screenMode}
+                                />
+                                {showQualityList && (
+                                    <SubModal
+                                        data={availableQualities}
+                                        handleChange={(item) =>
+                                            changeQuality(item)
+                                        }
+                                        handleSet={() =>
+                                            setShowQualityList(false)
+                                        }
+                                        selectedItem={selectedQuality}
+                                        quality={true}
                                     />
-                                    <ThemedText
+                                )}
+                                {showSubtitleList && subtitlesData && (
+                                    <SubModal
+                                        data={subtitlesData}
+                                        handleChange={(item) =>
+                                            selectSubtitle(item)
+                                        }
+                                        handleSet={() =>
+                                            setShowSubtitleList(false)
+                                        }
+                                        selectedItem={selectedSubtitle}
+                                    />
+                                )}
+                                {(showSkipIntro || showSkipOutro) && (
+                                    <TouchableRipple
+                                        rippleColor={
+                                            Colors.dark.backgroundPress
+                                        }
+                                        borderless={true}
                                         style={{
-                                            fontSize: SIZE(12),
-                                            color: Colors.light.tabIconSelected,
+                                            position: "absolute",
+                                            bottom: SIZE(100),
+                                            right: SIZE(20),
+                                        }}
+                                        hitSlop={20}
+                                        onPress={() => {
+                                            showSkipIntro
+                                                ? skipSegment("intro")
+                                                : skipSegment("outro");
                                         }}
                                     >
-                                        {showSkipIntro
-                                            ? "Skip Intro"
-                                            : "Skip Outro"}
-                                    </ThemedText>
-                                </View>
-                            </TouchableRipple>
-                        )}
-                    </View>
+                                        <View>
+                                            <MaterialCommunityIcons
+                                                name="skip-forward"
+                                                size={SIZE(40)}
+                                                color={
+                                                    Colors.light.tabIconSelected
+                                                }
+                                            />
+                                            <ThemedText
+                                                style={{
+                                                    fontSize: SIZE(12),
+                                                    color: Colors.light
+                                                        .tabIconSelected,
+                                                }}
+                                            >
+                                                {showSkipIntro
+                                                    ? "Skip Intro"
+                                                    : "Skip Outro"}
+                                            </ThemedText>
+                                        </View>
+                                    </TouchableRipple>
+                                )}
+                            </View>
+                        </>
+                    ) : null}
                 </View>
             </TouchableWithoutFeedback>
         </View>
