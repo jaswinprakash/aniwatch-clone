@@ -97,13 +97,13 @@ const VideoPlayer = ({
     };
 
     const checkForIntroOutro = (currentTime) => {
-        if (intro && currentTime >= intro.start && currentTime <= intro.end) {
+        if (intro && currentTime >= intro?.start && currentTime <= intro?.end) {
             setShowSkipIntro(true);
         } else {
             setShowSkipIntro(false);
         }
 
-        if (outro && currentTime >= outro.start && currentTime <= outro.end) {
+        if (outro && currentTime >= outro?.start && currentTime <= outro?.end) {
             setShowSkipOutro(true);
         } else {
             setShowSkipOutro(false);
@@ -348,7 +348,7 @@ const VideoPlayer = ({
                 throttledUpdate(animeId, selectedEpisode, currentTime);
             }
         },
-        [selectedEpisode, animeId, throttledUpdate]
+        [selectedEpisode, animeId, throttledUpdate, intro, outro]
     );
 
     return (
