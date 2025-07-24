@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, ImageBackground } from "react-native";
-import { apiConfig } from "../../AxiosConfig";
-import { router } from "expo-router";
+import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
-import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
-import RenderAnime from "./_components/RenderAnime";
-import Carousel from "react-native-reanimated-carousel";
-import { ThemedText } from "@/components/ThemedText";
-import { LinearGradient } from "expo-linear-gradient";
-import { ScrollView } from "react-native-gesture-handler";
 import Constants from "expo-constants";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import LottieView from "lottie-react-native";
+import React, { useEffect, useState } from "react";
+import { Dimensions, ImageBackground, StyleSheet, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { TouchableRipple } from "react-native-paper";
+import Carousel from "react-native-reanimated-carousel";
+import { apiConfig } from "../../AxiosConfig";
+import RenderAnime from "./_components/RenderAnime";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
@@ -278,11 +278,11 @@ export const HomeScreen = () => {
                             data={animeHomeList?.topUpcomingAnimes}
                             type="top-upcoming"
                         />
-                        <RenderAnime
+                        {/* <RenderAnime
                             title="Trending Animes"
                             data={animeHomeList?.trendingAnimes}
                             type="ona"
-                        />
+                        /> */}
                         <RenderAnime
                             title="Completed Animes"
                             data={animeHomeList?.latestCompletedAnimes}

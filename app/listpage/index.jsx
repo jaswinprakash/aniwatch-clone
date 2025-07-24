@@ -1,16 +1,16 @@
-import { StyleSheet, View, Image, ImageBackground } from "react-native";
-import { useEffect, useState } from "react";
-import { apiConfig } from "../../AxiosConfig";
-import { SIZE } from "../../constants/Constants";
-import { Colors } from "../../constants/Colors";
-import { ActivityIndicator, TouchableRipple } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useRoute } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
-import { useRoute } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Image, ImageBackground, StyleSheet, View } from "react-native";
+import { ActivityIndicator, TouchableRipple } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { apiConfig } from "../../AxiosConfig";
+import { ThemedText } from "../../components/ThemedText";
+import { Colors } from "../../constants/Colors";
+import { SIZE } from "../../constants/Constants";
 
 const ListPage = () => {
     const route = useRoute();

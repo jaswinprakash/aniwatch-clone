@@ -1,13 +1,13 @@
-import { StyleSheet, Image, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
-import { ThemedView } from "../../../components/ThemedView";
-import { ThemedText } from "../../../components/ThemedText";
-import LottieView from "lottie-react-native";
-import { SIZE } from "../../../constants/Constants";
-import { TouchableRipple } from "react-native-paper";
-import { FlashList } from "@shopify/flash-list";
 import { Colors } from "@/constants/Colors";
+import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
+import LottieView from "lottie-react-native";
+import React, { useState } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import { ThemedText } from "../../../components/ThemedText";
+import { ThemedView } from "../../../components/ThemedView";
+import { SIZE } from "../../../constants/Constants";
 
 const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
     const [imageLoading, setImageLoading] = useState(true);
@@ -104,10 +104,7 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
 export default React.memo(RenderAnime);
 
 const styles = StyleSheet.create({
-    sectionContainer: {
-        marginBottom: SIZE(10),
-        height: SIZE(255),
-    },
+    sectionContainer: {},
     sectionHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -127,17 +124,17 @@ const styles = StyleSheet.create({
     animeItem: {
         marginRight: SIZE(8),
         alignItems: "center",
-        height: SIZE(240),
+        height: SIZE(268),
     },
     animePoster: {
-        width: SIZE(130),
-        height: SIZE(190),
+        width: SIZE(150),
+        height: SIZE(230),
         borderRadius: SIZE(10),
     },
     animeName: {
         marginTop: SIZE(5),
         textAlign: "center",
-        width: SIZE(130),
+        width: SIZE(150),
         fontSize: SIZE(12),
         color: Colors.light.tabIconSelected,
     },
