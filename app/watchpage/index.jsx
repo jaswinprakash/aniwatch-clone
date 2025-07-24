@@ -639,7 +639,9 @@ const SinglePage = () => {
                                                 selectedEpisode === item?.number
                                                     ? Colors.light
                                                           .tabIconSelected
-                                                    : null,
+                                                    : item?.isFiller
+                                                    ? "#005580"
+                                                    : "transparent",
                                             borderColor:
                                                 Colors.light.tabIconSelected,
                                         },
