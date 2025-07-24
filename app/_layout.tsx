@@ -16,6 +16,7 @@ import { Stack } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { SafeAreaView, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -66,11 +67,15 @@ export default function RootLayout() {
                     backgroundColor: Colors.dark.background,
                 }}
             >
-                <MaterialCommunityIcons
-                    name="wifi-off"
-                    size={SIZE(100)}
-                    color={Colors.light.tabIconSelected}
-                    style={{ alignSelf: "center" }}
+                <LottieView
+                    source={require("../assets/lottie/offline.json")}
+                    autoPlay
+                    loop
+                    style={{
+                        width: SIZE(200),
+                        height: SIZE(200),
+                        alignSelf: "center",
+                    }}
                 />
                 <ThemedText
                     style={{
