@@ -285,7 +285,7 @@ const Controls = ({
                         height: SIZE(5),
                         borderRadius: SIZE(5),
                     }}
-                    value={currentTime}
+                    value={isSeeking ? seekPosition : currentTime}
                     minimumValue={0}
                     maximumValue={duration}
                     step={1}
@@ -297,6 +297,7 @@ const Controls = ({
                     slideOnTap={true}
                     thumbTintColor={Colors.light.tabIconSelected}
                     onValueChange={(value) => {
+                        setIsSeeking(true);
                         setCurrentTime(value);
                         setSeekPosition(value);
                         videoRef.current.seek(value);

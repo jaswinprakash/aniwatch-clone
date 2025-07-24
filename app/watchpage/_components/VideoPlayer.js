@@ -392,6 +392,7 @@ const VideoPlayer = ({
                                     setIsLoading(true);
                                 } else {
                                     setIsLoading(false);
+                                    setIsSeeking(false);
                                     setTimeout(() => {
                                         setShowControls(false);
                                     }, 2000);
