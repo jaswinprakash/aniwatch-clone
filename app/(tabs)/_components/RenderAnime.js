@@ -9,8 +9,66 @@ import { ThemedText } from "../../../components/ThemedText";
 import { ThemedView } from "../../../components/ThemedView";
 import { SIZE } from "../../../constants/Constants";
 
-const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
+const AnimeItem = ({ item, info, setAnimeId }) => {
     const [imageLoading, setImageLoading] = useState(true);
+
+    return (
+        <View style={styles.animeItem}>
+            <TouchableRipple
+                rippleColor={Colors.dark.backgroundPress}
+                borderless={true}
+                style={{ borderRadius: SIZE(10) }}
+                onPress={() => {
+                    if (info) {
+                        setAnimeId(item.id);
+                    } else {
+                        router.navigate({
+                            pathname: "infopage",
+                            params: {
+                                id: item.id,
+                            },
+                        });
+                    }
+                }}
+            >
+                <>
+                    {imageLoading && (
+                        <LottieView
+                            source={require("../../../assets/lottie/loader2.json")}
+                            autoPlay
+                            loop
+                            style={{
+                                position: "absolute",
+                                alignSelf: "center",
+                                width: SIZE(100),
+                                height: SIZE(100),
+                                top: "28%",
+                            }}
+                        />
+                    )}
+                    <Image
+                        style={styles.animePoster}
+                        source={{ uri: item.poster }}
+                        resizeMode="cover"
+                        onLoadEnd={() => {
+                            setImageLoading(false);
+                        }}
+                    />
+                </>
+            </TouchableRipple>
+
+            <ThemedText
+                numberOfLines={2}
+                type="subtitle"
+                style={styles.animeName}
+            >
+                {item.name}
+            </ThemedText>
+        </View>
+    );
+};
+
+const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
     if (!data) return null;
 
     return (
@@ -43,60 +101,11 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
                 horizontal
                 contentContainerStyle={{ paddingHorizontal: SIZE(16) }}
                 renderItem={({ item }) => (
-                    <View style={styles.animeItem}>
-                        <TouchableRipple
-                            rippleColor={Colors.dark.backgroundPress}
-                            borderless={true}
-                            style={{ borderRadius: SIZE(10) }}
-                            onPress={() => {
-                                if (info) {
-                                    setAnimeId(item.id);
-                                } else {
-                                    router.navigate({
-                                        pathname: "infopage",
-                                        params: {
-                                            id: item.id,
-                                        },
-                                    });
-                                }
-                            }}
-                        >
-                            <>
-                                {imageLoading && (
-                                    <LottieView
-                                        source={require("../../../assets/lottie/loader2.json")}
-                                        autoPlay
-                                        loop
-                                        style={{
-                                            position: "absolute",
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            width: SIZE(100),
-                                            height: SIZE(100),
-                                        }}
-                                    />
-                                )}
-                                <Image
-                                    style={styles.animePoster}
-                                    source={{ uri: item.poster }}
-                                    resizeMode="cover"
-                                    onLoadEnd={() => {
-                                        setImageLoading(false);
-                                    }}
-                                />
-                            </>
-                        </TouchableRipple>
-
-                        <ThemedText
-                            numberOfLines={2}
-                            type="subtitle"
-                            style={styles.animeName}
-                        >
-                            {item.name}
-                        </ThemedText>
-                    </View>
+                    <AnimeItem
+                        item={item}
+                        info={info}
+                        setAnimeId={setAnimeId}
+                    />
                 )}
             />
         </ThemedView>
