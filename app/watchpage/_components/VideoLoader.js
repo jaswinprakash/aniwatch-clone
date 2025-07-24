@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import LottieView from "lottie-react-native";
 import React from "react";
+import { StyleSheet } from "react-native";
 import { ThemedText } from "../../../components/ThemedText";
 import { ThemedView } from "../../../components/ThemedView";
 import { Colors } from "../../../constants/Colors";
-import LottieView from "lottie-react-native";
 import { SIZE } from "../../../constants/Constants";
 const VideoLoader = ({ selectedEpisode }) => {
     return (
@@ -18,10 +18,13 @@ const VideoLoader = ({ selectedEpisode }) => {
             }}
         >
             <LottieView
-                source={require("../../../assets/lottie/loader-2.json")}
+                source={require("../../../assets/lottie/loader2.json")}
                 autoPlay
                 loop
-                style={{ width: SIZE(200), height: SIZE(200) }}
+                style={{
+                    width: SIZE(100),
+                    height: SIZE(100),
+                }}
             />
             <ThemedText
                 type="subtitle"

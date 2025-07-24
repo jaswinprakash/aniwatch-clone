@@ -1,4 +1,5 @@
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { Slider } from "@react-native-assets/slider";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
@@ -10,8 +11,8 @@ import Animated, {
 import { ThemedText } from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
-import { Slider } from "@react-native-assets/slider";
 
+import LottieView from "lottie-react-native";
 import { TouchableRipple } from "react-native-paper";
 
 const Controls = ({
@@ -46,6 +47,7 @@ const Controls = ({
     resetControlsTimeout,
     setScreenMode,
     screenMode,
+    isLoading,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
@@ -252,7 +254,20 @@ const Controls = ({
                     </View>
                 </View>
             </Animated.View>
-            {/* Play/Pause and Skip Buttons */}
+            {isLoading && (
+                <LottieView
+                    source={require("../../../assets/lottie/loader.json")}
+                    autoPlay
+                    loop
+                    style={{
+                        width: SIZE(40),
+                        height: SIZE(40),
+                        alignSelf: "center",
+                        position: "absolute",
+                        top: "45%",
+                    }}
+                />
+            )}
             <Animated.View
                 style={[styles.centerControls, centerControlsStyle]}
             ></Animated.View>

@@ -64,7 +64,7 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
                             <>
                                 {imageLoading && (
                                     <LottieView
-                                        source={require("../../../assets/lottie/loader-3.json")}
+                                        source={require("../../../assets/lottie/loader2.json")}
                                         autoPlay
                                         loop
                                         style={{
@@ -73,6 +73,8 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
                                             left: 0,
                                             right: 0,
                                             bottom: 0,
+                                            width: SIZE(100),
+                                            height: SIZE(100),
                                         }}
                                     />
                                 )}

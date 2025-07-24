@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useScreenOrientation } from "@/hooks/useScreenOrientation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
     DarkTheme,
@@ -10,7 +11,9 @@ import {
     ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from "expo-router";
+import * as ScreenOrientation from "expo-screen-orientation";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -40,6 +43,7 @@ export default function RootLayout() {
         Exo2Bold: require("../assets/fonts/RobotoCondensed-Bold.ttf"),
     });
     const isConnected = useNetworkState();
+    useScreenOrientation();
 
     useEffect(() => {
         if (loaded) {
@@ -52,6 +56,8 @@ export default function RootLayout() {
     }
 
     if (!isConnected) {
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+        NavigationBar.setVisibilityAsync("visible");
         return (
             <SafeAreaView
                 style={{

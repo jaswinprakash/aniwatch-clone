@@ -488,12 +488,12 @@ const SearchPage = () => {
                     }}
                 >
                     <LottieView
-                        source={require("../../assets/lottie/loader-3.json")}
+                        source={require("../../assets/lottie/loader2.json")}
                         autoPlay
                         loop
                         style={{
-                            width: SIZE(200),
-                            height: SIZE(200),
+                            width: SIZE(100),
+                            height: SIZE(100),
                         }}
                     />
                 </View>

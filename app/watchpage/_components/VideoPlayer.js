@@ -1,12 +1,10 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import * as NavigationBar from "expo-navigation-bar";
 import { router } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
     BackHandler,
     StyleSheet,
     TouchableWithoutFeedback,
@@ -148,14 +146,12 @@ const VideoPlayer = ({
                 ScreenOrientation.lockAsync(
                     ScreenOrientation.OrientationLock.LANDSCAPE
                 ),
-                NavigationBar.setVisibilityAsync("hidden"),
             ]);
         } else {
             await Promise.all([
                 ScreenOrientation.lockAsync(
                     ScreenOrientation.OrientationLock.PORTRAIT
                 ),
-                NavigationBar.setVisibilityAsync("visible"),
             ]);
         }
         resetControlsTimeout();
@@ -279,7 +275,6 @@ const VideoPlayer = ({
             ScreenOrientation.lockAsync(
                 ScreenOrientation.OrientationLock.PORTRAIT
             );
-            NavigationBar.setVisibilityAsync("visible");
         };
     }, []);
 
@@ -360,13 +355,6 @@ const VideoPlayer = ({
                 onTouchEnd={handleTouchEnd}
             >
                 <View style={styles.videoContainer}>
-                    {isLoading && (
-                        <ActivityIndicator
-                            size={"large"}
-                            color={Colors.light.tabIconSelected}
-                            style={styles.loader}
-                        />
-                    )}
                     {showBackwardIndicator && (
                         <View
                             style={[styles.skipIndicator, { left: SIZE(50) }]}
@@ -425,13 +413,6 @@ const VideoPlayer = ({
                             onLoad={onLoad}
                             onProgress={onProgress}
                             resizeMode={screenMode}
-                            renderLoader={() => (
-                                <ActivityIndicator
-                                    size={"large"}
-                                    color={Colors.light.tabIconSelected}
-                                    style={styles.loader}
-                                />
-                            )}
                             selectedVideoTrack={{
                                 type:
                                     selectedQuality === "auto"
@@ -518,6 +499,7 @@ const VideoPlayer = ({
                                     resetControlsTimeout={resetControlsTimeout}
                                     setScreenMode={setScreenMode}
                                     screenMode={screenMode}
+                                    isLoading={isLoading}
                                 />
                                 {showQualityList && (
                                     <SubModal
