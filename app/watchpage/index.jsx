@@ -1,33 +1,30 @@
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { SIZE } from "@/constants/Constants";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { FlashList } from "@shopify/flash-list";
+import Constants from "expo-constants";
+import LottieView from "lottie-react-native";
+import { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
     StyleSheet,
-    View,
-    ImageBackground,
-    Text,
-    Image,
     Switch,
+    Text,
+    View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
-import { apiConfig, streamApi } from "../../AxiosConfig";
-import { FlashList } from "@shopify/flash-list";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import VideoPlayer from "./_components/VideoPlayer";
-import { Colors } from "@/constants/Colors";
-import { SIZE } from "@/constants/Constants";
-import { TextInput, TouchableRipple } from "react-native-paper";
-import { useFullscreen } from "../../hooks/FullScreenContext";
-import Constants from "expo-constants";
-import VideoLoader from "./_components/VideoLoader";
-import ServerTab from "./_components/ServerTab";
-import DropDownTab from "./_components/DropDownTab";
 import { Dropdown } from "react-native-element-dropdown";
-import LottieView from "lottie-react-native";
+import { TextInput, TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { apiConfig, streamApi } from "../../AxiosConfig";
 import { SIZES } from "../../constants/Constants";
+import { useFullscreen } from "../../hooks/FullScreenContext";
+import DropDownTab from "./_components/DropDownTab";
+import ServerTab from "./_components/ServerTab";
+import VideoPlayer from "./_components/VideoPlayer";
 import WebViewPlayer from "./_components/WebViewPlayer";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const SinglePage = () => {
     const { isFullscreenContext } = useFullscreen();
@@ -130,15 +127,15 @@ const SinglePage = () => {
                     }
                 }
 
-                const streamResponse = await apiConfig
-                    .get(
-                        `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
-                    )
-                    .catch((error) => {
-                        // setTimeout(() => {
-                        //     setError(true);
-                        // }, 1000)
-                    });
+                // const streamResponse = await apiConfig
+                //     .get(
+                //         `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
+                //     )
+                //     .catch((error) => {
+                //         setTimeout(() => {
+                //             setError(true);
+                //         }, 1000)
+                //     });
 
                 const streamResponseTwo = await streamApi
                     .get(
