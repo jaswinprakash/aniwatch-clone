@@ -1,15 +1,16 @@
 import { useKeepAwake } from "expo-keep-awake";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
+import * as WebBrowser from "expo-web-browser";
 import React, { useEffect, useRef, useState } from "react";
 import { BackHandler, Platform, StyleSheet, View } from "react-native";
 import WebView from "react-native-webview";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 import { SIZE } from "../../../constants/Constants";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import PlayerLoader from "./PlayerLoader";
-
 const WebViewPlayer = ({
     route,
     episodes,
@@ -80,7 +81,9 @@ const WebViewPlayer = ({
     const onExitFullscreen = () => {
         setIsFullscreenContext(false);
         setIsFullscreen(false);
-        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+        ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP
+        );
         if (wasPlayingRef.current) {
             setTimeout(() => {
                 webViewRef.current.injectJavaScript(`
@@ -110,6 +113,23 @@ const WebViewPlayer = ({
         } else {
             console.log("No next episode available.");
         }
+    };
+
+    const handleLoad = (request) => {
+        if (
+            request.url.includes(
+                `https://megaplay.buzz/stream/s-2/${idForWebview}/${activeTab}`
+            )
+        ) {
+            return true;
+        }
+
+        WebBrowser.openBrowserAsync(request.url, {
+            toolbarColor: Colors.dark.background,
+            controlsColor: Colors.dark.tabIconSelected,
+            dismissButtonStyle: "close",
+        });
+        return false;
     };
 
     const INJECTED_JAVASCRIPT = `
@@ -233,6 +253,7 @@ const WebViewPlayer = ({
                         //         `);
                         //     }
                         // }}
+                        onShouldStartLoadWithRequest={handleLoad}
                     />
                 )
             )}
