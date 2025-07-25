@@ -9,11 +9,12 @@ import { FlashList } from "@shopify/flash-list";
 import Constants from "expo-constants";
 import LottieView from "lottie-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Switch, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { TextInput, TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { apiConfig, streamApi } from "../../AxiosConfig";
+import CustomSwitch from "../../components/CustomSwitch";
 import { SIZES } from "../../constants/Constants";
 import { useFullscreen } from "../../hooks/FullScreenContext";
 import DropDownTab from "./_components/DropDownTab";
@@ -589,20 +590,10 @@ const SinglePage = () => {
                                         webviewOn ? "web-check" : "web-remove"
                                     }
                                     size={SIZE(20)}
-                                    color={webviewOn ? "#3AFF6F" : "#f44336"}
+                                    color={webviewOn ? "#3AFF6F" : "#3e3e3e"}
                                     style={{ alignSelf: "center" }}
                                 />
-                                <Switch
-                                    trackColor={{
-                                        false: "#f44336",
-                                        true: "#3AFF6F",
-                                    }}
-                                    thumbColor={
-                                        webviewOn
-                                            ? Colors.light.tabIconSelected
-                                            : "#fff"
-                                    }
-                                    ios_backgroundColor="#3e3e3e"
+                                <CustomSwitch
                                     onValueChange={toggleSwitch}
                                     value={webviewOn}
                                 />
