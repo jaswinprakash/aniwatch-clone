@@ -9,7 +9,9 @@
         "userInterfaceStyle": "dark",
         "newArchEnabled": true,
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "bundleIdentifier": "com.animplay",
+            "requireFullScreen": true
         },
         "android": {
             "adaptiveIcon": {
@@ -38,7 +40,7 @@
             [
                 "expo-screen-orientation",
                 {
-                    "initialOrientation": "DEFAULT"
+                    "initialOrientation": "PORTRAIT"
                 }
             ],
             [

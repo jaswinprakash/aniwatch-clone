@@ -18,7 +18,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
-import { SafeAreaView, TouchableOpacity, View } from "react-native";
+import { Platform, SafeAreaView, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider as PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -58,7 +58,9 @@ export default function RootLayout() {
 
     if (!isConnected) {
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
-        NavigationBar.setVisibilityAsync("visible");
+        if (Platform.OS === "android") {
+            NavigationBar.setVisibilityAsync("visible");
+        }
         return (
             <SafeAreaView
                 style={{

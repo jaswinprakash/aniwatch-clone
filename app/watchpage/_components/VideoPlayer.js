@@ -1,11 +1,12 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     BackHandler,
+    Platform,
     StyleSheet,
     TouchableWithoutFeedback,
     View,
@@ -41,6 +42,7 @@ const VideoPlayer = ({
     error,
     episodeLoading,
 }) => {
+    const navigation = useNavigation();
     const videoRef = useRef(null);
     const { setIsFullscreenContext } = useFullscreen();
     const [isFullScreen, setIsFullScreen] = useState(false);
@@ -147,12 +149,24 @@ const VideoPlayer = ({
                     ScreenOrientation.OrientationLock.LANDSCAPE
                 ),
             ]);
+            if (Platform.OS == "ios") {
+                navigation.setOptions({
+                    autoHideHomeIndicator: true,
+                    gestureEnabled: false,
+                });
+            }
         } else {
             await Promise.all([
                 ScreenOrientation.lockAsync(
-                    ScreenOrientation.OrientationLock.PORTRAIT
+                    ScreenOrientation.OrientationLock.PORTRAIT_UP
                 ),
             ]);
+            if (Platform.OS == "ios") {
+                navigation.setOptions({
+                    autoHideHomeIndicator: false,
+                    gestureEnabled: true,
+                });
+            }
         }
         resetControlsTimeout();
     };
@@ -271,14 +285,6 @@ const VideoPlayer = ({
     }, [isFullScreen]);
 
     useEffect(() => {
-        return () => {
-            ScreenOrientation.lockAsync(
-                ScreenOrientation.OrientationLock.PORTRAIT
-            );
-        };
-    }, []);
-
-    useEffect(() => {
         if (subtitlesData && subtitlesData.length > 0) {
             setSelectedSubtitle(
                 subtitlesData.find(
@@ -293,10 +299,16 @@ const VideoPlayer = ({
     useEffect(() => {
         return () => {
             ScreenOrientation.lockAsync(
-                ScreenOrientation.OrientationLock.PORTRAIT
+                ScreenOrientation.OrientationLock.PORTRAIT_UP
             );
             if (controlsTimeoutRef.current) {
                 clearTimeout(controlsTimeoutRef.current);
+            }
+            if (Platform.OS == "ios") {
+                navigation.setOptions({
+                    autoHideHomeIndicator: false,
+                    gestureEnabled: true,
+                });
             }
         };
     }, []);

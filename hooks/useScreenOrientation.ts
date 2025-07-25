@@ -2,6 +2,7 @@
 import * as NavigationBar from "expo-navigation-bar";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { useEffect } from "react";
+import { Platform } from "react-native";
 
 export function useScreenOrientation() {
     useEffect(() => {
@@ -18,7 +19,7 @@ export function useScreenOrientation() {
                     orientation ===
                         ScreenOrientation.Orientation.LANDSCAPE_RIGHT;
 
-                if (isMounted) {
+                if (isMounted && Platform.OS === "android") {
                     await NavigationBar.setVisibilityAsync(
                         isLandscape ? "hidden" : "visible"
                     );

@@ -1,13 +1,13 @@
-import { StyleSheet, View, BackHandler, Platform } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
-import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
-import WebView from "react-native-webview";
-import { SIZE } from "../../../constants/Constants";
+import { useKeepAwake } from "expo-keep-awake";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useRef, useState } from "react";
+import { BackHandler, Platform, StyleSheet, View } from "react-native";
+import WebView from "react-native-webview";
+import { SIZE } from "../../../constants/Constants";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
-import { useKeepAwake } from "expo-keep-awake";
+import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
+import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import PlayerLoader from "./PlayerLoader";
 
 const WebViewPlayer = ({
@@ -69,12 +69,18 @@ const WebViewPlayer = ({
         ScreenOrientation.lockAsync(
             ScreenOrientation.OrientationLock.LANDSCAPE
         );
+        if (Platform.OS == "ios") {
+            navigation.setOptions({
+                autoHideHomeIndicator: true,
+                gestureEnabled: false,
+            });
+        }
     };
 
     const onExitFullscreen = () => {
         setIsFullscreenContext(false);
         setIsFullscreen(false);
-        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
         if (wasPlayingRef.current) {
             setTimeout(() => {
                 webViewRef.current.injectJavaScript(`
@@ -85,6 +91,12 @@ const WebViewPlayer = ({
                     true;
                 `);
             }, 500);
+        }
+        if (Platform.OS == "ios") {
+            navigation.setOptions({
+                autoHideHomeIndicator: false,
+                gestureEnabled: true,
+            });
         }
     };
 
