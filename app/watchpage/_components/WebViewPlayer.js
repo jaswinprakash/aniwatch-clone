@@ -254,6 +254,7 @@ const WebViewPlayer = ({
                         //     }
                         // }}
                         onShouldStartLoadWithRequest={handleLoad}
+                        setSupportMultipleWindows={false}
                     />
                 )
             )}
