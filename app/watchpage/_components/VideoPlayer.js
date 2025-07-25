@@ -47,7 +47,6 @@ const VideoPlayer = ({
     const { setIsFullscreenContext } = useFullscreen();
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [showControls, setShowControls] = useState(true);
-    const [controlsTimeout, setControlsTimeout] = useState(null);
     const [isPlaying, setIsPlaying] = useState(true);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -55,7 +54,6 @@ const VideoPlayer = ({
     const [selectedSubtitle, setSelectedSubtitle] = useState(null);
     const [isSeeking, setIsSeeking] = useState(false);
     const [seekPosition, setSeekPosition] = useState(0);
-    const [controlsVisible, setControlsVisible] = useState(true);
     const [selectedQuality, setSelectedQuality] = useState("auto");
     const [showQualityList, setShowQualityList] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +64,6 @@ const VideoPlayer = ({
     const [doubleTapTimeoutId, setDoubleTapTimeoutId] = useState(null);
     const DOUBLE_TAP_DELAY = 300;
     const SEEK_AMOUNT = 10;
-    let touchStart = 0;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
     const [initialLoad, setInitialLoad] = useState(true);
@@ -75,6 +72,9 @@ const VideoPlayer = ({
     const [showSkipOutro, setShowSkipOutro] = useState(false);
     const controlsTimeoutRef = useRef(null);
     const [screenMode, setScreenMode] = useState("contain");
+    const [showSpeedIndicator, setShowSpeedIndicator] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(1);
+    const isLongPressActiveRef = useRef(false);
 
     const toggleControls = () => {
         if (showControls) {
@@ -127,17 +127,12 @@ const VideoPlayer = ({
         resetControlsTimeout();
     };
 
-    const handleTouchStart = (event) => {
-        touchStart = event.nativeEvent.pageY;
+    const handleTouchStart = () => {
+        resetControlsTimeout();
     };
 
-    const handleTouchEnd = (event) => {
-        const touchEnd = event.nativeEvent.pageY;
-        const diff = touchEnd - touchStart;
-
-        if (Math.abs(diff) > 20 && isFullScreen) {
-            setControlsVisible(!controlsVisible);
-        }
+    const handleTouchEnd = () => {
+        resetControlsTimeout();
     };
 
     const toggleFullScreen = async () => {
@@ -358,6 +353,28 @@ const VideoPlayer = ({
         [selectedEpisode, animeId, throttledUpdate, intro, outro]
     );
 
+    const handleLongPress = (event) => {
+        const screenWidth = SIZE(400);
+        const tapX = event.nativeEvent.locationX;
+        const isRightSide = tapX > screenWidth / 2;
+
+        if (isRightSide) {
+            setPlaybackRate(2);
+            setShowSpeedIndicator(true);
+            isLongPressActiveRef.current = true;
+            console.log("Long press activated - fast forward");
+        }
+    };
+
+    const handleLongPressEnd = () => {
+        if (isLongPressActiveRef.current) {
+            setPlaybackRate(1);
+            setShowSpeedIndicator(false);
+            isLongPressActiveRef.current = false;
+            console.log("Long press released - returning to normal speed");
+        }
+    };
+
     return (
         <View style={[styles.container, isFullScreen && styles.fullScreen]}>
             <StatusBar hidden={isFullScreen} style="auto" />
@@ -365,6 +382,9 @@ const VideoPlayer = ({
                 onPress={(event) => handleDoubleTap(event)}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
+                onLongPress={handleLongPress}
+                onPressOut={handleLongPressEnd}
+                delayLongPress={500}
             >
                 <View style={styles.videoContainer}>
                     {showBackwardIndicator && (
@@ -438,6 +458,7 @@ const VideoPlayer = ({
                             }}
                             onEnd={nextEpisode}
                             controls={false}
+                            rate={playbackRate}
                         />
                     )}
                     {!videoLoading ? (
@@ -514,6 +535,7 @@ const VideoPlayer = ({
                                     setScreenMode={setScreenMode}
                                     screenMode={screenMode}
                                     isLoading={isLoading}
+                                    showSpeedIndicator={showSpeedIndicator}
                                 />
                                 {showQualityList && (
                                     <SubModal

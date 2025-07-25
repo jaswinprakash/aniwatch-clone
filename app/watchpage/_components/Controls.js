@@ -48,6 +48,7 @@ const Controls = ({
     setScreenMode,
     screenMode,
     isLoading,
+    showSpeedIndicator,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
@@ -268,8 +269,38 @@ const Controls = ({
                         alignSelf: "center",
                         position: "absolute",
                         top: "45%",
+                        zIndex: 1000,
                     }}
                 />
+            )}
+            {showSpeedIndicator && (
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        alignSelf: "center",
+                        position: "absolute",
+                        top: "20%",
+                        zIndex: 1000,
+                    }}
+                >
+                    <ThemedText
+                        type="subtitle"
+                        style={{
+                            color: Colors.light.tabIconSelected,
+                            textShadowColor: Colors.dark.black,
+                            textShadowOffset: { width: 1, height: 1 },
+                            textShadowRadius: 2,
+                        }}
+                    >
+                        2x
+                    </ThemedText>
+                    <MaterialIcons
+                        name="fast-forward"
+                        size={SIZE(30)}
+                        color={Colors.light.tabIconSelected}
+                    />
+                </View>
             )}
             <Animated.View
                 style={[styles.centerControls, centerControlsStyle]}
