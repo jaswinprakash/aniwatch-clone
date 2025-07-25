@@ -242,17 +242,6 @@ const WebViewPlayer = ({
                                 );
                             }
                         }}
-                        // onNavigationStateChange={(webViewState) => {
-                        //     if (
-                        //         webViewState.url.includes("https://megaplay.buzz")
-                        //     ) {
-                        //         webViewRef.current.injectJavaScript(`
-                        //             var video = document.querySelector('video');
-                        //             if (video) video.pause();
-                        //             true;
-                        //         `);
-                        //     }
-                        // }}
                         onShouldStartLoadWithRequest={handleLoad}
                         setSupportMultipleWindows={false}
                     />
