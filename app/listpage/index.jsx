@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import { useEffect, useState } from "react";
 import { Image, ImageBackground, StyleSheet, View } from "react-native";
-import { ActivityIndicator, TouchableRipple } from "react-native-paper";
+import { TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { apiConfig } from "../../AxiosConfig";
 import { ThemedText } from "../../components/ThemedText";
@@ -114,9 +114,15 @@ const ListPage = () => {
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         isFetchingNextPage ? (
-                            <ActivityIndicator
-                                color={Colors.light.tabIconSelected}
-                                size="small"
+                            <LottieView
+                                source={require("../../assets/lottie/loader2.json")}
+                                autoPlay
+                                loop
+                                style={{
+                                    alignSelf: "center",
+                                    width: SIZE(100),
+                                    height: SIZE(100),
+                                }}
                             />
                         ) : null
                     }
@@ -143,7 +149,7 @@ const ListPage = () => {
                                     { backgroundColor: "rgba(0, 0, 0, 0.2)" },
                                 ]}
                                 source={{ uri: item.poster }}
-                                blurRadius={2}
+                                blurRadius={10}
                                 resizeMode="cover"
                             >
                                 <View

@@ -81,7 +81,7 @@ const StoredVideos = ({ id, episode, time }) => {
                     ]}
                     source={{ uri: animeInfo?.anime?.info?.poster }}
                     resizeMode="cover"
-                    blurRadius={2}
+                    blurRadius={10}
                 >
                     <View style={{ width: "100%" }}>
                         <View style={styles.main}>

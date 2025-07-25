@@ -425,6 +425,7 @@ const VideoPlayer = ({
                                         : selectedQuality,
                             }}
                             onEnd={nextEpisode}
+                            controls={false}
                         />
                     )}
                     {!videoLoading ? (

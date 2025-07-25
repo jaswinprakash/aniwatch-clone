@@ -1,3 +1,4 @@
+import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -8,13 +9,7 @@ import { FlashList } from "@shopify/flash-list";
 import Constants from "expo-constants";
 import LottieView from "lottie-react-native";
 import { useCallback, useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    StyleSheet,
-    Switch,
-    Text,
-    View,
-} from "react-native";
+import { StyleSheet, Switch, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { TextInput, TouchableRipple } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -397,59 +392,74 @@ const SinglePage = () => {
                 >
                     {animeInfo?.anime?.info?.name}
                 </ThemedText>
-                <View
-                    style={{
-                        borderWidth: SIZE(1),
-                        borderColor: Colors.light.tabIconSelected,
-                        borderRadius: SIZE(8),
-                        marginBottom: SIZE(10),
-                        padding: SIZE(10),
-                    }}
-                >
-                    <ServerTab
-                        activeTab={activeTab}
-                        setActiveTab={setActiveTab}
-                        servers={servers}
+                {episodeLoading ? (
+                    <SkeletonLoader
+                        height={SIZE(110)}
+                        width={SIZE(100)}
+                        style={{
+                            width: "100%",
+                            marginBottom: SIZE(10),
+                            borderRadius: SIZE(8),
+                        }}
+                        backgroundColor={Colors.dark.background}
                     />
-                    {activeTab === "sub" && (
-                        <View style={styles.subTabContainer}>
-                            {servers?.sub?.map((item, index) => (
-                                <DropDownTab
-                                    key={index}
-                                    item={item}
-                                    activeSubTab={activeSubTab}
-                                    setActiveSubTab={setActiveSubTab}
-                                />
-                            ))}
-                        </View>
-                    )}
+                ) : (
+                    <View
+                        style={{
+                            borderWidth: SIZE(1),
+                            borderColor: Colors.light.tabIconSelected,
+                            borderRadius: SIZE(8),
+                            marginBottom: SIZE(10),
+                            padding: SIZE(10),
+                            height: SIZE(110),
+                        }}
+                    >
+                        <ServerTab
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                            servers={servers}
+                        />
+                        {activeTab === "sub" && (
+                            <View style={styles.subTabContainer}>
+                                {servers?.sub?.map((item, index) => (
+                                    <DropDownTab
+                                        key={index}
+                                        item={item}
+                                        activeSubTab={activeSubTab}
+                                        setActiveSubTab={setActiveSubTab}
+                                    />
+                                ))}
+                            </View>
+                        )}
 
-                    {activeTab === "dub" && (
-                        <View style={styles.subTabContainer}>
-                            {servers?.dub?.map((item, index) => (
-                                <DropDownTab
-                                    key={index}
-                                    item={item}
-                                    activeSubTab={activeSubTab}
-                                    setActiveSubTab={setActiveSubTab}
-                                />
-                            ))}
-                        </View>
-                    )}
+                        {activeTab === "dub" && (
+                            <View style={styles.subTabContainer}>
+                                {servers?.dub?.map((item, index) => (
+                                    <DropDownTab
+                                        key={index}
+                                        item={item}
+                                        activeSubTab={activeSubTab}
+                                        setActiveSubTab={setActiveSubTab}
+                                    />
+                                ))}
+                            </View>
+                        )}
 
-                    {activeTab === "raw" && (
-                        <View style={styles.subTabContainer}>
-                            {servers?.raw?.map((item, index) => (
-                                <DropDownTab
-                                    key={index}
-                                    item={item}
-                                    activeSubTab={activeSubTab}
-                                    setActiveSubTab={setActiveSubTab}
-                                />
-                            ))}
-                        </View>
-                    )}
-                </View>
+                        {activeTab === "raw" && (
+                            <View style={styles.subTabContainer}>
+                                {servers?.raw?.map((item, index) => (
+                                    <DropDownTab
+                                        key={index}
+                                        item={item}
+                                        activeSubTab={activeSubTab}
+                                        setActiveSubTab={setActiveSubTab}
+                                    />
+                                ))}
+                            </View>
+                        )}
+                    </View>
+                )}
+
                 <View
                     style={{
                         flexDirection: "row",
@@ -479,11 +489,37 @@ const SinglePage = () => {
                     </ThemedText>
                 </View>
                 {episodeLoading ? (
-                    <ActivityIndicator
-                        size={"large"}
-                        color={Colors.light.tabIconSelected}
-                        style={{ flex: 1 }}
-                    />
+                    <>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                marginBottom: SIZE(20),
+                            }}
+                        >
+                            <SkeletonLoader
+                                height={SIZE(40)}
+                                width={SIZE(50)}
+                                style={{
+                                    width: "35%",
+                                    marginTop: SIZE(5),
+                                    borderRadius: SIZE(8),
+                                }}
+                                backgroundColor={Colors.dark.background}
+                            />
+                            <SkeletonLoader
+                                height={SIZE(40)}
+                                width={SIZE(50)}
+                                style={{
+                                    width: "35%",
+                                    marginTop: SIZE(5),
+                                    borderRadius: SIZE(8),
+                                }}
+                                backgroundColor={Colors.dark.background}
+                            />
+                        </View>
+                    </>
                 ) : (
                     <>
                         <View

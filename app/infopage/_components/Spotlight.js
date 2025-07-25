@@ -16,7 +16,7 @@ const Spotlight = ({ animeInfo, qTip }) => {
                 style={[styles.backgroundImage]}
                 source={{ uri: animeInfo?.anime?.info?.poster }}
                 resizeMode="cover"
-                blurRadius={2}
+                blurRadius={10}
             >
                 <Image
                     style={styles.fastImage}

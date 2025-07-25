@@ -1,28 +1,24 @@
+import { MaterialIcons } from "@expo/vector-icons";
+import { FlashList } from "@shopify/flash-list";
+import { router } from "expo-router";
+import LottieView from "lottie-react-native";
+import { useEffect, useMemo, useState } from "react";
 import {
-    ScrollView,
-    StyleSheet,
     Image,
     ImageBackground,
+    ScrollView,
+    StyleSheet,
     View,
 } from "react-native";
-import { useEffect, useMemo, useState } from "react";
-import { apiConfig } from "../../AxiosConfig";
-import { SIZE } from "../../constants/Constants";
-import { Colors } from "../../constants/Colors";
-import {
-    ActivityIndicator,
-    TextInput,
-    TouchableRipple,
-} from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "../../components/ThemedText";
-import { FlashList } from "@shopify/flash-list";
-import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import FilterModal from "./_components/FilterModal";
 import Modal from "react-native-modal";
+import { TextInput, TouchableRipple } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { apiConfig } from "../../AxiosConfig";
+import { ThemedText } from "../../components/ThemedText";
+import { Colors } from "../../constants/Colors";
+import { SIZE } from "../../constants/Constants";
 import AppliedFilters from "./_components/AppliedFilters";
-import LottieView from "lottie-react-native";
+import FilterModal from "./_components/FilterModal";
 
 const SearchPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -216,9 +212,15 @@ const SearchPage = () => {
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={
                     isFetchingNextPage ? (
-                        <ActivityIndicator
-                            color={Colors.light.tabIconSelected}
-                            size="small"
+                        <LottieView
+                            source={require("../../assets/lottie/loader2.json")}
+                            autoPlay
+                            loop
+                            style={{
+                                alignSelf: "center",
+                                width: SIZE(100),
+                                height: SIZE(100),
+                            }}
                         />
                     ) : null
                 }
@@ -243,7 +245,7 @@ const SearchPage = () => {
                             ]}
                             source={{ uri: item.poster }}
                             resizeMode="cover"
-                            blurRadius={2}
+                            blurRadius={10}
                         >
                             <View
                                 style={{
@@ -448,9 +450,16 @@ const SearchPage = () => {
                         searchLoading ? (
                             <TextInput.Icon
                                 icon={() => (
-                                    <ActivityIndicator
-                                        size="small"
-                                        color={Colors.light.tabIconSelected}
+                                    <LottieView
+                                        source={require("../../assets/lottie/loader2.json")}
+                                        autoPlay
+                                        loop
+                                        style={{
+                                            alignSelf: "center",
+                                            width: SIZE(50),
+                                            height: SIZE(50),
+                                            marginBottom: SIZE(10),
+                                        }}
                                     />
                                 )}
                             />

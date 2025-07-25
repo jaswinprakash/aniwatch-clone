@@ -23,7 +23,7 @@ const PlayerLoader = ({
                 ]}
                 source={{ uri: uri }}
                 resizeMode="cover"
-                blurRadius={2}
+                blurRadius={10}
             >
                 {error && !videoLoading && !episodeLoading && (
                     <ThemedText type="title" style={styles.errorText}>
