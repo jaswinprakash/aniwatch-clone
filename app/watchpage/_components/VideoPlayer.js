@@ -435,10 +435,10 @@ const VideoPlayer = ({
                                 uri: videoUrl,
                                 type: "m3u8",
                                 bufferConfig: {
-                                    minBufferMs: 15000,
-                                    maxBufferMs: 30000,
-                                    bufferForPlaybackMs: 2500,
-                                    bufferForPlaybackAfterRebufferMs: 5000,
+                                    minBufferMs: 5000,
+                                    maxBufferMs: 10000,
+                                    bufferForPlaybackMs: 1000,
+                                    bufferForPlaybackAfterRebufferMs: 2000,
                                 },
                             }}
                             style={styles.video}
