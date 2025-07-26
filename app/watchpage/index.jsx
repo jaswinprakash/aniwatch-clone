@@ -39,8 +39,6 @@ const SinglePage = () => {
     const [servers, setServers] = useState();
     const [animeInfo, setAnimeInfo] = useState();
     const [availableQualities, setAvailableQualities] = useState(["auto"]);
-    const [currentPlayingEpisodeId, setCurrentPlayingEpisodeId] =
-        useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState(false);
@@ -180,9 +178,6 @@ const SinglePage = () => {
                 // setVideoData(streamResponse.data.data);
                 setVideoData(videoData);
 
-                if (currentPlayingEpisodeId !== id) {
-                    setCurrentPlayingEpisodeId(id);
-                }
                 setVideoLoading(false);
             } catch (error) {
                 console.log(error, "axios error - stream");
@@ -193,7 +188,7 @@ const SinglePage = () => {
                 // setVideoLoading(false);
             }
         },
-        [activeSubTab, activeTab, currentPlayingEpisodeId]
+        [activeSubTab, activeTab]
     );
 
     useEffect(() => {
@@ -350,9 +345,7 @@ const SinglePage = () => {
                     episodes={episodes}
                     setSelectedEpisode={setSelectedEpisode}
                     selectedEpisodeId={selectedEpisodeId}
-                    currentPlayingEpisodeId={currentPlayingEpisodeId}
                     startStream={startStream}
-                    setCurrentPlayingEpisodeId={setCurrentPlayingEpisodeId}
                     animeId={route?.params?.id}
                     uri={animeInfo?.anime?.info?.poster}
                     videoLoading={videoLoading}
@@ -684,9 +677,6 @@ const SinglePage = () => {
                                         },
                                     ]}
                                     onPress={() => {
-                                        setCurrentPlayingEpisodeId(
-                                            item.episodeId
-                                        );
                                         setSelectedEpisode(item?.number);
                                         setSelectedEpisodeId(item?.episodeId);
                                         startStream(

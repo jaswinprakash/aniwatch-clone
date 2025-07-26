@@ -33,8 +33,6 @@ const VideoPlayer = ({
     setSelectedEpisode,
     startStream,
     animeId,
-    currentPlayingEpisodeId,
-    setCurrentPlayingEpisodeId,
     intro,
     outro,
     uri,
@@ -57,7 +55,6 @@ const VideoPlayer = ({
     const [selectedQuality, setSelectedQuality] = useState("auto");
     const [showQualityList, setShowQualityList] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [epId, setEpId] = useState();
     const [showForwardIndicator, setShowForwardIndicator] = useState(false);
     const [showBackwardIndicator, setShowBackwardIndicator] = useState(false);
     const [lastTap, setLastTap] = useState(0);
@@ -66,7 +63,6 @@ const VideoPlayer = ({
     const SEEK_AMOUNT = 10;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
-    const [initialLoad, setInitialLoad] = useState(true);
     const [subSyncValue, setSubSyncValue] = useState(0.2);
     const [showSkipIntro, setShowSkipIntro] = useState(false);
     const [showSkipOutro, setShowSkipOutro] = useState(false);
@@ -201,7 +197,6 @@ const VideoPlayer = ({
 
         if (nextEpisode) {
             setSelectedEpisode(nextEpisode.number);
-            setEpId(nextEpisode.episodeId);
             startStream(nextEpisode.episodeId, nextEpisode.number);
         } else {
             console.log("No next episode available.");
@@ -216,7 +211,6 @@ const VideoPlayer = ({
 
         if (prevEpisode) {
             setSelectedEpisode(prevEpisode.number);
-            setEpId(prevEpisode.episodeId);
             startStream(prevEpisode.episodeId, prevEpisode.number);
         } else {
             console.log("No previous episode available.");
@@ -308,13 +302,6 @@ const VideoPlayer = ({
     }, []);
 
     useEffect(() => {
-        if (epId !== currentPlayingEpisodeId) {
-            setCurrentPlayingEpisodeId(epId);
-            setInitialLoad(true);
-        }
-    }, [epId]);
-
-    useEffect(() => {
         setCurrentTime(0);
         const animeData = history.find(
             (item) =>
@@ -329,15 +316,7 @@ const VideoPlayer = ({
 
     const onLoad = (data) => {
         setDuration(data.duration);
-
-        if (initialLoad) {
-            if (currentTime > 0) {
-                videoRef.current.seek(currentTime);
-            } else {
-                videoRef.current.seek(0);
-            }
-            setInitialLoad(false);
-        }
+        videoRef.current.seek(currentTime);
     };
 
     const onProgress = useCallback(
