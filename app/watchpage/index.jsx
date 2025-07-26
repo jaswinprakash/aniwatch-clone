@@ -283,10 +283,25 @@ const SinglePage = () => {
     };
 
     const handleSearch = (query) => {
-        setSearchQuery(query);
-        if (query) {
+        const numericOnly = query.replace(/[^0-9]/g, "");
+        const maxEpisodeNumber =
+            episodes.length > 0
+                ? Math.max(...episodes.map((ep) => ep.number))
+                : 0;
+        const episodeNumber = parseInt(numericOnly);
+        if (episodeNumber > maxEpisodeNumber) {
+            setSearchQuery(maxEpisodeNumber.toString());
+
             const filteredEpisodes = episodes.filter((episode) =>
-                episode.number.toString().includes(query)
+                episode.number.toString().includes(maxEpisodeNumber.toString())
+            );
+            setSearchResults(filteredEpisodes);
+            return;
+        }
+        setSearchQuery(numericOnly);
+        if (numericOnly) {
+            const filteredEpisodes = episodes.filter((episode) =>
+                episode.number.toString().includes(numericOnly)
             );
             setSearchResults(filteredEpisodes);
         } else {
@@ -650,6 +665,7 @@ const SinglePage = () => {
                                     label="Search "
                                     value={searchQuery}
                                     onChangeText={handleSearch}
+                                    keyboardType="numeric"
                                 />
                             </View>
                         </View>

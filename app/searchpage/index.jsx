@@ -204,6 +204,8 @@ const SearchPage = () => {
         // Case 3: Query entered and results are available
         return (
             <FlashList
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="always"
                 showsVerticalScrollIndicator={false}
                 data={searchResults}
                 keyExtractor={(item, index) => index.toString()}
