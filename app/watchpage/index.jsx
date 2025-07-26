@@ -372,6 +372,7 @@ const SinglePage = () => {
                         videoLoading={videoLoading}
                         error={error}
                         episodeLoading={episodeLoading}
+                        selectedEpisodeId={selectedEpisodeId}
                     />
                 </View>
             )}

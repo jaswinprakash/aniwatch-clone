@@ -24,6 +24,7 @@ const WebViewPlayer = ({
     videoLoading,
     error,
     episodeLoading,
+    selectedEpisodeId,
 }) => {
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
@@ -81,19 +82,25 @@ const WebViewPlayer = ({
     const onEnterFullscreen = () => {
         setIsFullscreenContext(true);
         setIsFullscreen(true);
-        if (Platform.OS === 'ios') {
+        if (Platform.OS === "ios") {
             ScreenOrientation.unlockAsync();
-            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+            ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.LANDSCAPE
+            );
         } else {
-            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+            ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.LANDSCAPE
+            );
         }
     };
 
     const onExitFullscreen = () => {
         setIsFullscreenContext(false);
         setIsFullscreen(false);
-        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
-        
+        ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP
+        );
+
         if (wasPlayingRef.current) {
             setTimeout(() => {
                 webViewRef.current?.injectJavaScript(`
@@ -246,7 +253,9 @@ const WebViewPlayer = ({
                 }
                 
                 // Platform-specific fullscreen handling
-                ${Platform.OS === 'android' ? `
+                ${
+                    Platform.OS === "android"
+                        ? `
                     // Android fullscreen handling
                     document.addEventListener('fullscreenchange', function() {
                         var isFullscreenNow = !!document.fullscreenElement;
@@ -260,7 +269,8 @@ const WebViewPlayer = ({
                             console.log('Fullscreen message error:', e);
                         }
                     });
-                ` : `
+                `
+                        : `
                     // iOS fullscreen handling
                     function setupIOSFullscreen() {
                         if (!window.videoElement) return;
@@ -296,7 +306,8 @@ const WebViewPlayer = ({
                         originalSetupVideoHandlers();
                         setupIOSFullscreen();
                     };
-                `}
+                `
+                }
                 
                 // Start finding video
                 findVideo();
@@ -304,30 +315,31 @@ const WebViewPlayer = ({
                 return true;
             })();
         `;
-        
+
         return baseScript;
     };
 
     const handleMessage = (event) => {
         try {
             const data = JSON.parse(event.nativeEvent.data);
-            console.log('WebView message:', data);
-            
+            console.log("WebView message:", data);
+
             switch (data.type) {
                 case "timeupdate":
                     wasPlayingRef.current = data.isPlaying;
                     throttledUpdate(
                         route?.params?.id,
                         selectedEpisode,
-                        data.currentTime
+                        data.currentTime,
+                        selectedEpisodeId
                     );
                     break;
                 case "ended":
-                    console.log('Video ended, moving to next episode');
+                    console.log("Video ended, moving to next episode");
                     nextEpisode();
                     break;
                 case "fullscreen":
-                    console.log('Fullscreen state changed:', data.isFullscreen);
+                    console.log("Fullscreen state changed:", data.isFullscreen);
                     if (data.isFullscreen) {
                         onEnterFullscreen();
                     } else {
@@ -341,7 +353,9 @@ const WebViewPlayer = ({
     };
 
     return (
-        <View style={isFullscreen ? styles.fullscreenContainer : styles.container}>
+        <View
+            style={isFullscreen ? styles.fullscreenContainer : styles.container}
+        >
             <StatusBar hidden={isFullscreen} style="auto" />
             {videoLoading ? (
                 <PlayerLoader
@@ -368,8 +382,8 @@ const WebViewPlayer = ({
                         javaScriptEnabled={true}
                         domStorageEnabled={true}
                         allowsFullscreenVideo={true}
-                        allowsInlineMediaPlayback={Platform.OS === 'ios'}
-                        allowsAirPlayForMediaPlayback={Platform.OS === 'ios'}
+                        allowsInlineMediaPlayback={Platform.OS === "ios"}
+                        allowsAirPlayForMediaPlayback={Platform.OS === "ios"}
                         mediaPlaybackRequiresUserAction={false}
                         onLoad={handleWebViewLoad}
                         onMessage={handleMessage}
@@ -377,22 +391,22 @@ const WebViewPlayer = ({
                         setSupportMultipleWindows={false}
                         onError={(syntheticEvent) => {
                             const { nativeEvent } = syntheticEvent;
-                            console.warn('WebView error:', nativeEvent);
+                            console.warn("WebView error:", nativeEvent);
                         }}
                         onHttpError={(syntheticEvent) => {
                             const { nativeEvent } = syntheticEvent;
-                            console.warn('HTTP error:', nativeEvent);
+                            console.warn("HTTP error:", nativeEvent);
                         }}
                         onLoadStart={() => {
-                            console.log('WebView load started');
+                            console.log("WebView load started");
                             setWebViewLoaded(false);
                             timeSetRef.current = false;
                         }}
                         onLoadEnd={() => {
-                            console.log('WebView load ended');
+                            console.log("WebView load ended");
                         }}
                         // iOS specific props for better video handling
-                        {...(Platform.OS === 'ios' && {
+                        {...(Platform.OS === "ios" && {
                             scrollEnabled: false,
                             bounces: false,
                             allowsBackForwardNavigationGestures: false,

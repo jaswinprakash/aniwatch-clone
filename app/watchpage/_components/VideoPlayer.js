@@ -31,6 +31,7 @@ const VideoPlayer = ({
     selectedEpisode,
     episodes,
     setSelectedEpisode,
+    selectedEpisodeId,
     startStream,
     animeId,
     intro,
@@ -54,7 +55,7 @@ const VideoPlayer = ({
     const [seekPosition, setSeekPosition] = useState(0);
     const [selectedQuality, setSelectedQuality] = useState("auto");
     const [showQualityList, setShowQualityList] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [showForwardIndicator, setShowForwardIndicator] = useState(false);
     const [showBackwardIndicator, setShowBackwardIndicator] = useState(false);
     const [lastTap, setLastTap] = useState(0);
@@ -303,16 +304,20 @@ const VideoPlayer = ({
 
     useEffect(() => {
         setCurrentTime(0);
+
         const animeData = history.find(
             (item) =>
                 item.animeId === animeId &&
-                item.episodeNumber === selectedEpisode
+                item.episodeNumber === selectedEpisode &&
+                item.selectedEpisodeId === selectedEpisodeId
         );
 
-        if (animeData) {
+        if (animeData && animeData?.selectedEpisodeId === selectedEpisodeId) {
             setCurrentTime(animeData.currentTime);
+        } else {
+            setCurrentTime(0);
         }
-    }, [animeId, selectedEpisode, history]);
+    }, [animeId, selectedEpisode, history, selectedEpisodeId]);
 
     const onLoad = (data) => {
         setDuration(data.duration);
@@ -325,7 +330,12 @@ const VideoPlayer = ({
                 checkForIntroOutro(data.currentTime);
                 const currentTime = data.currentTime;
                 setCurrentTime(currentTime);
-                throttledUpdate(animeId, selectedEpisode, currentTime);
+                throttledUpdate(
+                    animeId,
+                    selectedEpisode,
+                    currentTime,
+                    selectedEpisodeId
+                );
                 if (isLoading) {
                     setIsLoading(false);
                     setIsSeeking(false);
@@ -525,46 +535,48 @@ const VideoPlayer = ({
                                         selectedItem={selectedSubtitle}
                                     />
                                 )}
-                                {(showSkipIntro || showSkipOutro) && (
-                                    <TouchableRipple
-                                        rippleColor={
-                                            Colors.dark.backgroundPress
-                                        }
-                                        borderless={true}
-                                        style={{
-                                            position: "absolute",
-                                            bottom: SIZE(100),
-                                            right: SIZE(20),
-                                        }}
-                                        hitSlop={20}
-                                        onPress={() => {
-                                            showSkipIntro
-                                                ? skipSegment("intro")
-                                                : skipSegment("outro");
-                                        }}
-                                    >
-                                        <View>
-                                            <MaterialCommunityIcons
-                                                name="skip-forward"
-                                                size={SIZE(40)}
-                                                color={
-                                                    Colors.light.tabIconSelected
-                                                }
-                                            />
-                                            <ThemedText
-                                                style={{
-                                                    fontSize: SIZE(12),
-                                                    color: Colors.light
-                                                        .tabIconSelected,
-                                                }}
-                                            >
-                                                {showSkipIntro
-                                                    ? "Skip Intro"
-                                                    : "Skip Outro"}
-                                            </ThemedText>
-                                        </View>
-                                    </TouchableRipple>
-                                )}
+                                {!isLoading &&
+                                    (showSkipIntro || showSkipOutro) && (
+                                        <TouchableRipple
+                                            rippleColor={
+                                                Colors.dark.backgroundPress
+                                            }
+                                            borderless={true}
+                                            style={{
+                                                position: "absolute",
+                                                bottom: SIZE(100),
+                                                right: SIZE(20),
+                                            }}
+                                            hitSlop={20}
+                                            onPress={() => {
+                                                showSkipIntro
+                                                    ? skipSegment("intro")
+                                                    : skipSegment("outro");
+                                            }}
+                                        >
+                                            <View>
+                                                <MaterialCommunityIcons
+                                                    name="skip-forward"
+                                                    size={SIZE(40)}
+                                                    color={
+                                                        Colors.light
+                                                            .tabIconSelected
+                                                    }
+                                                />
+                                                <ThemedText
+                                                    style={{
+                                                        fontSize: SIZE(12),
+                                                        color: Colors.light
+                                                            .tabIconSelected,
+                                                    }}
+                                                >
+                                                    {showSkipIntro
+                                                        ? "Skip Intro"
+                                                        : "Skip Outro"}
+                                                </ThemedText>
+                                            </View>
+                                        </TouchableRipple>
+                                    )}
                             </View>
                         </>
                     ) : null}
