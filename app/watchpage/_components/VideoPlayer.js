@@ -74,7 +74,6 @@ const VideoPlayer = ({
     const [screenMode, setScreenMode] = useState("contain");
     const [showSpeedIndicator, setShowSpeedIndicator] = useState(false);
     const [playbackRate, setPlaybackRate] = useState(1);
-    const isLongPressActiveRef = useRef(false);
 
     const toggleControls = () => {
         if (showControls) {
@@ -348,31 +347,24 @@ const VideoPlayer = ({
                 const currentTime = data.currentTime;
                 setCurrentTime(currentTime);
                 throttledUpdate(animeId, selectedEpisode, currentTime);
+                if (isLoading) {
+                    setIsLoading(false);
+                    setIsSeeking(false);
+                    setShowControls(false);
+                }
             }
         },
-        [selectedEpisode, animeId, throttledUpdate, intro, outro]
+        [selectedEpisode, animeId, throttledUpdate, intro, outro, isLoading]
     );
 
-    const handleLongPress = (event) => {
-        const screenWidth = SIZE(400);
-        const tapX = event.nativeEvent.locationX;
-        const isRightSide = tapX > screenWidth / 2;
-
-        if (isRightSide) {
-            setPlaybackRate(2);
-            setShowSpeedIndicator(true);
-            isLongPressActiveRef.current = true;
-            console.log("Long press activated - fast forward");
-        }
+    const handleLongPress = () => {
+        setPlaybackRate(2);
+        setShowSpeedIndicator(true);
     };
 
     const handleLongPressEnd = () => {
-        if (isLongPressActiveRef.current) {
-            setPlaybackRate(1);
-            setShowSpeedIndicator(false);
-            isLongPressActiveRef.current = false;
-            console.log("Long press released - returning to normal speed");
-        }
+        setPlaybackRate(1);
+        setShowSpeedIndicator(false);
     };
 
     return (
@@ -420,15 +412,7 @@ const VideoPlayer = ({
                     ) : (
                         <Video
                             onBuffer={(data) => {
-                                if (data.isBuffering) {
-                                    setIsLoading(true);
-                                } else {
-                                    setIsLoading(false);
-                                    setIsSeeking(false);
-                                    setTimeout(() => {
-                                        setShowControls(false);
-                                    }, 2000);
-                                }
+                                setIsLoading(true);
                             }}
                             ref={videoRef}
                             source={{
