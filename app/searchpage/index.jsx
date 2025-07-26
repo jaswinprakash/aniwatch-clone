@@ -437,7 +437,6 @@ const SearchPage = () => {
                             bodyLarge: {
                                 fontFamily: "Exo2Medium",
                                 fontSize: SIZE(10),
-                                paddingBottom: SIZE(5),
                             },
                         },
                     }}

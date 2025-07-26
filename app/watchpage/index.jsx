@@ -645,7 +645,6 @@ const SinglePage = () => {
                                         fonts: {
                                             bodyLarge: {
                                                 fontFamily: "Exo2Medium",
-                                                paddingBottom: SIZE(5),
                                                 fontSize: SIZE(10),
                                             },
                                         },
