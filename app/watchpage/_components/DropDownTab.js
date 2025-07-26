@@ -25,7 +25,7 @@ const DropDownTab = ({ item, activeSubTab, setActiveSubTab }) => {
                             styles.activeSubText,
                     ]}
                 >
-                    {item?.serverName}
+                    {item?.serverName?.toUpperCase()}
                 </ThemedText>
             </TouchableRipple>
         </>

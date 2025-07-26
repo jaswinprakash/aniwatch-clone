@@ -212,6 +212,7 @@ const SinglePage = () => {
         getAnimeInfo();
         getQtipInfo();
     }, []);
+
     useEffect(() => {
         if (
             (route.params?.history === "true" ||
@@ -393,7 +394,7 @@ const SinglePage = () => {
                 >
                     {animeInfo?.anime?.info?.name}
                 </ThemedText>
-                {episodeLoading ? (
+                {!activeSubTab || !servers ? (
                     <SkeletonLoader
                         height={SIZE(110)}
                         width={SIZE(100)}
@@ -489,7 +490,7 @@ const SinglePage = () => {
                         Search episodes
                     </ThemedText>
                 </View>
-                {episodeLoading ? (
+                {getEpisodesForCurrentRange().length === 0 ? (
                     <>
                         <View
                             style={{
@@ -520,6 +521,15 @@ const SinglePage = () => {
                                 backgroundColor={Colors.dark.background}
                             />
                         </View>
+                        <SkeletonLoader
+                            height={SIZE(300)}
+                            style={{
+                                width: "100%",
+                                marginTop: SIZE(5),
+                                borderRadius: SIZE(8),
+                            }}
+                            backgroundColor={Colors.dark.background}
+                        />
                     </>
                 ) : (
                     <>
@@ -599,7 +609,7 @@ const SinglePage = () => {
                                 />
                             </View>
 
-                            <View>
+                            <View style={{ width: "35%" }}>
                                 <TextInput
                                     contentStyle={{
                                         fontFamily: "Exo2Medium",

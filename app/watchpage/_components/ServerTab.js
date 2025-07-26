@@ -1,9 +1,9 @@
-import { StyleSheet, View } from "react-native";
 import React from "react";
+import { StyleSheet, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
 import { ThemedText } from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
-import { TouchableRipple } from "react-native-paper";
 
 const ServerTab = ({ activeTab, setActiveTab, servers }) => {
     return (
@@ -75,7 +75,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
     );
 };
 
-export default  React.memo(ServerTab);
+export default React.memo(ServerTab);
 
 const styles = StyleSheet.create({
     tabContainer: {
