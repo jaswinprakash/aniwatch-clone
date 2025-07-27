@@ -5,6 +5,7 @@ import LottieView from "lottie-react-native";
 import React, { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
+import Animated, { FadeInRight } from "react-native-reanimated";
 import { ThemedText } from "../../../components/ThemedText";
 import { ThemedView } from "../../../components/ThemedView";
 import { SIZE } from "../../../constants/Constants";
@@ -13,7 +14,7 @@ const AnimeItem = ({ item, info, setAnimeId }) => {
     const [imageLoading, setImageLoading] = useState(true);
 
     return (
-        <View style={styles.animeItem}>
+        <Animated.View entering={FadeInRight} style={styles.animeItem}>
             <TouchableRipple
                 rippleColor={Colors.dark.backgroundPress}
                 borderless={true}
@@ -64,11 +65,11 @@ const AnimeItem = ({ item, info, setAnimeId }) => {
             >
                 {item.name}
             </ThemedText>
-        </View>
+        </Animated.View>
     );
 };
 
-const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
+const RenderAnime = ({ title, data, info, setAnimeId, type, home }) => {
     if (!data) return null;
 
     return (
@@ -88,9 +89,11 @@ const RenderAnime = ({ title, data, info, setAnimeId, type }) => {
                         });
                     }}
                 >
-                    <ThemedText type="title" style={styles.sectionLink}>
-                        See all
-                    </ThemedText>
+                    {home && (
+                        <ThemedText type="title" style={styles.sectionLink}>
+                            See all
+                        </ThemedText>
+                    )}
                 </TouchableOpacity>
             </View>
 

@@ -1,19 +1,20 @@
-import { StyleSheet, View, ScrollView, FlatList, Image } from "react-native";
-import { useEffect, useState } from "react";
+import { useAnimeHistory } from "@/store/AnimeHistoryContext";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
-import { SIZE } from "../../constants/Constants";
+import { router } from "expo-router";
+import LottieView from "lottie-react-native";
+import { useEffect, useState } from "react";
+import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import Animated, { FadeInRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "../../constants/Colors";
+import RenderAnime from "../(tabs)/_components/RenderAnime";
 import { apiConfig } from "../../AxiosConfig";
 import { ThemedText } from "../../components/ThemedText";
-import { TouchableRipple } from "react-native-paper";
-import Spotlight from "./_components/Spotlight";
+import { Colors } from "../../constants/Colors";
+import { SIZE } from "../../constants/Constants";
 import AnimeDetails from "./_components/AnimeDetails";
-import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useAnimeHistory } from "@/store/AnimeHistoryContext";
-import RenderAnime from "../(tabs)/_components/RenderAnime";
-import LottieView from "lottie-react-native";
+import Spotlight from "./_components/Spotlight";
 
 const InfoPage = () => {
     const route = useRoute();
@@ -85,7 +86,7 @@ const InfoPage = () => {
         );
     }
     const renderVoiceActorItem = ({ item }) => (
-        <View style={styles.voiceActorItem}>
+        <Animated.View entering={FadeInRight} style={styles.voiceActorItem}>
             <Image
                 style={styles.characterImage}
                 source={{ uri: item.character.poster }}
@@ -102,7 +103,7 @@ const InfoPage = () => {
             <ThemedText type="subtitle" style={styles.voiceActorName}>
                 {item.voiceActor.name}
             </ThemedText>
-        </View>
+        </Animated.View>
     );
 
     const validVoiceActors =

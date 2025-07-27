@@ -257,26 +257,31 @@ export const HomeScreen = () => {
                             title="Latest Episode Animes"
                             data={animeHomeList?.latestEpisodeAnimes}
                             type="recently-updated"
+                            home
                         />
                         <RenderAnime
                             title="Most Popular Animes"
                             data={animeHomeList?.mostPopularAnimes}
                             type="most-popular"
+                            home
                         />
                         <RenderAnime
                             title="Most Favorite Animes"
                             data={animeHomeList?.mostFavoriteAnimes}
                             type="most-favorite"
+                            home
                         />
                         <RenderAnime
                             title="Top Airing Animes"
                             data={animeHomeList?.topAiringAnimes}
                             type="top-airing"
+                            home
                         />
                         <RenderAnime
                             title="Top Upcoming Animes"
                             data={animeHomeList?.topUpcomingAnimes}
                             type="top-upcoming"
+                            home
                         />
                         {/* <RenderAnime
                             title="Trending Animes"
@@ -287,6 +292,7 @@ export const HomeScreen = () => {
                             title="Completed Animes"
                             data={animeHomeList?.latestCompletedAnimes}
                             type="completed"
+                            home
                         />
                     </View>
                 </ScrollView>
