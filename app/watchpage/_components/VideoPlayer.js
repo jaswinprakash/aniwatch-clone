@@ -40,6 +40,8 @@ const VideoPlayer = ({
     videoLoading,
     error,
     episodeLoading,
+    setSelectedEpisodeName,
+    selectedEpisodeName,
 }) => {
     const navigation = useNavigation();
     const videoRef = useRef(null);
@@ -198,6 +200,7 @@ const VideoPlayer = ({
 
         if (nextEpisode) {
             setSelectedEpisode(nextEpisode.number);
+            setSelectedEpisodeName(nextEpisode.title);
             startStream(nextEpisode.episodeId, nextEpisode.number);
         } else {
             console.log("No next episode available.");
@@ -212,6 +215,7 @@ const VideoPlayer = ({
 
         if (prevEpisode) {
             setSelectedEpisode(prevEpisode.number);
+            setSelectedEpisodeName(prevEpisode.title);
             startStream(prevEpisode.episodeId, prevEpisode.number);
         } else {
             console.log("No previous episode available.");
@@ -397,6 +401,7 @@ const VideoPlayer = ({
                             selectedEpisode={selectedEpisode}
                             error={error}
                             episodeLoading={episodeLoading}
+                            selectedEpisodeName={selectedEpisodeName}
                         />
                     ) : (
                         <Video
@@ -445,10 +450,10 @@ const VideoPlayer = ({
                                     marginBottom: SIZE(3),
                                     textShadowColor: Colors.dark.black,
                                     textShadowOffset: {
-                                        width: 2,
-                                        height: 2,
+                                        width: 1,
+                                        height: 1,
                                     },
-                                    textShadowRadius: 3,
+                                    textShadowRadius: 10,
                                 }}
                                 containerStyle={{
                                     position: "absolute",
@@ -509,6 +514,7 @@ const VideoPlayer = ({
                                     screenMode={screenMode}
                                     isLoading={isLoading}
                                     showSpeedIndicator={showSpeedIndicator}
+                                    selectedEpisodeName={selectedEpisodeName}
                                 />
                                 {showQualityList && (
                                     <SubModal

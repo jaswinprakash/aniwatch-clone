@@ -55,7 +55,8 @@
                     "ios": {}
                 }
             ],
-            ["expo-web-browser", [{ "experimentalLauncherActivity": true }]]
+            ["expo-web-browser", [{ "experimentalLauncherActivity": true }]],
+            ["react-native-google-cast"]
         ],
         "experiments": {
             "typedRoutes": true

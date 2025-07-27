@@ -11,6 +11,7 @@ const PlayerLoader = ({
     selectedEpisode,
     error,
     episodeLoading,
+    selectedEpisodeName,
 }) => {
     return (
         <ThemedView style={styles.imageContainer}>
@@ -41,7 +42,10 @@ const PlayerLoader = ({
                     resizeMode="contain"
                 />
                 {videoLoading && (
-                    <VideoLoader selectedEpisode={selectedEpisode} />
+                    <VideoLoader
+                        selectedEpisode={selectedEpisode}
+                        selectedEpisodeName={selectedEpisodeName}
+                    />
                 )}
             </ImageBackground>
         </ThemedView>

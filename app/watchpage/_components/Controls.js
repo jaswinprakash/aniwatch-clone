@@ -49,6 +49,7 @@ const Controls = ({
     screenMode,
     isLoading,
     showSpeedIndicator,
+    selectedEpisodeName,
 }) => {
     const controlsOpacity = useSharedValue(1);
     const controlsTop = useSharedValue(0);
@@ -166,6 +167,19 @@ const Controls = ({
                             }}
                         >
                             Episode - {selectedEpisode}
+                        </ThemedText>
+                        <ThemedText
+                            numberOfLines={1}
+                            style={{
+                                color: Colors.light.tabIconSelected,
+                                textShadowColor: Colors.dark.black,
+                                textShadowOffset: { width: 1, height: 1 },
+                                textShadowRadius: 2,
+                                position: "absolute",
+                                top: "110%",
+                            }}
+                        >
+                            {selectedEpisodeName && selectedEpisodeName}
                         </ThemedText>
                     </View>
                 </View>

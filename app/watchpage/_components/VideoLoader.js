@@ -5,7 +5,7 @@ import { ThemedText } from "../../../components/ThemedText";
 import { ThemedView } from "../../../components/ThemedView";
 import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
-const VideoLoader = ({ selectedEpisode }) => {
+const VideoLoader = ({ selectedEpisode, selectedEpisodeName }) => {
     return (
         <ThemedView
             style={{
@@ -39,6 +39,23 @@ const VideoLoader = ({ selectedEpisode }) => {
                 }}
             >
                 Loading Episode {selectedEpisode}
+            </ThemedText>
+            <ThemedText
+                numberOfLines={2}
+                type="subtitle"
+                style={{
+                    color: Colors.light.tabIconSelected,
+                    textShadowColor: Colors.dark.black,
+                    textShadowOffset: {
+                        width: 1,
+                        height: 1,
+                    },
+                    textShadowRadius: 2,
+                    width: SIZE(300),
+                    textAlign: "center",
+                }}
+            >
+                {selectedEpisodeName}
             </ThemedText>
         </ThemedView>
     );

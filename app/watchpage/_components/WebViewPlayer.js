@@ -25,6 +25,7 @@ const WebViewPlayer = ({
     error,
     episodeLoading,
     selectedEpisodeId,
+    setSelectedEpisodeName,
 }) => {
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
@@ -125,6 +126,7 @@ const WebViewPlayer = ({
         );
         if (nextEpisode) {
             setSelectedEpisode(nextEpisode.number);
+            setSelectedEpisodeName(nextEpisode.title);
             startStream(nextEpisode.episodeId, nextEpisode.number);
         }
     };

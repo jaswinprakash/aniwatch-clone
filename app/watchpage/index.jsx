@@ -17,6 +17,7 @@ import { apiConfig, streamApi } from "../../AxiosConfig";
 import CustomSwitch from "../../components/CustomSwitch";
 import { SIZES } from "../../constants/Constants";
 import { useFullscreen } from "../../hooks/FullScreenContext";
+import CastPlayer from "./_components/CastPlayer";
 import DropDownTab from "./_components/DropDownTab";
 import ServerTab from "./_components/ServerTab";
 import VideoPlayer from "./_components/VideoPlayer";
@@ -34,6 +35,7 @@ const SinglePage = () => {
     const [videoLoading, setVideoLoading] = useState(false);
     const [selectedEpisode, setSelectedEpisode] = useState();
     const [selectedEpisodeId, setSelectedEpisodeId] = useState();
+    const [selectedEpisodeName, setSelectedEpisodeName] = useState();
     const [activeTab, setActiveTab] = useState("");
     const [activeSubTab, setActiveSubTab] = useState("hd-1");
     const [servers, setServers] = useState();
@@ -44,6 +46,7 @@ const SinglePage = () => {
     const [error, setError] = useState(false);
     const [idForWebview, setIdForWebview] = useState(null);
     const [webviewOn, setWebviewOn] = useState(false);
+    const [castOn, setCastOn] = useState(false);
 
     const getEpisodes = async () => {
         try {
@@ -221,12 +224,14 @@ const SinglePage = () => {
 
             if (episodeToPlay) {
                 setSelectedEpisode(episodeToPlay.number);
+                setSelectedEpisodeName(episodeToPlay.title);
                 setSelectedEpisodeId(episodeToPlay.episodeId);
                 startStream(episodeToPlay.episodeId, episodeToPlay.number);
                 adjustRangeForSelectedEpisode(episodeToPlay.number);
             }
         } else {
             setSelectedEpisode(episodes[0]?.number);
+            setSelectedEpisodeName(episodes[0]?.title);
             setSelectedEpisodeId(episodes[0]?.episodeId);
             startStream(episodes[0]?.episodeId, episodes[0]?.number);
         }
@@ -311,6 +316,12 @@ const SinglePage = () => {
 
     const toggleSwitch = () => {
         setWebviewOn(!webviewOn);
+        setCastOn(false);
+    };
+
+    const toggleCast = () => {
+        setCastOn(!castOn);
+        setWebviewOn(false);
     };
 
     if (pageLoading) {
@@ -346,7 +357,7 @@ const SinglePage = () => {
                     : Constants.statusBarHeight,
             }}
         >
-            {!webviewOn ? (
+            {!webviewOn && !castOn ? (
                 <VideoPlayer
                     videoUrl={videoData?.sources[0]?.url}
                     subtitlesData={videoData?.tracks}
@@ -366,8 +377,10 @@ const SinglePage = () => {
                     videoLoading={videoLoading}
                     error={error}
                     episodeLoading={episodeLoading}
+                    setSelectedEpisodeName={setSelectedEpisodeName}
+                    selectedEpisodeName={selectedEpisodeName}
                 />
-            ) : (
+            ) : !castOn ? (
                 <View
                     style={{
                         height: SIZE(250),
@@ -388,8 +401,32 @@ const SinglePage = () => {
                         error={error}
                         episodeLoading={episodeLoading}
                         selectedEpisodeId={selectedEpisodeId}
+                        setSelectedEpisodeName={setSelectedEpisodeName}
                     />
                 </View>
+            ) : (
+                <CastPlayer
+                    videoUrl={videoData?.sources[0]?.url}
+                    subtitlesData={videoData?.tracks}
+                    intro={videoData?.intro}
+                    outro={videoData?.outro}
+                    onLoadStart={() => setVideoLoading(true)}
+                    onReadyForDisplay={() => setVideoLoading(false)}
+                    availableQualities={availableQualities}
+                    title={animeInfo?.anime?.info?.name}
+                    selectedEpisode={selectedEpisode}
+                    episodes={episodes}
+                    setSelectedEpisode={setSelectedEpisode}
+                    selectedEpisodeId={selectedEpisodeId}
+                    startStream={startStream}
+                    animeId={route?.params?.id}
+                    uri={animeInfo?.anime?.info?.poster}
+                    videoLoading={videoLoading}
+                    error={error}
+                    episodeLoading={episodeLoading}
+                    setSelectedEpisodeName={setSelectedEpisodeName}
+                    selectedEpisodeName={selectedEpisodeName}
+                />
             )}
 
             <ThemedView style={styles.container}>
@@ -617,6 +654,18 @@ const SinglePage = () => {
                                     value={webviewOn}
                                 />
                             </View>
+                            <View>
+                                <MaterialCommunityIcons
+                                    name={castOn ? "cast-connected" : "cast"}
+                                    size={SIZE(20)}
+                                    color={castOn ? "#3AFF6F" : "#3e3e3e"}
+                                    style={{ alignSelf: "center" }}
+                                />
+                                <CustomSwitch
+                                    onValueChange={toggleCast}
+                                    value={castOn}
+                                />
+                            </View>
 
                             <View style={{ width: "35%" }}>
                                 <TextInput
@@ -695,6 +744,7 @@ const SinglePage = () => {
                                     onPress={() => {
                                         setSelectedEpisode(item?.number);
                                         setSelectedEpisodeId(item?.episodeId);
+                                        setSelectedEpisodeName(item?.title);
                                         startStream(
                                             item?.episodeId,
                                             item?.number
