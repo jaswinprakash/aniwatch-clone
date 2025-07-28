@@ -1,6 +1,5 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -10,6 +9,8 @@ import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StoredVideos from "./_components/StoredVideos";
 import GoogleSignInButton from "../../components//GoogleSignInButton";
+import { useSelector } from "react-redux";
+
 const Profile = () => {
     const history = useAnimeHistory();
 
@@ -24,8 +25,10 @@ const Profile = () => {
                 style={{
                     paddingHorizontal: SIZE(16),
                     height: SIZE(60),
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                     backgroundColor: Colors.dark.background,
+                    flexDirection: "row",
+                    alignItems: "center",
                 }}
             >
                 <ThemedText
@@ -37,18 +40,10 @@ const Profile = () => {
                 >
                     Watch History
                 </ThemedText>
+                <View>
+                    <GoogleSignInButton />
+                </View>
             </ThemedView>
-            <View
-                style={{
-                    position: "absolute",
-                    bottom: "5%",
-                    zIndex: 100,
-                    alignSelf: "center",
-                    width: "90%",
-                }}
-            >
-                <GoogleSignInButton />
-            </View>
             <View>
                 {!history?.length ? (
                     <View

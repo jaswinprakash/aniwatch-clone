@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getAnimeHistory, saveAnimeHistory } from "./storage";
+import { getAnimeHistory, getUserProfile, saveAnimeHistory } from "./storage";
 import { supabase } from "../lib/supabase";
 
 const initialState = {
     animeHistory: getAnimeHistory(),
     isAuthenticated: false,
     user: null,
+    userProfile: getUserProfile(),
     syncStatus: "idle", // 'idle', 'syncing', 'synced', 'error'
 };
 
@@ -307,6 +308,9 @@ const playbackSlice = createSlice({
         setSyncStatus: (state, action) => {
             state.syncStatus = action.payload;
         },
+        setUserProfile: (state, action) => {
+            state.userProfile = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -336,5 +340,6 @@ const playbackSlice = createSlice({
     },
 });
 
-export const { setAuthState, setSyncStatus } = playbackSlice.actions;
+export const { setAuthState, setSyncStatus, setUserProfile } =
+    playbackSlice.actions;
 export default playbackSlice.reducer;
