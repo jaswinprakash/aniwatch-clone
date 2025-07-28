@@ -11,6 +11,7 @@ import { useFullscreen } from "../../../hooks/FullScreenContext";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import PlayerLoader from "./PlayerLoader";
+import { useManualPlaybackSave } from "../../../lib/playBackUtils";
 
 const WebViewPlayer = ({
     route,
@@ -28,6 +29,7 @@ const WebViewPlayer = ({
     setSelectedEpisodeName,
 }) => {
     const throttledUpdate = useThrottledPlayback();
+    const saveToDatabase = useManualPlaybackSave();
     const history = useAnimeHistory();
     const [currentTime, setCurrentTime] = useState(0);
     const webViewRef = useRef(null);
@@ -36,6 +38,12 @@ const WebViewPlayer = ({
     const wasPlayingRef = useRef(false);
     const timeSetRef = useRef(false);
     const { setIsFullscreenContext } = useFullscreen();
+    const latestValuesRef = useRef({
+        animeId: null,
+        selectedEpisode: null,
+        currentTime: null,
+        selectedEpisodeId: null,
+    });
 
     useKeepAwake(isFullscreen ? "fullscreen-video" : undefined);
 
@@ -80,6 +88,26 @@ const WebViewPlayer = ({
         return () => backHandler.remove();
     }, [isFullscreen]);
 
+    useEffect(() => {
+        return () => {
+            const { animeId, selectedEpisode, currentTime, selectedEpisodeId } =
+                latestValuesRef.current;
+
+            if (
+                animeId &&
+                selectedEpisode &&
+                currentTime &&
+                selectedEpisodeId
+            ) {
+                saveToDatabase(
+                    animeId,
+                    selectedEpisode,
+                    currentTime,
+                    selectedEpisodeId
+                );
+            }
+        };
+    }, []);
     const onEnterFullscreen = () => {
         setIsFullscreenContext(true);
         setIsFullscreen(true);
@@ -335,6 +363,12 @@ const WebViewPlayer = ({
                         data.currentTime,
                         selectedEpisodeId
                     );
+                    latestValuesRef.current = {
+                        animeId: route?.params?.id,
+                        selectedEpisode,
+                        currentTime: data.currentTime,
+                        selectedEpisodeId,
+                    };
                     break;
                 case "ended":
                     console.log("Video ended, moving to next episode");

@@ -22,6 +22,7 @@ import Controls from "./Controls";
 import PlayerLoader from "./PlayerLoader";
 import SubModal from "./SubModal";
 import Subtitles from "./Subtitles";
+import { useManualPlaybackSave } from "../../../lib/playBackUtils";
 
 const VideoPlayer = ({
     videoUrl,
@@ -66,6 +67,7 @@ const VideoPlayer = ({
     const SEEK_AMOUNT = 10;
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
+    const saveToDatabase = useManualPlaybackSave();
     const [subSyncValue, setSubSyncValue] = useState(0.2);
     const [showSkipIntro, setShowSkipIntro] = useState(false);
     const [showSkipOutro, setShowSkipOutro] = useState(false);
@@ -73,6 +75,13 @@ const VideoPlayer = ({
     const [screenMode, setScreenMode] = useState("contain");
     const [showSpeedIndicator, setShowSpeedIndicator] = useState(false);
     const [playbackRate, setPlaybackRate] = useState(1);
+
+    const latestValuesRef = useRef({
+        animeId: null,
+        selectedEpisode: null,
+        currentTime: null,
+        selectedEpisodeId: null,
+    });
 
     const toggleControls = () => {
         if (showControls) {
@@ -303,6 +312,23 @@ const VideoPlayer = ({
                     gestureEnabled: true,
                 });
             }
+
+            const { animeId, selectedEpisode, currentTime, selectedEpisodeId } =
+                latestValuesRef.current;
+
+            if (
+                animeId &&
+                selectedEpisode &&
+                currentTime &&
+                selectedEpisodeId
+            ) {
+                saveToDatabase(
+                    animeId,
+                    selectedEpisode,
+                    currentTime,
+                    selectedEpisodeId
+                );
+            }
         };
     }, []);
 
@@ -345,6 +371,12 @@ const VideoPlayer = ({
                     setIsSeeking(false);
                     setShowControls(false);
                 }
+                latestValuesRef.current = {
+                    animeId,
+                    selectedEpisode,
+                    currentTime,
+                    selectedEpisodeId,
+                };
             }
         },
         [selectedEpisode, animeId, throttledUpdate, intro, outro, isLoading]

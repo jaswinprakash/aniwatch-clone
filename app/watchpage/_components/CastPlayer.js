@@ -22,6 +22,7 @@ import { SIZE } from "../../../constants/Constants";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
 import { useThrottledPlayback } from "../../../store/useThrottledPlayback";
 import SubModal from "./SubModal";
+import { useManualPlaybackSave } from "../../../lib/playBackUtils";
 
 const CastPlayer = ({
     videoUrl,
@@ -70,6 +71,13 @@ const CastPlayer = ({
 
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
+    const saveToDatabase = useManualPlaybackSave();
+    const latestValuesRef = useRef({
+        animeId: null,
+        selectedEpisode: null,
+        currentTime: null,
+        selectedEpisodeId: null,
+    });
 
     const isCasting = client !== null;
 
@@ -594,6 +602,12 @@ const CastPlayer = ({
                             currentTime,
                             selectedEpisodeId
                         );
+                        latestValuesRef.current = {
+                            animeId,
+                            selectedEpisode,
+                            currentTime,
+                            selectedEpisodeId,
+                        };
                     }
 
                     // Handle playback end
@@ -665,6 +679,23 @@ const CastPlayer = ({
     const forceDisconnectCast = useCallback(async () => {
         try {
             await sessionManager.endCurrentSession(true);
+            const { animeId, selectedEpisode, currentTime, selectedEpisodeId } =
+                latestValuesRef.current;
+
+            if (
+                animeId &&
+                selectedEpisode &&
+                currentTime &&
+                selectedEpisodeId
+            ) {
+                saveToDatabase(
+                    animeId,
+                    selectedEpisode,
+                    currentTime,
+                    selectedEpisodeId
+                );
+            }
+
             setCastIsPlaying(false);
             setCastCurrentTime(0);
             setCastDuration(0);

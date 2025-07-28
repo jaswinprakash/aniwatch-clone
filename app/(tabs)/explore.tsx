@@ -9,6 +9,7 @@ import { useAnimeHistory } from "@/store/AnimeHistoryContext";
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StoredVideos from "./_components/StoredVideos";
+import GoogleSignInButton from "../../components//GoogleSignInButton";
 const Profile = () => {
     const history = useAnimeHistory();
 
@@ -37,6 +38,17 @@ const Profile = () => {
                     Watch History
                 </ThemedText>
             </ThemedView>
+            <View
+                style={{
+                    position: "absolute",
+                    bottom: "5%",
+                    zIndex: 100,
+                    alignSelf: "center",
+                    width: "90%",
+                }}
+            >
+                <GoogleSignInButton />
+            </View>
             <View>
                 {!history?.length ? (
                     <View

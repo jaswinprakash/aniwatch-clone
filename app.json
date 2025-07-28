@@ -56,7 +56,13 @@
                 }
             ],
             ["expo-web-browser", [{ "experimentalLauncherActivity": true }]],
-            ["react-native-google-cast"]
+            ["react-native-google-cast"],
+            [
+                "@react-native-google-signin/google-signin",
+                {
+                    "iosUrlScheme": "com.googleusercontent.apps.473935740233-ao2prlvnb0b68csriousq0sml4o21hkf"
+                }
+            ]
         ],
         "experiments": {
             "typedRoutes": true
