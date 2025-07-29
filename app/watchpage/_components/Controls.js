@@ -215,7 +215,7 @@ const Controls = ({
                                 right: SIZE(50),
                                 gap: SIZE(10),
                                 flexDirection: "row",
-                                // alignItems: "center",
+                                height: SIZE(26),
                             }}
                         >
                             <TouchableRipple
@@ -472,7 +472,7 @@ const Controls = ({
                     style={{
                         flexDirection: "row",
                         gap: SIZE(20),
-                        // alignItems: "center",
+                        alignItems: "center",
                     }}
                 >
                     {isFullScreen && (
@@ -506,7 +506,7 @@ const Controls = ({
                                         ? "Stretch"
                                         : screenMode === "contain"
                                         ? "Original"
-                                        : "Zoom Fit"}
+                                        : "Zoom"}
                                 </ThemedText>
                             </View>
                         </TouchableRipple>
