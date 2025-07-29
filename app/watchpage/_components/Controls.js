@@ -239,7 +239,7 @@ const Controls = ({
                                     type="subtitle"
                                     style={{
                                         color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(12),
+                                        fontSize: SIZE(13),
                                         textAlign: "center",
                                         marginBottom: SIZE(-7),
                                     }}
