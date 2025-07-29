@@ -3,7 +3,13 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import {
     BackHandler,
     Platform,
@@ -23,7 +29,7 @@ import PlayerLoader from "./PlayerLoader";
 import SubModal from "./SubModal";
 import Subtitles from "./Subtitles";
 import { useManualPlaybackSave } from "../../../lib/playBackUtils";
-
+import debounce from "lodash.debounce";
 const VideoPlayer = ({
     videoUrl,
     subtitlesData,
@@ -75,6 +81,8 @@ const VideoPlayer = ({
     const [screenMode, setScreenMode] = useState("contain");
     const [showSpeedIndicator, setShowSpeedIndicator] = useState(false);
     const [playbackRate, setPlaybackRate] = useState(1);
+    const [initialSeekTime, setInitialSeekTime] = useState(0);
+    const [isInitialSeekDone, setIsInitialSeekDone] = useState(false);
 
     const latestValuesRef = useRef({
         animeId: null,
@@ -83,6 +91,11 @@ const VideoPlayer = ({
         selectedEpisodeId: null,
         selectedEpisodeName,
     });
+
+    const debouncedHideControls = useMemo(
+        () => debounce(() => setShowControls(false), 5000),
+        []
+    );
 
     const toggleControls = () => {
         if (showControls) {
@@ -94,29 +107,23 @@ const VideoPlayer = ({
 
     const resetControlsTimeout = () => {
         setShowControls(true);
-        if (controlsTimeoutRef.current) {
-            clearTimeout(controlsTimeoutRef.current);
-        }
         if (isPlaying && !isLoading) {
-            controlsTimeoutRef.current = setTimeout(() => {
-                setShowControls(false);
-            }, 5000);
+            debouncedHideControls();
         }
     };
 
-    const checkForIntroOutro = (currentTime) => {
-        if (intro && currentTime >= intro?.start && currentTime <= intro?.end) {
-            setShowSkipIntro(true);
-        } else {
-            setShowSkipIntro(false);
-        }
+    const checkForIntroOutro = useMemo(() => {
+        return (currentTime) => {
+            // Cache calculations
+            const showIntro =
+                intro && currentTime >= intro.start && currentTime <= intro.end;
+            const showOutro =
+                outro && currentTime >= outro.start && currentTime <= outro.end;
 
-        if (outro && currentTime >= outro?.start && currentTime <= outro?.end) {
-            setShowSkipOutro(true);
-        } else {
-            setShowSkipOutro(false);
-        }
-    };
+            if (showIntro !== showSkipIntro) setShowSkipIntro(showIntro);
+            if (showOutro !== showSkipOutro) setShowSkipOutro(showOutro);
+        };
+    }, [intro, outro, showSkipIntro, showSkipOutro]);
 
     const skipSegment = (segment) => {
         if (segment === "intro" && intro) {
@@ -143,7 +150,8 @@ const VideoPlayer = ({
         resetControlsTimeout();
     };
 
-    const toggleFullScreen = async () => {
+    const toggleFullScreen = useCallback(async () => {
+        if (isFullScreen) return;
         setIsFullScreen(!isFullScreen);
         setIsFullscreenContext(!isFullScreen);
         if (!isFullScreen) {
@@ -172,7 +180,7 @@ const VideoPlayer = ({
             }
         }
         resetControlsTimeout();
-    };
+    }, [isFullScreen]);
 
     const togglePlayPause = () => {
         setIsPlaying(!isPlaying);
@@ -307,13 +315,13 @@ const VideoPlayer = ({
             if (controlsTimeoutRef.current) {
                 clearTimeout(controlsTimeoutRef.current);
             }
+            debouncedHideControls.cancel();
             if (Platform.OS == "ios") {
                 navigation.setOptions({
                     autoHideHomeIndicator: false,
                     gestureEnabled: true,
                 });
             }
-
             const {
                 animeId,
                 selectedEpisode,
@@ -341,29 +349,31 @@ const VideoPlayer = ({
     }, []);
 
     useEffect(() => {
-        setCurrentTime(0);
-
         const animeData = history.find(
             (item) =>
                 item.animeId === animeId &&
                 item.episodeNumber === selectedEpisode &&
                 item.selectedEpisodeId === selectedEpisodeId
         );
-
-        if (animeData && animeData?.selectedEpisodeId === selectedEpisodeId) {
-            setCurrentTime(animeData.currentTime);
-        } else {
-            setCurrentTime(0);
-        }
-    }, [animeId, selectedEpisode, history, selectedEpisodeId]);
+        setInitialSeekTime(animeData?.currentTime || 0);
+    }, [animeId, selectedEpisode, selectedEpisodeId, history]);
 
     const onLoad = (data) => {
         setDuration(data.duration);
-        videoRef.current.seek(currentTime);
+        if (initialSeekTime > 0 && !isInitialSeekDone) {
+            videoRef.current.seek(initialSeekTime);
+            setIsInitialSeekDone(true);
+        }
     };
+    const lastProgressUpdateRef = useRef(0);
 
     const onProgress = useCallback(
         (data) => {
+            const now = Date.now();
+            if (now - lastProgressUpdateRef.current < 500) return;
+
+            lastProgressUpdateRef.current = now;
+
             if (selectedEpisode) {
                 checkForIntroOutro(data.currentTime);
                 const currentTime = data.currentTime;
@@ -462,7 +472,10 @@ const VideoPlayer = ({
                                 },
                             }}
                             style={styles.video}
-                            paused={!isPlaying}
+                            paused={
+                                !isPlaying ||
+                                (initialSeekTime > 0 && !isInitialSeekDone)
+                            }
                             onLoad={onLoad}
                             onProgress={onProgress}
                             resizeMode={screenMode}
