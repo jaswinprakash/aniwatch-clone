@@ -1,6 +1,6 @@
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Slider } from "@react-native-assets/slider";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
     Easing,
@@ -8,10 +8,10 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from "react-native-reanimated";
+import { runOnUI } from "react-native-worklets"; // Corrected import
 import { ThemedText } from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
-
 import LottieView from "lottie-react-native";
 import { TouchableRipple } from "react-native-paper";
 
@@ -51,9 +51,43 @@ const Controls = ({
     showSpeedIndicator,
     selectedEpisodeName,
 }) => {
+    // Single shared value for all controls opacity
     const controlsOpacity = useSharedValue(1);
-    const controlsTop = useSharedValue(0);
-    const controlsBottom = useSharedValue(0);
+
+    // Optimized animation function with worklet
+    const animateControls = (visible) => {
+        "worklet";
+        const duration = isFullScreen ? 200 : 250; // Faster animation in landscape
+        const easing = Easing.out(Easing.ease); // Simpler easing for better performance
+
+        controlsOpacity.value = withTiming(visible ? 1 : 0, {
+            duration,
+            easing,
+        });
+    };
+
+    // Custom debounce implementation to avoid external dependency
+    const useDebounce = (callback, delay) => {
+        const timeoutRef = React.useRef(null);
+
+        return useCallback(
+            (...args) => {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = setTimeout(() => {
+                    callback(...args);
+                }, delay);
+            },
+            [callback, delay]
+        );
+    };
+
+    // Debounced animation to prevent excessive calls
+    const debouncedAnimateControls = useDebounce(
+        (visible) => {
+            runOnUI(animateControls)(visible);
+        },
+        16 // ~60fps throttling
+    );
 
     const toggleScreenMode = () => {
         resetControlsTimeout();
@@ -71,64 +105,26 @@ const Controls = ({
         });
     };
 
-    const animateControls = (visible) => {
-        controlsOpacity.value = withTiming(visible ? 1 : 0, {
-            duration: 300,
-            easing: Easing.inOut(Easing.ease),
-        });
-        controlsTop.value = withTiming(visible ? 0 : -100, {
-            duration: 300,
-            easing: Easing.inOut(Easing.ease),
-        });
-        controlsBottom.value = withTiming(visible ? 0 : 100, {
-            duration: 300,
-            easing: Easing.inOut(Easing.ease),
-        });
-    };
-
     useEffect(() => {
-        animateControls(showControls);
-    }, [showControls]);
+        debouncedAnimateControls(showControls);
+    }, [showControls, debouncedAnimateControls]);
 
-    // Animated styles
-    const topControlsStyle = useAnimatedStyle(() => ({
+    // Single animated style for all controls using fade animation
+    const controlsStyle = useAnimatedStyle(() => ({
         opacity: controlsOpacity.value,
-        transform: [{ translateY: controlsTop.value }],
-    }));
-
-    const bottomControlsStyle = useAnimatedStyle(() => ({
-        opacity: controlsOpacity.value,
-        transform: [{ translateY: controlsBottom.value }],
-    }));
-
-    const centerControlsStyle = useAnimatedStyle(() => ({
-        opacity: controlsOpacity.value,
+        // Use conditional rendering instead of transform for better performance
+        pointerEvents: controlsOpacity.value > 0.5 ? "auto" : "none",
     }));
 
     return (
         <>
-            <Animated.View
-                style={[
-                    {
-                        padding: SIZE(10),
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                    },
-                    topControlsStyle,
-                ]}
-            >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: SIZE(10),
-                    }}
-                >
+            {/* Top Controls */}
+            <Animated.View style={[styles.topControls, controlsStyle]}>
+                <View style={styles.topLeftSection}>
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(24) }}
+                        style={styles.iconButton}
                         hitSlop={10}
                         onPress={() => {
                             if (isFullScreen) {
@@ -144,53 +140,56 @@ const Controls = ({
                             color={Colors.light.tabIconSelected}
                         />
                     </TouchableRipple>
-                    <View style={{ width: "72%" }}>
+                    <View style={styles.titleContainer}>
                         <ThemedText
                             numberOfLines={1}
                             type="title"
-                            style={{
-                                color: Colors.light.tabIconSelected,
-                                fontSize: SIZE(15),
-                                textShadowColor: Colors.dark.black,
-                                textShadowOffset: { width: 1, height: 1 },
-                                textShadowRadius: 2,
-                            }}
+                            style={[
+                                styles.titleText,
+                                {
+                                    fontSize: isFullScreen
+                                        ? SIZE(20)
+                                        : SIZE(15),
+                                },
+                            ]}
                         >
                             {title}
                         </ThemedText>
-                        <ThemedText
-                            style={{
-                                color: Colors.light.tabIconSelected,
-                                textShadowColor: Colors.dark.black,
-                                textShadowOffset: { width: 1, height: 1 },
-                                textShadowRadius: 2,
-                                fontSize: SIZE(10),
-                            }}
-                        >
-                            Episode - {selectedEpisode}
-                        </ThemedText>
-                        <ThemedText
-                            type="title"
-                            numberOfLines={1}
-                            style={{
-                                color: Colors.light.tabIconSelected,
-                                textShadowColor: Colors.dark.black,
-                                textShadowOffset: { width: 1, height: 1 },
-                                textShadowRadius: 2,
-                                position: "absolute",
-                                top: "90%",
-                                fontSize: SIZE(10),
-                            }}
-                        >
-                            {selectedEpisodeName && selectedEpisodeName}
-                        </ThemedText>
+                        <View>
+                            <ThemedText
+                                style={[
+                                    styles.episodeText,
+                                    {
+                                        fontSize: isFullScreen
+                                            ? SIZE(12)
+                                            : SIZE(10),
+                                    },
+                                ]}
+                            >
+                                Episode - {selectedEpisode}
+                            </ThemedText>
+                            <ThemedText
+                                type="title"
+                                numberOfLines={1}
+                                style={[
+                                    styles.episodeNameText,
+                                    {
+                                        fontSize: isFullScreen
+                                            ? SIZE(15)
+                                            : SIZE(10),
+                                    },
+                                ]}
+                            >
+                                {selectedEpisodeName && selectedEpisodeName}
+                            </ThemedText>
+                        </View>
                     </View>
                 </View>
                 <View>
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(24) }}
+                        style={styles.iconButton}
                         hitSlop={10}
                         onPress={() => {
                             if (showQualityList) {
@@ -209,19 +208,11 @@ const Controls = ({
                     </TouchableRipple>
 
                     {selectedSubtitle && (
-                        <View
-                            style={{
-                                position: "absolute",
-                                right: SIZE(50),
-                                gap: SIZE(10),
-                                flexDirection: "row",
-                                height: SIZE(26),
-                            }}
-                        >
+                        <View style={styles.subtitleSyncContainer}>
                             <TouchableRipple
                                 rippleColor={Colors.dark.backgroundPress}
                                 borderless={true}
-                                style={{ borderRadius: SIZE(24) }}
+                                style={styles.iconButton}
                                 hitSlop={20}
                                 onPress={() => {
                                     handleSubtitleSync("+");
@@ -236,21 +227,13 @@ const Controls = ({
                             <View>
                                 <ThemedText
                                     type="subtitle"
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(13),
-                                        textAlign: "center",
-                                        marginBottom: SIZE(-7),
-                                    }}
+                                    style={styles.syncValueText}
                                 >
                                     {subSyncValue}
                                 </ThemedText>
                                 <ThemedText
                                     type="subtitle"
-                                    style={{
-                                        color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(8),
-                                    }}
+                                    style={styles.syncLabelText}
                                 >
                                     Sub Sync
                                 </ThemedText>
@@ -258,7 +241,7 @@ const Controls = ({
                             <TouchableRipple
                                 rippleColor={Colors.dark.backgroundPress}
                                 borderless={true}
-                                style={{ borderRadius: SIZE(24) }}
+                                style={styles.iconButton}
                                 hitSlop={20}
                                 onPress={() => {
                                     handleSubtitleSync("-");
@@ -274,41 +257,21 @@ const Controls = ({
                     )}
                 </View>
             </Animated.View>
+
+            {/* Loading Indicator - Outside animation scope for better performance */}
             {isLoading && (
                 <LottieView
                     source={require("../../../assets/lottie/loader.json")}
                     autoPlay
                     loop
-                    style={{
-                        width: SIZE(40),
-                        height: SIZE(40),
-                        alignSelf: "center",
-                        position: "absolute",
-                        top: "45%",
-                        zIndex: 1000,
-                    }}
+                    style={styles.loadingIndicator}
                 />
             )}
+
+            {/* Speed Indicator - Outside animation scope */}
             {showSpeedIndicator && (
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        alignSelf: "center",
-                        position: "absolute",
-                        top: "20%",
-                        zIndex: 1000,
-                    }}
-                >
-                    <ThemedText
-                        type="subtitle"
-                        style={{
-                            color: Colors.light.tabIconSelected,
-                            textShadowColor: Colors.dark.black,
-                            textShadowOffset: { width: 1, height: 1 },
-                            textShadowRadius: 2,
-                        }}
-                    >
+                <View style={styles.speedIndicator}>
+                    <ThemedText type="subtitle" style={styles.speedText}>
                         2x
                     </ThemedText>
                     <MaterialIcons
@@ -318,31 +281,23 @@ const Controls = ({
                     />
                 </View>
             )}
-            <Animated.View
-                style={[styles.centerControls, centerControlsStyle]}
-            ></Animated.View>
+
+            {/* Center Controls - Empty but keeping structure */}
+            <Animated.View style={[styles.centerControls, controlsStyle]} />
 
             {/* Progress Bar and Time */}
-            <Animated.View
-                style={[styles.progressContainer, bottomControlsStyle]}
-            >
+            <Animated.View style={[styles.progressContainer, controlsStyle]}>
                 <ThemedText type="subtitle" style={styles.timeText}>
                     {formatTime(isSeeking ? seekPosition : currentTime)}
                 </ThemedText>
                 <Slider
                     style={styles.progressBar}
-                    trackStyle={{
-                        height: SIZE(5),
-                        borderRadius: SIZE(5),
-                    }}
+                    trackStyle={styles.sliderTrack}
                     value={isSeeking ? seekPosition : currentTime}
                     minimumValue={0}
                     maximumValue={duration}
                     step={1}
-                    thumbStyle={{
-                        width: SIZE(15),
-                        height: SIZE(15),
-                    }}
+                    thumbStyle={styles.sliderThumb}
                     enabled={true}
                     slideOnTap={true}
                     thumbTintColor={Colors.light.tabIconSelected}
@@ -365,7 +320,7 @@ const Controls = ({
             <Animated.View
                 style={[
                     styles.bottomControls,
-                    bottomControlsStyle,
+                    controlsStyle,
                     {
                         paddingBottom: isFullScreen ? SIZE(20) : 0,
                     },
@@ -374,7 +329,7 @@ const Controls = ({
                 <TouchableRipple
                     rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
-                    style={{ borderRadius: SIZE(24) }}
+                    style={styles.iconButton}
                     onPress={() => {
                         if (showSubtitleList) {
                             setShowSubtitleList(false);
@@ -394,18 +349,17 @@ const Controls = ({
                         color={Colors.light.tabIconSelected}
                     />
                 </TouchableRipple>
+
                 <View
-                    style={{
-                        width: isFullScreen ? "50%" : "70%",
-                        alignItems: "center",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                    }}
+                    style={[
+                        styles.centerPlaybackControls,
+                        { width: isFullScreen ? "50%" : "70%" },
+                    ]}
                 >
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(30) }}
+                        style={styles.playbackButton}
                         hitSlop={10}
                         onPress={() => prevEpisode()}
                     >
@@ -418,7 +372,7 @@ const Controls = ({
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(30) }}
+                        style={styles.playbackButton}
                         hitSlop={10}
                         onPress={() => skip(-10)}
                     >
@@ -431,7 +385,7 @@ const Controls = ({
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(36) }}
+                        style={styles.playButton}
                         hitSlop={10}
                         onPress={togglePlayPause}
                     >
@@ -444,7 +398,7 @@ const Controls = ({
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(30) }}
+                        style={styles.playbackButton}
                         hitSlop={10}
                         onPress={() => skip(10)}
                     >
@@ -457,7 +411,7 @@ const Controls = ({
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(30) }}
+                        style={styles.playbackButton}
                         hitSlop={10}
                         onPress={() => nextEpisode()}
                     >
@@ -468,40 +422,25 @@ const Controls = ({
                         />
                     </TouchableRipple>
                 </View>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: SIZE(20),
-                        alignItems: "center",
-                    }}
-                >
+
+                <View style={styles.rightControls}>
                     {isFullScreen && (
                         <TouchableRipple
                             rippleColor={Colors.dark.backgroundPress}
                             borderless={true}
-                            style={{
-                                borderRadius: SIZE(5),
-                                width: SIZE(40),
-                                marginLeft: SIZE(-60),
-                            }}
+                            style={styles.screenModeButton}
                             hitSlop={10}
                             onPress={() => {
                                 toggleScreenMode();
                             }}
                         >
-                            <View style={{ alignItems: "center" }}>
+                            <View style={styles.screenModeContainer}>
                                 <MaterialIcons
                                     name={"fit-screen"}
                                     size={SIZE(24)}
                                     color={Colors.light.tabIconSelected}
                                 />
-                                <ThemedText
-                                    style={{
-                                        fontSize: SIZE(12),
-                                        color: Colors.light.tabIconSelected,
-                                        marginTop: SIZE(-5),
-                                    }}
-                                >
+                                <ThemedText style={styles.screenModeText}>
                                     {screenMode === "stretch"
                                         ? "Stretch"
                                         : screenMode === "contain"
@@ -514,7 +453,7 @@ const Controls = ({
                     <TouchableRipple
                         rippleColor={Colors.dark.backgroundPress}
                         borderless={true}
-                        style={{ borderRadius: SIZE(24) }}
+                        style={styles.iconButton}
                         hitSlop={10}
                         onPress={toggleFullScreen}
                     >
@@ -534,7 +473,85 @@ const Controls = ({
 
 export default React.memo(Controls);
 
+// Styles remain the same as in the previous version
 const styles = StyleSheet.create({
+    topControls: {
+        paddingHorizontal: SIZE(10),
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    topLeftSection: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SIZE(10),
+    },
+    iconButton: {
+        borderRadius: SIZE(24),
+    },
+    titleContainer: {
+        width: "72%",
+    },
+    titleText: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(15),
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+    },
+    episodeText: {
+        color: Colors.light.tabIconSelected,
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+        fontSize: SIZE(10),
+    },
+    episodeNameText: {
+        color: Colors.light.tabIconSelected,
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+        fontSize: SIZE(10),
+    },
+    subtitleSyncContainer: {
+        position: "absolute",
+        right: SIZE(50),
+        gap: SIZE(10),
+        flexDirection: "row",
+        height: SIZE(26),
+    },
+    syncValueText: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(13),
+        textAlign: "center",
+        marginBottom: SIZE(-7),
+    },
+    syncLabelText: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(8),
+    },
+    loadingIndicator: {
+        width: SIZE(40),
+        height: SIZE(40),
+        alignSelf: "center",
+        position: "absolute",
+        top: "45%",
+        zIndex: 1000,
+    },
+    speedIndicator: {
+        flexDirection: "row",
+        alignItems: "center",
+        alignSelf: "center",
+        position: "absolute",
+        top: "20%",
+        zIndex: 1000,
+    },
+    speedText: {
+        color: Colors.light.tabIconSelected,
+        textShadowColor: Colors.dark.black,
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+    },
     centerControls: {
         flexDirection: "row",
         alignItems: "center",
@@ -551,6 +568,14 @@ const styles = StyleSheet.create({
     progressBar: {
         flex: 1,
     },
+    sliderTrack: {
+        height: SIZE(5),
+        borderRadius: SIZE(5),
+    },
+    sliderThumb: {
+        width: SIZE(15),
+        height: SIZE(15),
+    },
     timeText: {
         color: Colors.light.tabIconSelected,
         fontSize: SIZE(12),
@@ -562,5 +587,34 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: SIZE(10),
+    },
+    centerPlaybackControls: {
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    playbackButton: {
+        borderRadius: SIZE(30),
+    },
+    playButton: {
+        borderRadius: SIZE(36),
+    },
+    rightControls: {
+        flexDirection: "row",
+        gap: SIZE(20),
+        alignItems: "center",
+    },
+    screenModeButton: {
+        borderRadius: SIZE(5),
+        width: SIZE(40),
+        marginLeft: SIZE(-60),
+    },
+    screenModeContainer: {
+        alignItems: "center",
+    },
+    screenModeText: {
+        fontSize: SIZE(12),
+        color: Colors.light.tabIconSelected,
+        marginTop: SIZE(-5),
     },
 });

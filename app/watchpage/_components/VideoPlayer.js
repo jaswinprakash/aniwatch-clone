@@ -499,7 +499,12 @@ const VideoPlayer = ({
                                 }}
                                 containerStyle={{
                                     position: "absolute",
-                                    bottom: SIZE(20),
+                                    bottom:
+                                        !isFullScreen && showControls
+                                            ? SIZE(70)
+                                            : isFullScreen && showControls
+                                            ? SIZE(110)
+                                            : SIZE(20),
                                     zIndex: 1000,
                                     alignSelf: "center",
                                     justifyContent: "center",
