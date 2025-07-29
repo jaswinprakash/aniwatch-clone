@@ -2,10 +2,23 @@ import { useKeepAwake } from "expo-keep-awake";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import * as WebBrowser from "expo-web-browser";
-import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, Platform, StyleSheet, View } from "react-native";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import {
+    BackHandler,
+    Platform,
+    StyleSheet,
+    View,
+    AppState,
+} from "react-native";
 import WebView from "react-native-webview";
 import { Colors } from "react-native/Libraries/NewAppScreen";
+// import NetInfo from "@react-native-community/netinfo";
 import { SIZE } from "../../../constants/Constants";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
 import { useAnimeHistory } from "../../../store/AnimeHistoryContext";
@@ -39,6 +52,11 @@ const WebViewPlayer = ({
     const wasPlayingRef = useRef(false);
     const timeSetRef = useRef(false);
     const { setIsFullscreenContext } = useFullscreen();
+    const [isWifi, setIsWifi] = useState(true);
+    const [isUserActive, setIsUserActive] = useState(true);
+    const orientationLock = useRef(null);
+    const lastInteractionRef = useRef(Date.now());
+
     const latestValuesRef = useRef({
         animeId: null,
         selectedEpisode: null,
@@ -47,8 +65,20 @@ const WebViewPlayer = ({
         selectedEpisodeName: null,
     });
 
-    useKeepAwake(isFullscreen ? "fullscreen-video" : undefined);
+    // Network awareness
+    // useEffect(() => {
+    //     const unsubscribe = NetInfo.addEventListener((state) => {
+    //         setIsWifi(state.isConnected && state.isWifiEnabled);
+    //     });
+    //     return () => unsubscribe();
+    // }, []);
 
+    // Keep awake only when needed
+    useKeepAwake(
+        isFullscreen && wasPlayingRef.current ? "fullscreen-video" : undefined
+    );
+
+    // History and time restoration
     useEffect(() => {
         const animeData = history.find(
             (item) =>
@@ -57,9 +87,10 @@ const WebViewPlayer = ({
         );
         const newCurrentTime = animeData ? animeData.currentTime : 0;
         setCurrentTime(newCurrentTime);
-        timeSetRef.current = false; // Reset flag when episode changes
+        timeSetRef.current = false;
     }, [route?.params?.id, selectedEpisode, history]);
 
+    // Back handler
     useEffect(() => {
         const backAction = () => {
             if (isFullscreen) {
@@ -90,6 +121,7 @@ const WebViewPlayer = ({
         return () => backHandler.remove();
     }, [isFullscreen]);
 
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
             const {
@@ -115,11 +147,73 @@ const WebViewPlayer = ({
                     selectedEpisodeName
                 );
             }
+
+            if (orientationLock.current) {
+                ScreenOrientation.unlockAsync();
+            }
         };
     }, []);
-    const onEnterFullscreen = () => {
+
+    // App state changes
+    useEffect(() => {
+        const handleAppStateChange = (nextAppState) => {
+            if (nextAppState === "background") {
+                webViewRef.current?.injectJavaScript(`
+                    if (window.videoElement && !window.videoElement.paused) {
+                        window.videoElement.pause();
+                    }
+                `);
+            } else if (nextAppState === "active") {
+                setIsUserActive(true);
+                lastInteractionRef.current = Date.now();
+            }
+        };
+
+        const sub = AppState.addEventListener("change", handleAppStateChange);
+        return () => sub.remove();
+    }, []);
+
+    // User activity timeout
+    useEffect(() => {
+        const activityCheckInterval = setInterval(() => {
+            if (
+                isFullscreen &&
+                Date.now() - lastInteractionRef.current > 30000
+            ) {
+                setIsUserActive(false);
+            }
+        }, 10000);
+
+        return () => clearInterval(activityCheckInterval);
+    }, [isFullscreen]);
+
+    // CPU throttling when inactive
+    useEffect(() => {
+        if (!isUserActive && isFullscreen) {
+            webViewRef.current?.injectJavaScript(`
+                if (window.videoElement) {
+                    window.videoElement.playbackRate = 0.8;
+                }
+            `);
+        } else {
+            webViewRef.current?.injectJavaScript(`
+                if (window.videoElement) {
+                    window.videoElement.playbackRate = 1.0;
+                }
+            `);
+        }
+    }, [isUserActive, isFullscreen]);
+
+    const handleUserInteraction = useCallback(() => {
+        setIsUserActive(true);
+        lastInteractionRef.current = Date.now();
+    }, []);
+
+    const onEnterFullscreen = useCallback(() => {
         setIsFullscreenContext(true);
         setIsFullscreen(true);
+        handleUserInteraction();
+
         if (Platform.OS === "ios") {
             ScreenOrientation.unlockAsync();
             ScreenOrientation.lockAsync(
@@ -130,14 +224,16 @@ const WebViewPlayer = ({
                 ScreenOrientation.OrientationLock.LANDSCAPE
             );
         }
-    };
+        orientationLock.current = true;
+    }, []);
 
-    const onExitFullscreen = () => {
+    const onExitFullscreen = useCallback(() => {
         setIsFullscreenContext(false);
         setIsFullscreen(false);
         ScreenOrientation.lockAsync(
             ScreenOrientation.OrientationLock.PORTRAIT_UP
         );
+        orientationLock.current = false;
 
         if (wasPlayingRef.current) {
             setTimeout(() => {
@@ -155,9 +251,9 @@ const WebViewPlayer = ({
                 `);
             }, 500);
         }
-    };
+    }, []);
 
-    const nextEpisode = () => {
+    const nextEpisode = useCallback(() => {
         const nextEpisode = episodes.find(
             (episode) => episode.number === selectedEpisode + 1
         );
@@ -166,59 +262,50 @@ const WebViewPlayer = ({
             setSelectedEpisodeName(nextEpisode.title);
             startStream(nextEpisode.episodeId, nextEpisode.number);
         }
-    };
+    }, [episodes, selectedEpisode]);
 
-    const handleLoad = (request) => {
-        if (
-            request.url.includes(
-                `https://megaplay.buzz/stream/s-2/${idForWebview}/${activeTab}`
-            )
-        ) {
-            return true;
-        }
+    const handleLoad = useCallback(
+        (request) => {
+            if (
+                request.url.includes(
+                    `https://megaplay.buzz/stream/s-2/${idForWebview}/${activeTab}`
+                )
+            ) {
+                return true;
+            }
 
-        WebBrowser.openBrowserAsync(request.url, {
-            toolbarColor: Colors.dark.background,
-            controlsColor: Colors.dark.tabIconSelected,
-            dismissButtonStyle: "close",
-        });
-        return false;
-    };
+            WebBrowser.openBrowserAsync(request.url, {
+                toolbarColor: Colors.dark.background,
+                controlsColor: Colors.dark.tabIconSelected,
+                dismissButtonStyle: "close",
+            });
+            return false;
+        },
+        [idForWebview, activeTab]
+    );
 
-    const handleWebViewLoad = () => {
-        setWebViewLoaded(true);
-        // Small delay to ensure DOM is ready
-        setTimeout(() => {
-            webViewRef.current?.injectJavaScript(getInjectedJavaScript());
-        }, 1000);
-    };
-
-    const getInjectedJavaScript = () => {
-        const baseScript = `
+    const getInjectedJavaScript = useCallback(() => {
+        return `
             (function() {
-                console.log('Injecting JavaScript...');
+                console.log('Injecting optimized JavaScript...');
                 
-                // Find video element with retry mechanism
-                function findVideo(attempts = 0) {
+                // Video element finder with single attempt
+                function findVideo() {
                     var video = document.querySelector('video');
                     if (video) {
                         window.videoElement = video;
                         setupVideoHandlers();
-                        return;
+                        return true;
                     }
-                    
-                    if (attempts < 20) {
-                        setTimeout(function() {
-                            findVideo(attempts + 1);
-                        }, 500);
-                    }
+                    return false;
                 }
                 
                 function setupVideoHandlers() {
-                    if (!window.videoElement) return;
+                    if (!window.videoElement || window.videoElement._handlersSetup) return;
                     
-                    console.log('Video element found, setting up handlers');
+                    console.log('Setting up optimized video handlers');
                     
+                    // Initial time setup
                     var initialTime = ${currentTime};
                     var timeSet = false;
                     
@@ -232,27 +319,20 @@ const WebViewPlayer = ({
                             
                             if (initialTime > 0) {
                                 setTimeout(function() {
-                                    window.videoElement.play().catch(function(e) {
-                                        console.log('Auto-play error:', e);
-                                    });
+                                    window.videoElement.play().catch(console.log);
                                 }, 500);
                             }
                         }
                     }
                     
-                    // Set initial time when metadata is loaded
-                    if (window.videoElement.readyState >= 1) {
-                        setInitialTime();
-                    } else {
-                        window.videoElement.addEventListener('loadedmetadata', setInitialTime);
-                        window.videoElement.addEventListener('canplay', setInitialTime);
-                    }
+                    // Efficient event listeners
+                    var lastUpdate = 0;
+                    var updateInterval;
                     
-                    // Time update reporting with throttling
-                    var lastReportedTime = 0;
-                    var reportInterval = setInterval(function() {
-                        if (window.videoElement && Math.abs(window.videoElement.currentTime - lastReportedTime) > 0.5) {
-                            lastReportedTime = window.videoElement.currentTime;
+                    function handleTimeUpdate() {
+                        var now = Date.now();
+                        if (now - lastUpdate > 1000) {
+                            lastUpdate = now;
                             try {
                                 window.ReactNativeWebView.postMessage(JSON.stringify({
                                     type: 'timeupdate',
@@ -263,145 +343,182 @@ const WebViewPlayer = ({
                                 console.log('Message post error:', e);
                             }
                         }
-                    }, 1000);
+                    }
                     
-                    // Video ended event
-                    window.videoElement.addEventListener('ended', function() {
-                        try {
-                            window.ReactNativeWebView.postMessage(JSON.stringify({
-                                type: 'ended'
-                            }));
-                        } catch (e) {
-                            console.log('Ended message error:', e);
+                    function setupListeners() {
+                        if (window.videoElement._handlersSetup) return;
+                        
+                        window.videoElement.addEventListener('loadedmetadata', setInitialTime);
+                        window.videoElement.addEventListener('canplay', setInitialTime);
+                        
+                        // Throttled timeupdate
+                        updateInterval = setInterval(handleTimeUpdate, 1000);
+                        
+                        window.videoElement.addEventListener('ended', function() {
+                            try {
+                                window.ReactNativeWebView.postMessage(JSON.stringify({
+                                    type: 'ended'
+                                }));
+                            } catch (e) {
+                                console.log('Ended message error:', e);
+                            }
+                        });
+                        
+                        window.videoElement._handlersSetup = true;
+                    }
+                    
+                    // Cleanup function
+                    window.cleanupVideoHandlers = function() {
+                        if (window.videoElement && window.videoElement._handlersSetup) {
+                            clearInterval(updateInterval);
+                            window.videoElement.removeEventListener('loadedmetadata', setInitialTime);
+                            window.videoElement.removeEventListener('canplay', setInitialTime);
+                            window.videoElement._handlersSetup = false;
                         }
-                    });
+                    };
                     
-                    // Play/pause tracking
-                    window.videoElement.addEventListener('play', function() {
-                        console.log('Video playing');
-                    });
+                    setupListeners();
                     
-                    window.videoElement.addEventListener('pause', function() {
-                        console.log('Video paused');
-                    });
-                    
-                    // Error handling
-                    window.videoElement.addEventListener('error', function(e) {
-                        console.log('Video error:', e);
-                    });
+                    // Initial check
+                    setInitialTime();
                 }
                 
-                // Platform-specific fullscreen handling
+                // Fullscreen handling
                 ${
                     Platform.OS === "android"
                         ? `
-                    // Android fullscreen handling
-                    document.addEventListener('fullscreenchange', function() {
-                        var isFullscreenNow = !!document.fullscreenElement;
-                        console.log('Fullscreen change:', isFullscreenNow);
-                        try {
-                            window.ReactNativeWebView.postMessage(JSON.stringify({ 
-                                type: 'fullscreen', 
-                                isFullscreen: isFullscreenNow 
-                            }));
-                        } catch (e) {
-                            console.log('Fullscreen message error:', e);
-                        }
-                    });
+                document.addEventListener('fullscreenchange', function() {
+                    var isFullscreenNow = !!document.fullscreenElement;
+                    try {
+                        window.ReactNativeWebView.postMessage(JSON.stringify({ 
+                            type: 'fullscreen', 
+                            isFullscreen: isFullscreenNow 
+                        }));
+                    } catch (e) {
+                        console.log('Fullscreen message error:', e);
+                    }
+                });
                 `
                         : `
-                    // iOS fullscreen handling
-                    function setupIOSFullscreen() {
-                        if (!window.videoElement) return;
-                        
-                        window.videoElement.addEventListener('webkitbeginfullscreen', function() {
-                            console.log('iOS fullscreen begin');
-                            try {
-                                window.ReactNativeWebView.postMessage(JSON.stringify({
-                                    type: 'fullscreen',
-                                    isFullscreen: true
-                                }));
-                            } catch (e) {
-                                console.log('iOS fullscreen begin message error:', e);
-                            }
-                        });
-                        
-                        window.videoElement.addEventListener('webkitendfullscreen', function() {
-                            console.log('iOS fullscreen end');
-                            try {
-                                window.ReactNativeWebView.postMessage(JSON.stringify({
-                                    type: 'fullscreen',
-                                    isFullscreen: false
-                                }));
-                            } catch (e) {
-                                console.log('iOS fullscreen end message error:', e);
-                            }
-                        });
-                    }
+                function setupIOSFullscreen() {
+                    if (!window.videoElement) return;
                     
-                    // Setup iOS fullscreen after video is found
-                    var originalSetupVideoHandlers = setupVideoHandlers;
-                    setupVideoHandlers = function() {
-                        originalSetupVideoHandlers();
-                        setupIOSFullscreen();
-                    };
+                    window.videoElement.addEventListener('webkitbeginfullscreen', function() {
+                        try {
+                            window.ReactNativeWebView.postMessage(JSON.stringify({
+                                type: 'fullscreen',
+                                isFullscreen: true
+                            }));
+                        } catch (e) {
+                            console.log('iOS fullscreen begin message error:', e);
+                        }
+                    });
+                    
+                    window.videoElement.addEventListener('webkitendfullscreen', function() {
+                        try {
+                            window.ReactNativeWebView.postMessage(JSON.stringify({
+                                type: 'fullscreen',
+                                isFullscreen: false
+                            }));
+                        } catch (e) {
+                            console.log('iOS fullscreen end message error:', e);
+                        }
+                    });
+                }
                 `
                 }
                 
-                // Start finding video
-                findVideo();
+                // Initial setup
+                if (!findVideo()) {
+                    var observer = new MutationObserver(function() {
+                        if (findVideo()) {
+                            observer.disconnect();
+                            ${
+                                Platform.OS === "ios"
+                                    ? "setupIOSFullscreen();"
+                                    : ""
+                            }
+                        }
+                    });
+                    
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                } else {
+                    ${Platform.OS === "ios" ? "setupIOSFullscreen();" : ""}
+                }
                 
                 return true;
             })();
         `;
+    }, [currentTime]);
 
-        return baseScript;
-    };
+    const injectedScript = useMemo(
+        () => getInjectedJavaScript(),
+        [getInjectedJavaScript]
+    );
 
-    const handleMessage = (event) => {
-        try {
-            const data = JSON.parse(event.nativeEvent.data);
-            console.log("WebView message:", data);
+    const handleWebViewLoad = useCallback(() => {
+        setWebViewLoaded(true);
+        setTimeout(() => {
+            webViewRef.current?.injectJavaScript(injectedScript);
+        }, 1000);
+    }, [injectedScript]);
 
-            switch (data.type) {
-                case "timeupdate":
-                    wasPlayingRef.current = data.isPlaying;
-                    throttledUpdate(
-                        route?.params?.id,
-                        selectedEpisode,
-                        data.currentTime,
-                        selectedEpisodeId,
-                        selectedEpisodeName
-                    );
-                    latestValuesRef.current = {
-                        animeId: route?.params?.id,
-                        selectedEpisode,
-                        currentTime: data.currentTime,
-                        selectedEpisodeId,
-                        selectedEpisodeName,
-                    };
-                    break;
-                case "ended":
-                    console.log("Video ended, moving to next episode");
-                    nextEpisode();
-                    break;
-                case "fullscreen":
-                    console.log("Fullscreen state changed:", data.isFullscreen);
-                    if (data.isFullscreen) {
-                        onEnterFullscreen();
-                    } else {
-                        onExitFullscreen();
-                    }
-                    break;
+    const handleMessage = useCallback(
+        (event) => {
+            try {
+                const data = JSON.parse(event.nativeEvent.data);
+
+                switch (data.type) {
+                    case "timeupdate":
+                        wasPlayingRef.current = data.isPlaying;
+                        throttledUpdate(
+                            route?.params?.id,
+                            selectedEpisode,
+                            data.currentTime,
+                            selectedEpisodeId,
+                            selectedEpisodeName
+                        );
+                        latestValuesRef.current = {
+                            animeId: route?.params?.id,
+                            selectedEpisode,
+                            currentTime: data.currentTime,
+                            selectedEpisodeId,
+                            selectedEpisodeName,
+                        };
+                        handleUserInteraction();
+                        break;
+
+                    case "ended":
+                        nextEpisode();
+                        break;
+
+                    case "fullscreen":
+                        if (data.isFullscreen) {
+                            onEnterFullscreen();
+                        } else {
+                            onExitFullscreen();
+                        }
+                        break;
+                }
+            } catch (error) {
+                console.error("Error parsing message:", error);
             }
-        } catch (error) {
-            console.error("Error parsing message from WebView:", error);
-        }
-    };
+        },
+        [
+            route?.params?.id,
+            selectedEpisode,
+            selectedEpisodeId,
+            selectedEpisodeName,
+        ]
+    );
 
     return (
         <View
             style={isFullscreen ? styles.fullscreenContainer : styles.container}
+            onTouchStart={handleUserInteraction}
         >
             <StatusBar hidden={isFullscreen} style="auto" />
             {videoLoading ? (
@@ -421,8 +538,14 @@ const WebViewPlayer = ({
                             uri: `https://megaplay.buzz/stream/s-2/${idForWebview}/${activeTab}`,
                             headers: {
                                 Referer: "https://megaplay.buzz/",
-                                "User-Agent":
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                                "User-Agent": Platform.select({
+                                    ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1",
+                                    android:
+                                        "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.196 Mobile Safari/537.36",
+                                }),
+                                ...(!isWifi
+                                    ? { "X-Stream-Quality": "480p" }
+                                    : {}),
                             },
                         }}
                         style={styles.webview}
@@ -436,6 +559,11 @@ const WebViewPlayer = ({
                         onMessage={handleMessage}
                         onShouldStartLoadWithRequest={handleLoad}
                         setSupportMultipleWindows={false}
+                        cacheEnabled={true}
+                        androidLayerType="hardware"
+                        overScrollMode="never"
+                        androidHardwareAccelerationDisabled={false}
+                        renderToHardwareTextureAndroid={true}
                         onError={(syntheticEvent) => {
                             const { nativeEvent } = syntheticEvent;
                             console.warn("WebView error:", nativeEvent);
@@ -445,18 +573,14 @@ const WebViewPlayer = ({
                             console.warn("HTTP error:", nativeEvent);
                         }}
                         onLoadStart={() => {
-                            console.log("WebView load started");
                             setWebViewLoaded(false);
                             timeSetRef.current = false;
                         }}
-                        onLoadEnd={() => {
-                            console.log("WebView load ended");
-                        }}
-                        // iOS specific props for better video handling
                         {...(Platform.OS === "ios" && {
                             scrollEnabled: false,
                             bounces: false,
                             allowsBackForwardNavigationGestures: false,
+                            decelerationRate: "normal",
                         })}
                     />
                 )
@@ -464,8 +588,6 @@ const WebViewPlayer = ({
         </View>
     );
 };
-
-export default React.memo(WebViewPlayer);
 
 const styles = StyleSheet.create({
     container: {
@@ -482,3 +604,5 @@ const styles = StyleSheet.create({
         backgroundColor: "#000",
     },
 });
+
+export default React.memo(WebViewPlayer);
