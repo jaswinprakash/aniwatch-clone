@@ -214,7 +214,6 @@ const Controls = ({
                                 position: "absolute",
                                 right: SIZE(50),
                                 gap: SIZE(10),
-                                bottom: SIZE(-22),
                                 flexDirection: "row",
                                 // alignItems: "center",
                             }}
