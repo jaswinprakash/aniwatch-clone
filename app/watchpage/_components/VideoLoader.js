@@ -39,7 +39,7 @@ const VideoLoader = ({ selectedEpisode, selectedEpisodeName }) => {
                     fontSize: SIZE(12),
                 }}
             >
-                Loading Episode {selectedEpisode}
+                Episode {selectedEpisode}
             </ThemedText>
             <ThemedText
                 numberOfLines={2}
