@@ -6,6 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import React, {
     useCallback,
     useEffect,
+    useImperativeHandle,
     useMemo,
     useRef,
     useState,
@@ -49,6 +50,7 @@ const VideoPlayer = ({
     episodeLoading,
     setSelectedEpisodeName,
     selectedEpisodeName,
+    ref,
 }) => {
     const navigation = useNavigation();
     const videoRef = useRef(null);
@@ -89,8 +91,15 @@ const VideoPlayer = ({
         selectedEpisode: null,
         currentTime: null,
         selectedEpisodeId: null,
-        selectedEpisodeName,
+        selectedEpisodeName: null,
     });
+
+    useImperativeHandle(ref, () => ({
+        resetTime: () => {
+            setCurrentTime(0);
+        },
+        getCurrentTime: () => currentTime,
+    }));
 
     const debouncedHideControls = useMemo(
         () => debounce(() => setShowControls(false), 5000),
@@ -151,7 +160,6 @@ const VideoPlayer = ({
     };
 
     const toggleFullScreen = useCallback(async () => {
-        if (isFullScreen) return;
         setIsFullScreen(!isFullScreen);
         setIsFullscreenContext(!isFullScreen);
         if (!isFullScreen) {
@@ -220,6 +228,7 @@ const VideoPlayer = ({
             setSelectedEpisode(nextEpisode.number);
             setSelectedEpisodeName(nextEpisode.title);
             startStream(nextEpisode.episodeId, nextEpisode.number);
+            setCurrentTime(0);
         } else {
             console.log("No next episode available.");
         }
@@ -235,6 +244,7 @@ const VideoPlayer = ({
             setSelectedEpisode(prevEpisode.number);
             setSelectedEpisodeName(prevEpisode.title);
             startStream(prevEpisode.episodeId, prevEpisode.number);
+            setCurrentTime(0);
         } else {
             console.log("No previous episode available.");
         }
@@ -251,10 +261,14 @@ const VideoPlayer = ({
             if (isRightSide) {
                 skip(SEEK_AMOUNT);
                 setShowForwardIndicator(true);
+                setIsSeeking(true);
+                setSeekPosition(currentTime + SEEK_AMOUNT);
                 setTimeout(() => setShowForwardIndicator(false), 500);
             } else {
                 skip(-SEEK_AMOUNT);
                 setShowBackwardIndicator(true);
+                setIsSeeking(true);
+                setSeekPosition(currentTime - SEEK_AMOUNT);
                 setTimeout(() => setShowBackwardIndicator(false), 500);
             }
             if (doubleTapTimeoutId) {
@@ -349,12 +363,7 @@ const VideoPlayer = ({
     }, []);
 
     useEffect(() => {
-        const animeData = history.find(
-            (item) =>
-                item.animeId === animeId &&
-                item.episodeNumber === selectedEpisode &&
-                item.selectedEpisodeId === selectedEpisodeId
-        );
+        const animeData = history.find((item) => item.animeId === animeId);
         setInitialSeekTime(animeData?.currentTime || 0);
     }, [animeId, selectedEpisode, selectedEpisodeId, history]);
 

@@ -8,7 +8,7 @@ import { useRoute } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import Constants from "expo-constants";
 import LottieView from "lottie-react-native";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { TextInput, TouchableRipple } from "react-native-paper";
@@ -47,6 +47,7 @@ const SinglePage = () => {
     const [idForWebview, setIdForWebview] = useState(null);
     const [webviewOn, setWebviewOn] = useState(false);
     const [castOn, setCastOn] = useState(false);
+    const playerRef = useRef(null);
 
     const getEpisodes = async () => {
         try {
@@ -95,6 +96,8 @@ const SinglePage = () => {
 
     const startStream = useCallback(
         async (id, number) => {
+            playerRef.current?.resetTime();
+            adjustRangeForSelectedEpisode(number);
             setVideoLoading(true);
             setVideoData(null);
             try {
@@ -379,6 +382,7 @@ const SinglePage = () => {
                     episodeLoading={episodeLoading}
                     setSelectedEpisodeName={setSelectedEpisodeName}
                     selectedEpisodeName={selectedEpisodeName}
+                    ref={playerRef}
                 />
             ) : !castOn ? (
                 <View
@@ -647,7 +651,11 @@ const SinglePage = () => {
                                         webviewOn ? "web-check" : "web-remove"
                                     }
                                     size={SIZE(20)}
-                                    color={webviewOn ? "#3AFF6F" : Colors.dark.backgroundPress}
+                                    color={
+                                        webviewOn
+                                            ? "#3AFF6F"
+                                            : Colors.dark.backgroundPress
+                                    }
                                     style={{ alignSelf: "center" }}
                                 />
                                 <CustomSwitch
@@ -659,7 +667,11 @@ const SinglePage = () => {
                                 <MaterialCommunityIcons
                                     name={castOn ? "cast-connected" : "cast"}
                                     size={SIZE(20)}
-                                    color={castOn ? "#3AFF6F" : Colors.dark.backgroundPress}
+                                    color={
+                                        castOn
+                                            ? "#3AFF6F"
+                                            : Colors.dark.backgroundPress
+                                    }
                                     style={{ alignSelf: "center" }}
                                 />
                                 <CustomSwitch
