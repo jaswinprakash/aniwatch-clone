@@ -402,6 +402,7 @@ const SinglePage = () => {
                         episodeLoading={episodeLoading}
                         selectedEpisodeId={selectedEpisodeId}
                         setSelectedEpisodeName={setSelectedEpisodeName}
+                        selectedEpisodeName={selectedEpisodeName}
                     />
                 </View>
             ) : (

@@ -77,6 +77,7 @@ const CastPlayer = ({
         selectedEpisode: null,
         currentTime: null,
         selectedEpisodeId: null,
+        selectedEpisodeName: null,
     });
 
     const isCasting = client !== null;
@@ -600,13 +601,15 @@ const CastPlayer = ({
                             animeId,
                             selectedEpisode,
                             currentTime,
-                            selectedEpisodeId
+                            selectedEpisodeId,
+                            selectedEpisodeName
                         );
                         latestValuesRef.current = {
                             animeId,
                             selectedEpisode,
                             currentTime,
                             selectedEpisodeId,
+                            selectedEpisodeName,
                         };
                     }
 
@@ -674,25 +677,33 @@ const CastPlayer = ({
         intro,
         outro,
         activeTrackIds,
+        selectedEpisodeName,
     ]);
 
     const forceDisconnectCast = useCallback(async () => {
         try {
             await sessionManager.endCurrentSession(true);
-            const { animeId, selectedEpisode, currentTime, selectedEpisodeId } =
-                latestValuesRef.current;
+            const {
+                animeId,
+                selectedEpisode,
+                currentTime,
+                selectedEpisodeId,
+                selectedEpisodeName,
+            } = latestValuesRef.current;
 
             if (
                 animeId &&
                 selectedEpisode &&
                 currentTime &&
-                selectedEpisodeId
+                selectedEpisodeId &&
+                selectedEpisodeName
             ) {
                 saveToDatabase(
                     animeId,
                     selectedEpisode,
                     currentTime,
-                    selectedEpisodeId
+                    selectedEpisodeId,
+                    selectedEpisodeName
                 );
             }
 

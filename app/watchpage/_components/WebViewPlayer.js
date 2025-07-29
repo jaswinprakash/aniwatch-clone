@@ -27,6 +27,7 @@ const WebViewPlayer = ({
     episodeLoading,
     selectedEpisodeId,
     setSelectedEpisodeName,
+    selectedEpisodeName,
 }) => {
     const throttledUpdate = useThrottledPlayback();
     const saveToDatabase = useManualPlaybackSave();
@@ -43,6 +44,7 @@ const WebViewPlayer = ({
         selectedEpisode: null,
         currentTime: null,
         selectedEpisodeId: null,
+        selectedEpisodeName: null,
     });
 
     useKeepAwake(isFullscreen ? "fullscreen-video" : undefined);
@@ -90,20 +92,27 @@ const WebViewPlayer = ({
 
     useEffect(() => {
         return () => {
-            const { animeId, selectedEpisode, currentTime, selectedEpisodeId } =
-                latestValuesRef.current;
+            const {
+                animeId,
+                selectedEpisode,
+                currentTime,
+                selectedEpisodeId,
+                selectedEpisodeName,
+            } = latestValuesRef.current;
 
             if (
                 animeId &&
                 selectedEpisode &&
                 currentTime &&
-                selectedEpisodeId
+                selectedEpisodeId &&
+                selectedEpisodeName
             ) {
                 saveToDatabase(
                     animeId,
                     selectedEpisode,
                     currentTime,
-                    selectedEpisodeId
+                    selectedEpisodeId,
+                    selectedEpisodeName
                 );
             }
         };
@@ -361,13 +370,15 @@ const WebViewPlayer = ({
                         route?.params?.id,
                         selectedEpisode,
                         data.currentTime,
-                        selectedEpisodeId
+                        selectedEpisodeId,
+                        selectedEpisodeName
                     );
                     latestValuesRef.current = {
                         animeId: route?.params?.id,
                         selectedEpisode,
                         currentTime: data.currentTime,
                         selectedEpisodeId,
+                        selectedEpisodeName,
                     };
                     break;
                 case "ended":

@@ -12,7 +12,7 @@ import { TouchableRipple } from "react-native-paper";
 import Animated, { FadeInRight } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 import CustomAlert from "./CustomAlert";
-const StoredVideos = ({ id, episode, time }) => {
+const StoredVideos = ({ id, episode, time, name }) => {
     const [animeInfo, setAnimeInfo] = useState();
     const [pageLoading, setPageLoading] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
@@ -122,11 +122,31 @@ const StoredVideos = ({ id, episode, time }) => {
                                             {animeInfo?.anime?.info?.name}
                                         </ThemedText>
                                         <ThemedText
+                                            numberOfLines={2}
                                             type="subtitle"
                                             style={{
                                                 color: Colors.light
                                                     .tabIconSelected,
                                                 fontSize: SIZE(15),
+                                                bottom: SIZE(50),
+                                                position: "absolute",
+                                                textShadowColor:
+                                                    Colors.dark.black,
+                                                textShadowOffset: {
+                                                    width: 1,
+                                                    height: 1,
+                                                },
+                                                textShadowRadius: 2,
+                                            }}
+                                        >
+                                            {name}
+                                        </ThemedText>
+                                        <ThemedText
+                                            type="subtitle"
+                                            style={{
+                                                color: Colors.light
+                                                    .tabIconSelected,
+                                                fontSize: SIZE(12),
                                                 bottom: SIZE(30),
                                                 position: "absolute",
                                                 textShadowColor:
@@ -145,7 +165,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                             style={{
                                                 color: Colors.light
                                                     .tabIconSelected,
-                                                fontSize: SIZE(15),
+                                                fontSize: SIZE(12),
                                                 bottom: SIZE(10),
                                                 position: "absolute",
                                                 textShadowColor:
@@ -157,7 +177,7 @@ const StoredVideos = ({ id, episode, time }) => {
                                                 textShadowRadius: 2,
                                             }}
                                         >
-                                            Played time : {formatTime(time)}
+                                            {formatTime(time)}
                                         </ThemedText>
                                     </View>
                                     <TouchableRipple

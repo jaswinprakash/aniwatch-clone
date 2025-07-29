@@ -75,7 +75,13 @@ export const syncWithSupabase = createAsyncThunk(
 export const updateToDatabase = createAsyncThunk(
     "playback/updateToDatabase",
     async (
-        { animeId, episodeNumber, currentTime, selectedEpisodeId },
+        {
+            animeId,
+            episodeNumber,
+            currentTime,
+            selectedEpisodeId,
+            selectedEpisodeName,
+        },
         { getState }
     ) => {
         const state = getState().playback;
@@ -99,6 +105,7 @@ export const updateToDatabase = createAsyncThunk(
                     episode_number: episodeNumber,
                     playback_time: Math.round(currentTime),
                     selected_episode_id: selectedEpisodeId,
+                    selected_episode_name: selectedEpisodeName,
                     updated_at: new Date().toISOString(),
                 },
                 {
@@ -124,7 +131,13 @@ export const updateToDatabase = createAsyncThunk(
 export const updatePlaybackLocal = createAsyncThunk(
     "playback/updatePlaybackLocal",
     async (
-        { animeId, episodeNumber, currentTime, selectedEpisodeId },
+        {
+            animeId,
+            episodeNumber,
+            currentTime,
+            selectedEpisodeId,
+            selectedEpisodeName,
+        },
         { getState }
     ) => {
         const history = getState().playback.animeHistory;
@@ -137,6 +150,7 @@ export const updatePlaybackLocal = createAsyncThunk(
             episodeNumber,
             currentTime,
             selectedEpisodeId,
+            selectedEpisodeName,
             timestamp: Date.now(),
         };
 
@@ -207,6 +221,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
         episodeNumber: item.episode_number,
         currentTime: item.playback_time,
         selectedEpisodeId: item.selected_episode_id,
+        selectedEpisodeName: item.selected_episode_name,
         timestamp: new Date(item.updated_at).getTime(),
     }));
 
@@ -234,6 +249,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
                 episode_number: localItem.episodeNumber,
                 playback_time: Math.round(localItem.currentTime),
                 selected_episode_id: localItem.selectedEpisodeId,
+                selected_episode_name: localItem.selectedEpisodeName,
             });
         } else {
             // Case 2: Anime exists in both local and database - CONDITIONAL UPDATE
@@ -248,6 +264,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
                     episode_number: localItem.episodeNumber,
                     playback_time: Math.round(localItem.currentTime),
                     selected_episode_id: localItem.selectedEpisodeId,
+                    selected_episode_name: localItem.selectedEpisodeName,
                 });
             } else if (remoteItem.episodeNumber > localItem.episodeNumber) {
                 // Remote episode is higher - use remote data locally
@@ -268,6 +285,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
                         episode_number: localItem.episodeNumber,
                         playback_time: Math.round(localItem.currentTime),
                         selected_episode_id: localItem.selectedEpisodeId,
+                        selected_episode_name: localItem.selectedEpisodeName,
                     });
                 } else {
                     console.log(

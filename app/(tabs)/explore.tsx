@@ -20,6 +20,7 @@ const Profile = () => {
             id={item?.animeId}
             episode={item?.episodeNumber}
             time={item?.currentTime}
+            name={item?.selectedEpisodeName}
         />
     );
 

@@ -81,6 +81,7 @@ const VideoPlayer = ({
         selectedEpisode: null,
         currentTime: null,
         selectedEpisodeId: null,
+        selectedEpisodeName,
     });
 
     const toggleControls = () => {
@@ -313,20 +314,27 @@ const VideoPlayer = ({
                 });
             }
 
-            const { animeId, selectedEpisode, currentTime, selectedEpisodeId } =
-                latestValuesRef.current;
+            const {
+                animeId,
+                selectedEpisode,
+                currentTime,
+                selectedEpisodeId,
+                selectedEpisodeName,
+            } = latestValuesRef.current;
 
             if (
                 animeId &&
                 selectedEpisode &&
                 currentTime &&
-                selectedEpisodeId
+                selectedEpisodeId &&
+                selectedEpisodeName
             ) {
                 saveToDatabase(
                     animeId,
                     selectedEpisode,
                     currentTime,
-                    selectedEpisodeId
+                    selectedEpisodeId,
+                    selectedEpisodeName
                 );
             }
         };
@@ -364,7 +372,8 @@ const VideoPlayer = ({
                     animeId,
                     selectedEpisode,
                     currentTime,
-                    selectedEpisodeId
+                    selectedEpisodeId,
+                    selectedEpisodeName
                 );
                 if (isLoading) {
                     setIsLoading(false);
@@ -376,6 +385,7 @@ const VideoPlayer = ({
                     selectedEpisode,
                     currentTime,
                     selectedEpisodeId,
+                    selectedEpisodeName,
                 };
             }
         },
