@@ -214,9 +214,9 @@ const Controls = ({
                                 position: "absolute",
                                 right: SIZE(50),
                                 gap: SIZE(10),
-                                bottom: SIZE(-10),
+                                bottom: SIZE(-22),
                                 flexDirection: "row",
-                                alignItems: "center",
+                                // alignItems: "center",
                             }}
                         >
                             <TouchableRipple
@@ -239,9 +239,9 @@ const Controls = ({
                                     type="subtitle"
                                     style={{
                                         color: Colors.light.tabIconSelected,
-                                        fontSize: SIZE(15),
+                                        fontSize: SIZE(12),
                                         textAlign: "center",
-                                        marginBottom: SIZE(-5),
+                                        marginBottom: SIZE(-7),
                                     }}
                                 >
                                     {subSyncValue}
