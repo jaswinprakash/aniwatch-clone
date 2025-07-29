@@ -898,7 +898,9 @@ const CastPlayer = ({
                                             minimumTrackTintColor={
                                                 Colors.light.tabIconSelected
                                             }
-                                            maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
+                                            maximumTrackTintColor={
+                                                Colors.dark.backgroundPress
+                                            }
                                             thumbStyle={styles.sliderThumb}
                                         />
                                         <ThemedText style={styles.timeText}>

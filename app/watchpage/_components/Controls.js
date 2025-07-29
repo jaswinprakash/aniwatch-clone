@@ -355,7 +355,7 @@ const Controls = ({
                         resetControlsTimeout();
                     }}
                     minimumTrackTintColor={Colors.light.tabIconSelected}
-                    maximumTrackTintColor={"#4A4A4A"}
+                    maximumTrackTintColor={Colors.dark.backgroundPress}
                 />
                 <ThemedText type="subtitle" style={styles.timeText}>
                     {formatTime(duration)}

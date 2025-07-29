@@ -91,6 +91,6 @@ const styles = StyleSheet.create({
         borderColor: "transparent",
     },
     activeTab: { borderColor: Colors.light.tabIconSelected },
-    tabText: { fontSize: SIZE(18), color: "#607d8b" },
+    tabText: { fontSize: SIZE(18), color: Colors.dark.backgroundPress },
     activeText: { color: Colors.light.tabIconSelected },
 });

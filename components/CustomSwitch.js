@@ -15,7 +15,7 @@ const CustomSwitch = ({ value, onValueChange }) => {
         true: "#3AFF6F",
     };
     const thumbColor = value ? Colors.light.tabIconSelected : "#fff";
-    const iosBackgroundColor = "#3e3e3e";
+    const iosBackgroundColor = Colors.dark.backgroundPress;
 
     // Pre-calculate all SIZE values
     const sizeValues = {

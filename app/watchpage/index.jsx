@@ -647,7 +647,7 @@ const SinglePage = () => {
                                         webviewOn ? "web-check" : "web-remove"
                                     }
                                     size={SIZE(20)}
-                                    color={webviewOn ? "#3AFF6F" : "#3e3e3e"}
+                                    color={webviewOn ? "#3AFF6F" : Colors.dark.backgroundPress}
                                     style={{ alignSelf: "center" }}
                                 />
                                 <CustomSwitch
@@ -659,7 +659,7 @@ const SinglePage = () => {
                                 <MaterialCommunityIcons
                                     name={castOn ? "cast-connected" : "cast"}
                                     size={SIZE(20)}
-                                    color={castOn ? "#3AFF6F" : "#3e3e3e"}
+                                    color={castOn ? "#3AFF6F" : Colors.dark.backgroundPress}
                                     style={{ alignSelf: "center" }}
                                 />
                                 <CustomSwitch
