@@ -103,7 +103,7 @@ export const updateToDatabase = createAsyncThunk(
                     user_id: user.id, // Now user is properly defined
                     anime_id: animeId,
                     episode_number: episodeNumber,
-                    playback_time: Math.round(currentTime),
+                    playback_time: Math.floor(currentTime),
                     selected_episode_id: selectedEpisodeId,
                     selected_episode_name: selectedEpisodeName,
                     updated_at: new Date().toISOString(),
@@ -247,7 +247,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
             databaseUpdates.push({
                 anime_id: localItem.animeId,
                 episode_number: localItem.episodeNumber,
-                playback_time: Math.round(localItem.currentTime),
+                playback_time: Math.floor(localItem.currentTime),
                 selected_episode_id: localItem.selectedEpisodeId,
                 selected_episode_name: localItem.selectedEpisodeName,
             });
@@ -262,7 +262,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
                 databaseUpdates.push({
                     anime_id: localItem.animeId,
                     episode_number: localItem.episodeNumber,
-                    playback_time: Math.round(localItem.currentTime),
+                    playback_time: Math.floor(localItem.currentTime),
                     selected_episode_id: localItem.selectedEpisodeId,
                     selected_episode_name: localItem.selectedEpisodeName,
                 });
@@ -283,7 +283,7 @@ const smartMergeWithConditionalSync = (localHistory, remoteData) => {
                     databaseUpdates.push({
                         anime_id: localItem.animeId,
                         episode_number: localItem.episodeNumber,
-                        playback_time: Math.round(localItem.currentTime),
+                        playback_time: Math.floor(localItem.currentTime),
                         selected_episode_id: localItem.selectedEpisodeId,
                         selected_episode_name: localItem.selectedEpisodeName,
                     });
