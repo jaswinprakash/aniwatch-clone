@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java b/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
+index bea60c0..c1a0424 100644
+--- a/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
++++ b/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
+@@ -456,7 +456,7 @@ public class ReactExoplayerView extends FrameLayout implements
+     private void updateControllerVisibility() {
+         if (exoPlayerView == null) return;
+             
+-        exoPlayerView.setUseController(!controlsConfig.getHideFullscreen());
++        exoPlayerView.setUseController(!controlsConfig.getHideFullscreen() && controls);
+     }
+ 
+     private void openSettings() {
