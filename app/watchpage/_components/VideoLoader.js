@@ -36,6 +36,7 @@ const VideoLoader = ({ selectedEpisode, selectedEpisodeName }) => {
                         height: 1,
                     },
                     textShadowRadius: 2,
+                    fontSize: SIZE(12),
                 }}
             >
                 Loading Episode {selectedEpisode}
@@ -53,6 +54,7 @@ const VideoLoader = ({ selectedEpisode, selectedEpisodeName }) => {
                     textShadowRadius: 2,
                     width: SIZE(300),
                     textAlign: "center",
+                    fontSize: SIZE(15),
                 }}
             >
                 {selectedEpisodeName}

@@ -1,5 +1,6 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -13,6 +14,14 @@ import { useSelector } from "react-redux";
 
 const Profile = () => {
     const history = useAnimeHistory();
+
+    const renderItem = ({ item }) => (
+        <StoredVideos
+            id={item?.animeId}
+            episode={item?.episodeNumber}
+            time={item?.currentTime}
+        />
+    );
 
     return (
         <SafeAreaView
@@ -44,7 +53,7 @@ const Profile = () => {
                     <GoogleSignInButton />
                 </View>
             </ThemedView>
-            <View>
+            <View style={{ height: "100%" }}>
                 {!history?.length ? (
                     <View
                         style={{
@@ -62,22 +71,22 @@ const Profile = () => {
                         />
                     </View>
                 ) : (
-                    <ScrollView
-                        style={{
+                    <FlashList
+                        data={history}
+                        renderItem={renderItem}
+                        keyExtractor={(item) =>
+                            `${item?.animeId}-${item?.episodeNumber}`
+                        }
+                        estimatedItemSize={SIZE(160)}
+                        contentContainerStyle={{
                             paddingHorizontal: SIZE(16),
                             backgroundColor: Colors.dark.background,
-                            marginBottom: "5%",
                         }}
-                    >
-                        {history?.map((item, index) => (
-                            <StoredVideos
-                                key={index}
-                                id={item?.animeId}
-                                episode={item?.episodeNumber}
-                                time={item?.currentTime}
-                            />
-                        ))}
-                    </ScrollView>
+                        showsVerticalScrollIndicator={false}
+                        ListFooterComponent={() => (
+                            <View style={{ height: SIZE(15) }} />
+                        )}
+                    />
                 )}
             </View>
         </SafeAreaView>

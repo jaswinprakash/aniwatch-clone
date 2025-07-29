@@ -164,11 +164,13 @@ const Controls = ({
                                 textShadowColor: Colors.dark.black,
                                 textShadowOffset: { width: 1, height: 1 },
                                 textShadowRadius: 2,
+                                fontSize: SIZE(10),
                             }}
                         >
                             Episode - {selectedEpisode}
                         </ThemedText>
                         <ThemedText
+                            type="title"
                             numberOfLines={1}
                             style={{
                                 color: Colors.light.tabIconSelected,
@@ -176,7 +178,8 @@ const Controls = ({
                                 textShadowOffset: { width: 1, height: 1 },
                                 textShadowRadius: 2,
                                 position: "absolute",
-                                top: "110%",
+                                top: "90%",
+                                fontSize: SIZE(10),
                             }}
                         >
                             {selectedEpisodeName && selectedEpisodeName}
