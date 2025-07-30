@@ -680,7 +680,9 @@ const SinglePage = () => {
                                 />
                             </View>
 
-                            <View style={{ width: "35%" }}>
+                            <View
+                                style={{ width: "35%", marginBottom: "1.4%" }}
+                            >
                                 <TextInput
                                     contentStyle={{
                                         fontFamily: "Exo2Medium",
