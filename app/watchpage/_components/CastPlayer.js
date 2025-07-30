@@ -44,7 +44,7 @@ const CastPlayer = ({
     setSelectedEpisodeName,
     selectedEpisodeName,
 }) => {
-    // CAST STATE using hooks - PRESERVED EXACTLY
+    // CAST STATE using hooks
     const client = useRemoteMediaClient();
     const sessionManager = GoogleCast.getSessionManager();
     const castState = useCastState();
@@ -54,7 +54,7 @@ const CastPlayer = ({
     const [castIsPlaying, setCastIsPlaying] = useState(false);
     const castProgressIntervalRef = useRef(null);
 
-    // PRESERVED ALL ORIGINAL STATES
+    // Video player equivalent states
     const [showSubtitleList, setShowSubtitleList] = useState(false);
     const [selectedSubtitle, setSelectedSubtitle] = useState(null);
     const [showSkipIntro, setShowSkipIntro] = useState(false);
@@ -62,12 +62,13 @@ const CastPlayer = ({
     const [subSyncValue, setSubSyncValue] = useState(0.2);
     const [isSeeking, setIsSeeking] = useState(false);
     const [seekPosition, setSeekPosition] = useState(0);
+
+    // CRITICAL: Prevent multiple cast calls
     const [isCastingInProgress, setIsCastingInProgress] = useState(false);
     const [hasLoadedMedia, setHasLoadedMedia] = useState(false);
     const [currentVideoUrl, setCurrentVideoUrl] = useState(null);
     const [activeTrackIds, setActiveTrackIds] = useState([]);
 
-    // PRESERVED ALL ORIGINAL REFS AND HOOKS
     const throttledUpdate = useThrottledPlayback();
     const history = useAnimeHistory();
     const saveToDatabase = useManualPlaybackSave();
@@ -81,12 +82,7 @@ const CastPlayer = ({
 
     const isCasting = client !== null;
 
-    /* ---------------------------
-       ALL ORIGINAL FUNCTIONS PRESERVED
-       Only added useCallback where safe
-    --------------------------- */
-
-    // 1. Check Google Play Services - EXACTLY AS YOURS
+    // Check Google Play Services on Android
     useEffect(() => {
         if (Platform.OS === "android") {
             CastContext.getPlayServicesState()
@@ -97,12 +93,15 @@ const CastPlayer = ({
                     }
                 })
                 .catch((error) => {
-                    console.warn("❌ Error checking Cast Play Services:", error);
+                    console.warn(
+                        "❌ Error checking Cast Play Services:",
+                        error
+                    );
                 });
         }
     }, []);
 
-    // 2. Reset cast flags when video changes - EXACTLY AS YOURS
+    // Reset cast flags when video changes
     useEffect(() => {
         if (videoUrl !== currentVideoUrl) {
             console.log("🔄 Video URL changed, resetting cast flags");
@@ -113,7 +112,19 @@ const CastPlayer = ({
         }
     }, [videoUrl, currentVideoUrl]);
 
-    // 3. Initialize from history - EXACTLY AS YOURS
+    // Reset cast flags when client changes
+    useEffect(() => {
+        if (!client) {
+            setHasLoadedMedia(false);
+            setIsCastingInProgress(false);
+            setCastCurrentTime(0);
+            setCastDuration(0);
+            setCastIsPlaying(false);
+            setActiveTrackIds([]);
+        }
+    }, [client]);
+
+    // Initialize from history (same as video player)
     useEffect(() => {
         setCastCurrentTime(0);
 
@@ -131,7 +142,7 @@ const CastPlayer = ({
         }
     }, [animeId, selectedEpisode, history, selectedEpisodeId]);
 
-    // 4. Auto-select English subtitle - EXACTLY AS YOURS
+    // Auto-select English subtitle (same as video player)
     useEffect(() => {
         if (subtitlesData && subtitlesData.length > 0) {
             setSelectedSubtitle(
@@ -144,7 +155,7 @@ const CastPlayer = ({
         }
     }, [subtitlesData]);
 
-    // 5. Check for intro/outro segments - EXACTLY AS YOURS
+    // Check for intro/outro segments
     const checkForIntroOutro = (currentTime) => {
         if (intro && currentTime >= intro?.start && currentTime <= intro?.end) {
             setShowSkipIntro(true);
@@ -159,7 +170,7 @@ const CastPlayer = ({
         }
     };
 
-    // 6. Skip intro/outro segments - EXACTLY AS YOURS
+    // Skip intro/outro segments
     const skipSegment = (segment) => {
         if (!client) return;
 
@@ -184,7 +195,7 @@ const CastPlayer = ({
         }
     };
 
-    // 7. Toggle play/pause - EXACTLY AS YOURS
+    // Toggle play/pause
     const togglePlayPause = () => {
         if (!client) return;
 
@@ -211,7 +222,7 @@ const CastPlayer = ({
         }
     };
 
-    // 8. Skip forward/backward - EXACTLY AS YOURS
+    // Skip forward/backward
     const skip = (seconds) => {
         if (!client) return;
 
@@ -228,7 +239,7 @@ const CastPlayer = ({
             });
     };
 
-    // 9. Subtitle selection - EXACTLY AS YOURS
+    // FIXED: Subtitle selection with proper track activation
     const selectSubtitle = (subtitle) => {
         setSelectedSubtitle(subtitle);
         setShowSubtitleList(false);
@@ -239,18 +250,24 @@ const CastPlayer = ({
                 client
                     .setActiveTrackIds([subtitle.id])
                     .then(() => {
-                        console.log("📝 Activated subtitle track:", subtitle.label);
+                        console.log(
+                            "📝 Activated subtitle track:",
+                            subtitle.label
+                        );
                         setActiveTrackIds([subtitle.id]);
                     })
                     .catch((error) => {
-                        console.error("❌ Failed to activate subtitle track:", error);
+                        console.error(
+                            "❌ Failed to activate subtitle track:",
+                            error
+                        );
                     });
 
                 // Apply text track styling
                 const textTrackStyle = {
-                    backgroundColor: "#00000000",
-                    foregroundColor: "#FFFFFF",
-                    edgeColor: "#000000",
+                    backgroundColor: "#00000000", // Transparent background
+                    foregroundColor: "#FFFFFF", // White text
+                    edgeColor: "#000000", // Black outline
                     edgeType: "outline",
                     fontFamily: "sans-serif",
                     fontScale: 1.0,
@@ -262,7 +279,10 @@ const CastPlayer = ({
                         console.log("🎨 Applied text track style");
                     })
                     .catch((error) => {
-                        console.error("❌ Failed to apply text track style:", error);
+                        console.error(
+                            "❌ Failed to apply text track style:",
+                            error
+                        );
                     });
             } else {
                 // Deactivate all subtitle tracks
@@ -273,13 +293,16 @@ const CastPlayer = ({
                         setActiveTrackIds([]);
                     })
                     .catch((error) => {
-                        console.error("❌ Failed to deactivate subtitle tracks:", error);
+                        console.error(
+                            "❌ Failed to deactivate subtitle tracks:",
+                            error
+                        );
                     });
             }
         }
     };
 
-    // 10. Next episode - EXACTLY AS YOURS
+    // Next episode
     const nextEpisode = () => {
         const nextEp = episodes.find(
             (episode) => episode.number === selectedEpisode + 1
@@ -294,7 +317,7 @@ const CastPlayer = ({
         }
     };
 
-    // 11. Previous episode - EXACTLY AS YOURS
+    // Previous episode
     const prevEpisode = () => {
         const prevEp = episodes.find(
             (episode) => episode.number === selectedEpisode - 1
@@ -309,14 +332,14 @@ const CastPlayer = ({
         }
     };
 
-    // 12. Format time display - EXACTLY AS YOURS
+    // Format time display
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
     };
 
-    // 13. Handle slider seek - EXACTLY AS YOURS
+    // Handle slider seek
     const handleSeek = (value) => {
         if (!client) return;
 
@@ -336,9 +359,16 @@ const CastPlayer = ({
             });
     };
 
-    // 14. Start casting - EXACTLY AS YOURS
+    // FIXED: Start casting with proper subtitle track format
     const startCasting = useCallback(async () => {
-        if (!client || !videoUrl || isCastingInProgress || hasLoadedMedia || videoLoading) {
+        // Prevent multiple calls
+        if (
+            !client ||
+            !videoUrl ||
+            isCastingInProgress ||
+            hasLoadedMedia ||
+            videoLoading
+        ) {
             console.log("❌ Cannot start casting:", {
                 client: !!client,
                 videoUrl: !!videoUrl,
@@ -355,26 +385,26 @@ const CastPlayer = ({
         try {
             let castUrl = videoUrl;
 
-            // Create subtitle tracks
+            // FIXED: Create subtitle tracks in correct format
             const mediaTracks = [];
             let defaultTrackId = null;
 
             if (subtitlesData && subtitlesData.length > 0) {
                 subtitlesData.forEach((subtitle, index) => {
-                    const trackId = index + 1;
+                    const trackId = index + 1; // Start from 1, not 0
 
                     const mediaTrack = {
                         id: trackId,
                         type: "text",
                         subtype: "subtitles",
                         name: subtitle.label || `Subtitle ${index + 1}`,
-                        contentId: subtitle.file,
+                        contentId: subtitle.file, // Use contentId instead of src
                         language: subtitle.language || "en-US",
                     };
 
                     mediaTracks.push(mediaTrack);
 
-                    // Set default track
+                    // Set default track (English or first one)
                     if (
                         subtitle.label?.toLowerCase().includes("english") ||
                         index === 0
@@ -410,13 +440,16 @@ const CastPlayer = ({
                         type: "tvShow",
                         episodeNumber: selectedEpisode,
                     },
-                    mediaTracks: mediaTracks,
+                    mediaTracks: mediaTracks, // Use mediaTracks instead of tracks
                 },
                 startTime: castCurrentTime || 0,
                 autoplay: true,
             };
 
-            console.log("📱 Loading media with tracks:", JSON.stringify(mediaLoadRequest, null, 2));
+            console.log(
+                "📱 Loading media with tracks:",
+                JSON.stringify(mediaLoadRequest, null, 2)
+            );
 
             const result = await client.loadMedia(mediaLoadRequest);
             console.log("✅ Cast load successful:", result);
@@ -424,15 +457,19 @@ const CastPlayer = ({
             setHasLoadedMedia(true);
             setCastIsPlaying(true);
 
-            // Auto-activate default subtitle track
+            // Auto-activate default subtitle track after loading
             if (defaultTrackId && mediaTracks.length > 0) {
                 setTimeout(() => {
                     client
                         .setActiveTrackIds([defaultTrackId])
                         .then(() => {
-                            console.log("📝 Auto-activated default subtitle track:", defaultTrackId);
+                            console.log(
+                                "📝 Auto-activated default subtitle track:",
+                                defaultTrackId
+                            );
                             setActiveTrackIds([defaultTrackId]);
 
+                            // Apply default text styling
                             const textTrackStyle = {
                                 backgroundColor: "#00000000",
                                 foregroundColor: "#FFFFFF",
@@ -445,13 +482,19 @@ const CastPlayer = ({
                             client
                                 .setTextTrackStyle(textTrackStyle)
                                 .catch((error) => {
-                                    console.error("❌ Failed to apply default text style:", error);
+                                    console.error(
+                                        "❌ Failed to apply default text style:",
+                                        error
+                                    );
                                 });
                         })
                         .catch((error) => {
-                            console.error("❌ Failed to auto-activate subtitle track:", error);
+                            console.error(
+                                "❌ Failed to auto-activate subtitle track:",
+                                error
+                            );
                         });
-                }, 2000);
+                }, 2000); // Wait for media to fully load
             }
         } catch (error) {
             console.error("❌ Error starting cast:", error);
@@ -462,7 +505,10 @@ const CastPlayer = ({
                     "This video format cannot be played on your Chromecast device. Try a different quality."
                 );
             } else {
-                Alert.alert("Casting Error", `Unable to cast: ${error.message}`);
+                Alert.alert(
+                    "Casting Error",
+                    `Unable to cast: ${error.message}`
+                );
             }
 
             setHasLoadedMedia(false);
@@ -472,74 +518,63 @@ const CastPlayer = ({
     }, [
         client,
         videoUrl,
+        availableQualities,
+        title,
+        selectedEpisode,
+        castCurrentTime,
+        selectedSubtitle,
         subtitlesData,
         isCastingInProgress,
         hasLoadedMedia,
         videoLoading,
-        castCurrentTime,
-        selectedEpisodeName,
-        title,
-        selectedEpisode,
-        uri,
-        selectedSubtitle,
     ]);
 
-    // 15. Stop casting - EXACTLY AS YOURS
-    const stopCasting = useCallback(() => {
-        if (client) {
-            console.log("🛑 Stopping cast");
-            client
-                .stop()
-                .then(() => {
-                    console.log("✅ Cast stopped successfully");
-                    setCastIsPlaying(false);
-                    setCastCurrentTime(0);
-                    setCastDuration(0);
-                    setHasLoadedMedia(false);
-                    setIsCastingInProgress(false);
-                    setActiveTrackIds([]);
-                })
-                .catch((error) => {
-                    console.error("❌ Error stopping cast:", error);
-                });
-        }
-    }, [client]);
+    // Monitor cast progress (same as video player onProgress)
 
-    // 16. Monitor cast progress - EXACTLY AS YOURS
     useEffect(() => {
         if (isCasting && client && hasLoadedMedia) {
             console.log("📺 Starting cast progress monitoring");
 
             castProgressIntervalRef.current = setInterval(async () => {
                 try {
-                    const [streamPosition, mediaStatus] = await Promise.all([
-                        client.getStreamPosition(),
-                        client.getMediaStatus()
-                    ]);
+                    // Use getStreamPosition() for more accurate real-time position
+                    const streamPosition = await client.getStreamPosition();
+                    const mediaStatus = await client.getMediaStatus();
 
-                    if (!mediaStatus) return;
+                    if (!mediaStatus) {
+                        return;
+                    }
 
+                    // Use the real-time stream position instead of mediaStatus.streamPosition
                     const currentTime = streamPosition || 0;
                     const duration = mediaStatus.mediaInfo?.streamDuration || 0;
                     const isPlaying = mediaStatus.playerState === "playing";
 
-                    console.log(`📊 Stream Position: ${currentTime}, Player State: ${mediaStatus.playerState}`);
+                    console.log(
+                        `📊 Stream Position: ${currentTime}, Player State: ${mediaStatus.playerState}`
+                    );
 
+                    // Check for intro/outro (same as video player)
                     checkForIntroOutro(currentTime);
 
                     setCastCurrentTime(currentTime);
                     setCastDuration(duration);
                     setCastIsPlaying(isPlaying);
 
+                    // Update active tracks if they've changed
                     if (
                         mediaStatus.activeTrackIds &&
                         JSON.stringify(mediaStatus.activeTrackIds) !==
                             JSON.stringify(activeTrackIds)
                     ) {
                         setActiveTrackIds(mediaStatus.activeTrackIds);
-                        console.log("📝 Active tracks updated:", mediaStatus.activeTrackIds);
+                        console.log(
+                            "📝 Active tracks updated:",
+                            mediaStatus.activeTrackIds
+                        );
                     }
 
+                    // Update history (same as video player)
                     if (selectedEpisode && currentTime > 0) {
                         throttledUpdate(
                             animeId,
@@ -557,6 +592,7 @@ const CastPlayer = ({
                         };
                     }
 
+                    // Handle playback end
                     if (
                         mediaStatus.playerState === "idle" &&
                         mediaStatus.idleReason === "finished"
@@ -565,6 +601,7 @@ const CastPlayer = ({
                         nextEpisode();
                     }
 
+                    // Check for errors
                     if (
                         mediaStatus.playerState === "idle" &&
                         mediaStatus.idleReason === "error"
@@ -578,15 +615,22 @@ const CastPlayer = ({
                 } catch (error) {
                     console.error("❌ Error getting cast progress:", error);
 
+                    // Fallback: try to get position from mediaStatus if getStreamPosition fails
                     try {
                         const mediaStatus = await client.getMediaStatus();
-                        if (mediaStatus && mediaStatus.streamPosition !== undefined) {
+                        if (
+                            mediaStatus &&
+                            mediaStatus.streamPosition !== undefined
+                        ) {
                             const currentTime = mediaStatus.streamPosition || 0;
                             setCastCurrentTime(currentTime);
                             console.log(`📊 Fallback Position: ${currentTime}`);
                         }
                     } catch (fallbackError) {
-                        console.error("❌ Fallback position retrieval failed:", fallbackError);
+                        console.error(
+                            "❌ Fallback position retrieval failed:",
+                            fallbackError
+                        );
                     }
                 }
             }, 1000);
@@ -615,7 +659,6 @@ const CastPlayer = ({
         selectedEpisodeName,
     ]);
 
-    // 17. Force disconnect - EXACTLY AS YOURS
     const forceDisconnectCast = useCallback(async () => {
         try {
             await sessionManager.endCurrentSession(true);
@@ -654,7 +697,7 @@ const CastPlayer = ({
         }
     }, [sessionManager]);
 
-    // 18. Auto-start casting - EXACTLY AS YOURS
+    // FIXED: Auto-start casting only when needed
     useEffect(() => {
         if (
             client &&
@@ -670,9 +713,9 @@ const CastPlayer = ({
 
             return () => clearTimeout(timer);
         }
-    }, [client, videoUrl, videoLoading, isCastingInProgress, hasLoadedMedia, startCasting]);
+    }, [client, videoUrl, videoLoading, isCastingInProgress, hasLoadedMedia]);
 
-    // 19. Cleanup on unmount - EXACTLY AS YOURS
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (castProgressIntervalRef.current) {
@@ -680,14 +723,12 @@ const CastPlayer = ({
             }
             forceDisconnectCast();
         };
-    }, [forceDisconnectCast]);
+    }, []);
 
-    // 20. Toggle cast controls - EXACTLY AS YOURS
     const toggleCastControls = () => {
-        setShowCastControls(!showCastControls);
+        // setShowCastControls(!showCastControls);
     };
 
-    // 21. Subtitle sync - EXACTLY AS YOURS
     const handleSubtitleSyncWithReload = async (direction) => {
         const newSyncValue =
             direction === "+" ? subSyncValue + 0.1 : subSyncValue - 0.1;
@@ -695,9 +736,14 @@ const CastPlayer = ({
 
         if (client && hasLoadedMedia) {
             try {
+                // Stop current media
                 await client.stop();
+
+                // Reset flags
                 setHasLoadedMedia(false);
                 setIsCastingInProgress(false);
+
+                // Restart casting with new sync value
                 setTimeout(() => {
                     startCasting();
                 }, 1000);
@@ -707,14 +753,9 @@ const CastPlayer = ({
         }
     };
 
-    // Calculate slider value - EXACTLY AS YOURS
+    // Calculate slider value
     const sliderValue =
         castDuration > 0 ? (castCurrentTime / castDuration) * 100 : 0;
-
-    /* ---------------------------
-       RENDER SECTION - PRESERVED EXACTLY
-       Only optimized the structure without changing functionality
-    --------------------------- */
 
     return (
         <View style={styles.container}>
@@ -754,21 +795,63 @@ const CastPlayer = ({
                                 Episode {selectedEpisode}
                             </ThemedText>
 
-                            {activeTrackIds.length > 0 && (
+                            {/* Show subtitle track status */}
+                            {/* {activeTrackIds.length > 0 && (
                                 <ThemedText style={styles.subtitleStatus}>
                                     📝 Subtitles:{" "}
                                     {selectedSubtitle?.label || "Active"}
                                 </ThemedText>
-                            )}
+                            )} */}
 
+                            {/* Show loading state */}
                             {isCastingInProgress && (
                                 <ThemedText style={styles.loadingText}>
                                     🔄 Loading media...
                                 </ThemedText>
                             )}
 
+                            {/* CAST CONTROLS */}
                             {hasLoadedMedia && !isCastingInProgress && (
                                 <View style={styles.castControlsContainer}>
+                                    {/* SEEK SLIDER */}
+                                    {/* <View style={styles.syncContainer}>
+                                            <ThemedText
+                                                style={styles.syncLabel}
+                                            >
+                                                Sub Sync:{" "}
+                                                {subSyncValue.toFixed(1)}s
+                                            </ThemedText>
+                                        </View>
+                                        <View style={styles.syncButtons}>
+                                            <TouchableRipple
+                                                onPress={() =>
+                                                    handleSubtitleSyncWithReload(
+                                                        "-"
+                                                    )
+                                                }
+                                                style={styles.syncButton}
+                                            >
+                                                <MaterialIcons
+                                                    name="remove"
+                                                    size={SIZE(16)}
+                                                    color={Colors.light.white}
+                                                />
+                                            </TouchableRipple>
+                                            <TouchableRipple
+                                                onPress={() =>
+                                                    handleSubtitleSyncWithReload(
+                                                        "+"
+                                                    )
+                                                }
+                                                style={styles.syncButton}
+                                            >
+                                                <MaterialIcons
+                                                    name="add"
+                                                    size={SIZE(16)}
+                                                    color={Colors.light.white}
+                                                />
+                                            </TouchableRipple>
+                                        </View> */}
                                     <View style={styles.sliderContainer}>
                                         <ThemedText style={styles.timeText}>
                                             {formatTime(
@@ -777,6 +860,7 @@ const CastPlayer = ({
                                                     : castCurrentTime
                                             )}
                                         </ThemedText>
+
                                         <Slider
                                             style={styles.slider}
                                             minimumValue={0}
@@ -803,6 +887,7 @@ const CastPlayer = ({
                                         </ThemedText>
                                     </View>
 
+                                    {/* MAIN CONTROLS */}
                                     <View style={styles.mainControlsRow}>
                                         <TouchableRipple
                                             onPress={prevEpisode}
@@ -866,6 +951,8 @@ const CastPlayer = ({
                                             />
                                         </TouchableRipple>
                                     </View>
+
+                                    {/* SETTINGS ROW */}
                                 </View>
                             )}
 
@@ -876,6 +963,7 @@ const CastPlayer = ({
                             )}
                         </View>
 
+                        {/* SKIP BUTTONS */}
                         {hasLoadedMedia && (showSkipIntro || showSkipOutro) && (
                             <TouchableRipple
                                 rippleColor={Colors.dark.backgroundPress}
@@ -903,13 +991,14 @@ const CastPlayer = ({
                             </TouchableRipple>
                         )}
 
+                        {/* MODALS */}
                         {showSubtitleList && subtitlesData && (
                             <SubModal
                                 data={[
-                                    { label: "Off", file: null },
+                                    { label: "Off", file: null }, // Add "Off" option
                                     ...subtitlesData.map((sub, index) => ({
                                         ...sub,
-                                        id: index + 1,
+                                        id: index + 1, // Add ID for track activation
                                     })),
                                 ]}
                                 handleChange={(item) => selectSubtitle(item)}
@@ -920,6 +1009,7 @@ const CastPlayer = ({
                     </View>
                 </TouchableWithoutFeedback>
             ) : (
+                /* NOT CASTING STATE */
                 <View style={styles.noCastContainer}>
                     <MaterialIcons
                         name="cast"
@@ -946,7 +1036,6 @@ const CastPlayer = ({
     );
 };
 
-// PRESERVED YOUR EXACT STYLES
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.dark.black,
@@ -992,7 +1081,7 @@ const styles = StyleSheet.create({
         marginTop: SIZE(20),
     },
     castingTitle: {
-        fontSize: SIZE(18),
+        fontSize: SIZE(16),
         color: Colors.light.tabIconSelected,
         marginTop: SIZE(10),
         fontWeight: "bold",
@@ -1055,6 +1144,75 @@ const styles = StyleSheet.create({
         padding: SIZE(10),
         borderRadius: SIZE(20),
         backgroundColor: "rgba(255, 255, 255, 0.1)",
+    },
+    settingsRow: {
+        justifyContent: "space-around",
+        alignItems: "center",
+        marginBottom: SIZE(30),
+        paddingHorizontal: SIZE(20),
+        position: "absolute",
+        bottom: "80%",
+    },
+    syncContainer: {
+        alignItems: "center",
+        position: "absolute",
+        left: "8%",
+        bottom: "180%",
+    },
+    syncLabel: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(12),
+        marginBottom: SIZE(5),
+    },
+    syncNote: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(10),
+    },
+    syncButtons: {
+        flexDirection: "row",
+        position: "absolute",
+        left: "5%",
+        bottom: "150%",
+    },
+    syncButton: {
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        paddingHorizontal: SIZE(12),
+        paddingVertical: SIZE(6),
+        marginHorizontal: SIZE(2),
+        borderRadius: SIZE(4),
+    },
+    syncButtonText: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(16),
+        fontWeight: "bold",
+    },
+    settingButton: {
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        padding: SIZE(10),
+        borderRadius: SIZE(6),
+    },
+    settingButtonContent: {
+        alignItems: "center",
+    },
+    settingButtonText: {
+        color: Colors.light.tabIconSelected,
+        fontSize: SIZE(10),
+        marginTop: SIZE(2),
+        textAlign: "center",
+    },
+    stopCastButton: {
+        paddingHorizontal: SIZE(10),
+        paddingVertical: SIZE(10),
+        backgroundColor: Colors.light.tabIconSelected,
+        borderRadius: SIZE(6),
+        position: "absolute",
+        bottom: "55%",
+        right: "5%",
+    },
+    stopCastText: {
+        color: Colors.light.white,
+        fontSize: SIZE(16),
+        fontWeight: "bold",
     },
     tapToControlText: {
         color: Colors.light.tabIconSelected,
