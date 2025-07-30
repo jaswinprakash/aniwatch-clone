@@ -123,29 +123,28 @@ const VideoPlayer = ({
 
     const checkForIntroOutro = useCallback(
         (currentTime) => {
+            if (!intro && !outro) return;
             const shouldShowIntro =
                 intro && currentTime >= intro.start && currentTime <= intro.end;
             const shouldShowOutro =
                 outro && currentTime >= outro.start && currentTime <= outro.end;
-
-            setShowSkipIntro((prev) => {
-                return prev !== shouldShowIntro ? shouldShowIntro : prev;
-            });
-            setShowSkipOutro((prev) => {
-                return prev !== shouldShowOutro ? shouldShowOutro : prev;
-            });
+            setShowSkipIntro(shouldShowIntro);
+            setShowSkipOutro(shouldShowOutro);
         },
         [intro, outro]
     );
 
-    const skipSegment = (segment) => {
-        if (segment === "intro" && intro) {
-            videoRef.current.seek(intro.end);
-        } else if (segment === "outro" && outro) {
-            videoRef.current.seek(outro.end);
-        }
-        resetControlsTimeout();
-    };
+    const skipSegment = useCallback(
+        (segment) => {
+            if (segment === "intro" && intro) {
+                videoRef.current.seek(intro.end);
+            } else if (segment === "outro" && outro) {
+                videoRef.current.seek(outro.end);
+            }
+            resetControlsTimeout();
+        },
+        [intro, outro]
+    );
 
     const handleSubtitleSync = (data) => {
         setSubSyncValue((prev) => {
@@ -332,6 +331,9 @@ const VideoPlayer = ({
             );
             if (controlsTimeoutRef.current) {
                 clearTimeout(controlsTimeoutRef.current);
+            }
+            if (doubleTapTimeoutId) {
+                clearTimeout(doubleTapTimeoutId);
             }
             debouncedHideControls.cancel();
             if (Platform.OS == "ios") {
