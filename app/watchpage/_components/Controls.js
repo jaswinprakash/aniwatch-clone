@@ -286,7 +286,15 @@ const Controls = ({
             <Animated.View style={[styles.centerControls, controlsStyle]} />
 
             {/* Progress Bar and Time */}
-            <Animated.View style={[styles.progressContainer, controlsStyle]}>
+            <Animated.View
+                style={[
+                    styles.progressContainer,
+                    controlsStyle,
+                    {
+                        marginBottom: isFullScreen ? SIZE(10) : 0,
+                    },
+                ]}
+            >
                 <ThemedText type="subtitle" style={styles.timeText}>
                     {formatTime(isSeeking ? seekPosition : currentTime)}
                 </ThemedText>
