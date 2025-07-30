@@ -121,18 +121,22 @@ const VideoPlayer = ({
         }
     };
 
-    const checkForIntroOutro = useMemo(() => {
-        return (currentTime) => {
-            // Cache calculations
-            const showIntro =
+    const checkForIntroOutro = useCallback(
+        (currentTime) => {
+            const shouldShowIntro =
                 intro && currentTime >= intro.start && currentTime <= intro.end;
-            const showOutro =
+            const shouldShowOutro =
                 outro && currentTime >= outro.start && currentTime <= outro.end;
 
-            if (showIntro !== showSkipIntro) setShowSkipIntro(showIntro);
-            if (showOutro !== showSkipOutro) setShowSkipOutro(showOutro);
-        };
-    }, [intro, outro, showSkipIntro, showSkipOutro]);
+            setShowSkipIntro((prev) => {
+                return prev !== shouldShowIntro ? shouldShowIntro : prev;
+            });
+            setShowSkipOutro((prev) => {
+                return prev !== shouldShowOutro ? shouldShowOutro : prev;
+            });
+        },
+        [intro, outro]
+    );
 
     const skipSegment = (segment) => {
         if (segment === "intro" && intro) {
@@ -474,12 +478,13 @@ const VideoPlayer = ({
                                 uri: videoUrl,
                                 type: "m3u8",
                                 bufferConfig: {
-                                    minBufferMs: 5000,
-                                    maxBufferMs: 10000,
-                                    bufferForPlaybackMs: 1000,
-                                    bufferForPlaybackAfterRebufferMs: 2000,
+                                    minBufferMs: 2500,
+                                    maxBufferMs: 8000,
+                                    bufferForPlaybackMs: 750,
+                                    bufferForPlaybackAfterRebufferMs: 1500,
                                 },
                             }}
+                            preferredForwardBufferDuration={2}
                             style={styles.video}
                             paused={
                                 !isPlaying ||
@@ -736,4 +741,9 @@ const styles = StyleSheet.create({
     },
 });
 
-export default React.memo(VideoPlayer);
+export default React.memo(VideoPlayer, (prevProps, nextProps) => {
+    return (
+        prevProps.videoUrl === nextProps.videoUrl &&
+        prevProps.isPlaying === nextProps.isPlaying
+    );
+});
