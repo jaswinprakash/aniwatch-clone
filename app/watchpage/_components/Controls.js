@@ -57,7 +57,7 @@ const Controls = ({
     // Optimized animation function with worklet
     const animateControls = (visible) => {
         "worklet";
-        const duration = isFullScreen ? 200 : 250; // Faster animation in landscape
+        const duration = 250; // Faster animation in landscape
         const easing = Easing.out(Easing.ease); // Simpler easing for better performance
 
         controlsOpacity.value = withTiming(visible ? 1 : 0, {

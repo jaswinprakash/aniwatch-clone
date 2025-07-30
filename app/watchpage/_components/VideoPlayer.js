@@ -446,7 +446,7 @@ const VideoPlayer = ({
                             <MaterialIcons
                                 name="replay-10"
                                 size={SIZE(30)}
-                                color={Colors.light.tabIconSelected}
+                                color={Colors.dark.tabIconSelected}
                             />
                         </View>
                     )}
@@ -457,7 +457,7 @@ const VideoPlayer = ({
                             <MaterialIcons
                                 name="forward-10"
                                 size={SIZE(30)}
-                                color={Colors.light.tabIconSelected}
+                                color={Colors.dark.tabIconSelected}
                             />
                         </View>
                     )}
@@ -551,7 +551,7 @@ const VideoPlayer = ({
                                     styles.controlsOverlay,
                                     {
                                         backgroundColor: showControls
-                                            ? "rgba(0, 0, 0, 0.5)"
+                                            ? "rgba(0, 0, 0, 0.2)"
                                             : null,
                                     },
                                 ]}
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
         borderRadius: SIZE(25),
         padding: SIZE(10),
         marginTop: -SIZE(27),
-        zIndex: 1000,
+        zIndex: 2000,
     },
     skipIndicatorText: {
         color: Colors.light.tabIconSelected,
