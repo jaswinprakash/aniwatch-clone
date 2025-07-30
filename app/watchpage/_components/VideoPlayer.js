@@ -137,8 +137,12 @@ const VideoPlayer = ({
     const skipSegment = useCallback(
         (segment) => {
             if (segment === "intro" && intro) {
+                setSeekPosition(intro.end);
+                setIsSeeking(false);
                 videoRef.current.seek(intro.end);
             } else if (segment === "outro" && outro) {
+                setSeekPosition(outro.end);
+                setIsSeeking(false);
                 videoRef.current.seek(outro.end);
             }
             resetControlsTimeout();
@@ -377,6 +381,9 @@ const VideoPlayer = ({
         setDuration(data.duration);
         if (initialSeekTime > 0 && !isInitialSeekDone) {
             videoRef.current.seek(initialSeekTime);
+            setIsInitialSeekDone(true);
+        } else {
+            videoRef.current.seek(0);
             setIsInitialSeekDone(true);
         }
     };
@@ -634,6 +641,7 @@ const VideoPlayer = ({
                                                 showSkipIntro
                                                     ? skipSegment("intro")
                                                     : skipSegment("outro");
+                                                setIsSeeking(true);
                                             }}
                                         >
                                             <View>
