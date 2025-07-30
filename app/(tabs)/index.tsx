@@ -170,7 +170,7 @@ export const HomeScreen = () => {
     });
 
     return (
-        <View style={{ flex: 1, backgroundColor: Colors.dark.background, }}>
+        <View style={{ flex: 1, backgroundColor: Colors.dark.background }}>
             {!pageLoading && (
                 <TouchableRipple
                     hitSlop={15}
