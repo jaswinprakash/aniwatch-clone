@@ -99,7 +99,6 @@ const VideoPlayer = ({
         resetTime: () => {
             setCurrentTime(0);
         },
-        getCurrentTime: () => currentTime,
         setPlaying: (isPlaying) => {
             setIsPlaying(isPlaying);
         },
@@ -156,9 +155,11 @@ const VideoPlayer = ({
                 setSeekPosition(intro.end);
                 setIsSeeking(false);
                 videoRef.current.seek(intro.end);
+                setIsPlaying(true);
             } else if (segment === "outro" && outro) {
                 setSeekPosition(outro.end);
                 setIsSeeking(false);
+                setIsPlaying(true);
                 videoRef.current.seek(outro.end);
             }
             resetControlsTimeout();
@@ -389,13 +390,17 @@ const VideoPlayer = ({
     }, []);
 
     useEffect(() => {
-        const animeData = history.find((item) => item.animeId === animeId);
+        const animeData = history.find(
+            (item) =>
+                item.animeId === animeId &&
+                item.episodeNumber === selectedEpisode
+        );
         setInitialSeekTime(animeData?.currentTime || 0);
     }, [animeId, selectedEpisode, selectedEpisodeId, history]);
 
     const onLoad = (data) => {
         setDuration(data.duration);
-        if (initialSeekTime > 0 && !isInitialSeekDone) {
+        if (initialSeekTime > 0) {
             videoRef.current.seek(initialSeekTime);
             setIsInitialSeekDone(true);
         } else {

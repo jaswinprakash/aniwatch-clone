@@ -646,34 +646,48 @@ const SinglePage = () => {
                                 />
                             </View>
                             <View>
-                                <MaterialCommunityIcons
-                                    name={
-                                        webviewOn ? "web-check" : "web-remove"
-                                    }
-                                    size={SIZE(20)}
-                                    color={
-                                        webviewOn
-                                            ? "#3AFF6F"
-                                            : Colors.dark.backgroundPress
-                                    }
-                                    style={{ alignSelf: "center" }}
-                                />
+                                <View style={{ height: SIZE(20) }}>
+                                    <MaterialCommunityIcons
+                                        name={
+                                            webviewOn
+                                                ? "web-check"
+                                                : "web-remove"
+                                        }
+                                        size={SIZE(20)}
+                                        color={
+                                            webviewOn
+                                                ? "#3AFF6F"
+                                                : Colors.dark.backgroundPress
+                                        }
+                                        style={{
+                                            alignSelf: "center",
+                                            height: SIZE(20),
+                                        }}
+                                    />
+                                </View>
                                 <CustomSwitch
                                     onValueChange={toggleSwitch}
                                     value={webviewOn}
                                 />
                             </View>
                             <View>
-                                <MaterialCommunityIcons
-                                    name={castOn ? "cast-connected" : "cast"}
-                                    size={SIZE(20)}
-                                    color={
-                                        castOn
-                                            ? "#3AFF6F"
-                                            : Colors.dark.backgroundPress
-                                    }
-                                    style={{ alignSelf: "center" }}
-                                />
+                                <View style={{ height: SIZE(20) }}>
+                                    <MaterialCommunityIcons
+                                        name={
+                                            castOn ? "cast-connected" : "cast"
+                                        }
+                                        size={SIZE(20)}
+                                        color={
+                                            castOn
+                                                ? "#3AFF6F"
+                                                : Colors.dark.backgroundPress
+                                        }
+                                        style={{
+                                            alignSelf: "center",
+                                            height: SIZE(20),
+                                        }}
+                                    />
+                                </View>
                                 <CustomSwitch
                                     onValueChange={toggleCast}
                                     value={castOn}

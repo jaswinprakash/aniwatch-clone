@@ -131,8 +131,7 @@ const CastPlayer = ({
         const animeData = history.find(
             (item) =>
                 item.animeId === animeId &&
-                item.episodeNumber === selectedEpisode &&
-                item.selectedEpisodeId === selectedEpisodeId
+                item.episodeNumber === selectedEpisode
         );
 
         if (animeData && animeData?.selectedEpisodeId === selectedEpisodeId) {
