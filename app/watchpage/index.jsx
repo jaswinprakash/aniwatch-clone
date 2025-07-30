@@ -183,7 +183,7 @@ const SinglePage = () => {
 
                 // setVideoData(streamResponse.data.data);
                 setVideoData(videoData);
-
+                playerRef.current?.setPlaying(true);
                 setVideoLoading(false);
             } catch (error) {
                 console.log(error, "axios error - stream");

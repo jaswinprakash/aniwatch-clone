@@ -85,6 +85,7 @@ const VideoPlayer = ({
     const [playbackRate, setPlaybackRate] = useState(1);
     const [initialSeekTime, setInitialSeekTime] = useState(0);
     const [isInitialSeekDone, setIsInitialSeekDone] = useState(false);
+    const hideTimeoutRef = useRef(null);
 
     const latestValuesRef = useRef({
         animeId: null,
@@ -99,27 +100,42 @@ const VideoPlayer = ({
             setCurrentTime(0);
         },
         getCurrentTime: () => currentTime,
+        setPlaying: (isPlaying) => {
+            setIsPlaying(isPlaying);
+        },
     }));
 
-    const debouncedHideControls = useMemo(
-        () => debounce(() => setShowControls(false), 5000),
-        []
-    );
+    const clearHideTimeout = useCallback(() => {
+        if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
+            hideTimeoutRef.current = null;
+        }
+    }, []);
 
-    const toggleControls = () => {
+    const startHideTimeout = useCallback(() => {
+        clearHideTimeout();
+        hideTimeoutRef.current = setTimeout(() => {
+            setShowControls(false);
+        }, 5000);
+    }, [clearHideTimeout]);
+
+    const resetControlsTimeout = useCallback(() => {
+        setShowControls(true);
+        clearHideTimeout();
+        startHideTimeout();
+    }, [startHideTimeout, clearHideTimeout]);
+
+    const toggleControls = useCallback(() => {
         if (showControls) {
             setShowControls(false);
+            clearHideTimeout();
         } else {
-            resetControlsTimeout();
+            setShowControls(true);
+            if (isPlaying) {
+                startHideTimeout();
+            }
         }
-    };
-
-    const resetControlsTimeout = () => {
-        setShowControls(true);
-        if (isPlaying && !isLoading) {
-            debouncedHideControls();
-        }
-    };
+    }, [showControls, isPlaying, startHideTimeout, clearHideTimeout]);
 
     const checkForIntroOutro = useCallback(
         (currentTime) => {
@@ -339,7 +355,7 @@ const VideoPlayer = ({
             if (doubleTapTimeoutId) {
                 clearTimeout(doubleTapTimeoutId);
             }
-            debouncedHideControls.cancel();
+            clearHideTimeout();
             if (Platform.OS == "ios") {
                 navigation.setOptions({
                     autoHideHomeIndicator: false,
