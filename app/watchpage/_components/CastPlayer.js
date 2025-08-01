@@ -3,9 +3,9 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Slider } from "@react-native-assets/slider";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-    Alert,
     Platform,
     StyleSheet,
+    ToastAndroid,
     TouchableWithoutFeedback,
     View,
 } from "react-native";
@@ -180,7 +180,7 @@ const CastPlayer = ({
                     console.log("⏭️ Skipped intro");
                 })
                 .catch((error) => {
-                    console.error("❌ Skip intro failed:", error);
+                    console.log("❌ Skip intro failed:", error);
                 });
         } else if (segment === "outro" && outro) {
             client
@@ -189,7 +189,7 @@ const CastPlayer = ({
                     console.log("⏭️ Skipped outro");
                 })
                 .catch((error) => {
-                    console.error("❌ Skip outro failed:", error);
+                    console.log("❌ Skip outro failed:", error);
                 });
         }
     };
@@ -206,7 +206,7 @@ const CastPlayer = ({
                     setCastIsPlaying(false);
                 })
                 .catch((error) => {
-                    console.error("❌ Cast pause failed:", error);
+                    console.log("❌ Cast pause failed:", error);
                 });
         } else {
             client
@@ -216,7 +216,7 @@ const CastPlayer = ({
                     setCastIsPlaying(true);
                 })
                 .catch((error) => {
-                    console.error("❌ Cast play failed:", error);
+                    console.log("❌ Cast play failed:", error);
                 });
         }
     };
@@ -234,7 +234,7 @@ const CastPlayer = ({
                 console.log(`⏭️ Cast seeked to: ${seekTime}`);
             })
             .catch((error) => {
-                console.error("❌ Cast seek failed:", error);
+                console.log("❌ Cast seek failed:", error);
             });
     };
 
@@ -256,7 +256,7 @@ const CastPlayer = ({
                         setActiveTrackIds([subtitle.id]);
                     })
                     .catch((error) => {
-                        console.error(
+                        console.log(
                             "❌ Failed to activate subtitle track:",
                             error
                         );
@@ -278,7 +278,7 @@ const CastPlayer = ({
                         console.log("🎨 Applied text track style");
                     })
                     .catch((error) => {
-                        console.error(
+                        console.log(
                             "❌ Failed to apply text track style:",
                             error
                         );
@@ -292,7 +292,7 @@ const CastPlayer = ({
                         setActiveTrackIds([]);
                     })
                     .catch((error) => {
-                        console.error(
+                        console.log(
                             "❌ Failed to deactivate subtitle tracks:",
                             error
                         );
@@ -353,7 +353,7 @@ const CastPlayer = ({
                 setIsSeeking(false);
             })
             .catch((error) => {
-                console.error("❌ Slider seek failed:", error);
+                console.log("❌ Slider seek failed:", error);
                 setIsSeeking(false);
             });
     };
@@ -481,14 +481,14 @@ const CastPlayer = ({
                             client
                                 .setTextTrackStyle(textTrackStyle)
                                 .catch((error) => {
-                                    console.error(
+                                    console.log(
                                         "❌ Failed to apply default text style:",
                                         error
                                     );
                                 });
                         })
                         .catch((error) => {
-                            console.error(
+                            console.log(
                                 "❌ Failed to auto-activate subtitle track:",
                                 error
                             );
@@ -496,18 +496,23 @@ const CastPlayer = ({
                 }, 2000); // Wait for media to fully load
             }
         } catch (error) {
-            console.error("❌ Error starting cast:", error);
+            console.log("❌ Error starting cast:", error);
 
             if (error.message.includes("2103")) {
-                Alert.alert(
-                    "Stream Not Supported",
-                    "This video format cannot be played on your Chromecast device. Try a different quality."
-                );
+                if (Platform.OS === "android") {
+                    ToastAndroid.show(
+                        "Stream Not Supported",
+                        "This video format cannot be played on your Chromecast device. Try a different quality.",
+                        ToastAndroid.LONG
+                    );
+                }
             } else {
-                Alert.alert(
-                    "Casting Error",
-                    `Unable to cast: ${error.message}`
-                );
+                if (Platform.OS === "android") {
+                    ToastAndroid.show(
+                        `Unable to cast: ${error.message}`,
+                        ToastAndroid.LONG
+                    );
+                }
             }
 
             setHasLoadedMedia(false);
@@ -605,14 +610,16 @@ const CastPlayer = ({
                         mediaStatus.playerState === "idle" &&
                         mediaStatus.idleReason === "error"
                     ) {
-                        console.error("❌ Cast playback error detected");
-                        Alert.alert(
-                            "Playback Error",
-                            "There was an error playing the video on your cast device."
-                        );
+                        console.log("❌ Cast playback error detected");
+                        if (Platform.OS === "android") {
+                            ToastAndroid.show(
+                                "Playback Error",
+                                ToastAndroid.SHORT
+                            );
+                        }
                     }
                 } catch (error) {
-                    console.error("❌ Error getting cast progress:", error);
+                    console.log("❌ Error getting cast progress:", error);
 
                     // Fallback: try to get position from mediaStatus if getStreamPosition fails
                     try {
@@ -626,7 +633,7 @@ const CastPlayer = ({
                             console.log(`📊 Fallback Position: ${currentTime}`);
                         }
                     } catch (fallbackError) {
-                        console.error(
+                        console.log(
                             "❌ Fallback position retrieval failed:",
                             fallbackError
                         );
@@ -692,7 +699,7 @@ const CastPlayer = ({
             setIsCastingInProgress(false);
             setActiveTrackIds([]);
         } catch (error) {
-            console.error("❌ All disconnect methods failed:", error);
+            console.log("❌ All disconnect methods failed:", error);
         }
     }, [sessionManager]);
 
@@ -747,7 +754,7 @@ const CastPlayer = ({
                     startCasting();
                 }, 1000);
             } catch (error) {
-                console.error("❌ Error reloading with new sync:", error);
+                console.log("❌ Error reloading with new sync:", error);
             }
         }
     };
