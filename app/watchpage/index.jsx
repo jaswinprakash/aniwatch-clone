@@ -47,6 +47,7 @@ const SinglePage = () => {
     const [idForWebview, setIdForWebview] = useState(null);
     const [webviewOn, setWebviewOn] = useState(false);
     const [castOn, setCastOn] = useState(false);
+    const [mainServer, setMainServer] = useState(false);
     const playerRef = useRef(null);
 
     const getEpisodes = async () => {
@@ -127,61 +128,100 @@ const SinglePage = () => {
                     }
                 }
 
-                // const streamResponse = await apiConfig
-                //     .get(
-                //         `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
-                //     )
-                //     .catch((error) => {
-                //         setTimeout(() => {
-                //             setError(true);
-                //         }, 1000)
-                //     });
+                let videoData;
 
-                const streamResponseTwo = await streamApi
-                    .get(
-                        `/api/stream?id=${id}&server=${activeSubTab}&type=${activeTab}`
-                    )
-                    .catch((error) => {
-                        setTimeout(() => {
-                            setError(true);
-                        }, 1000);
-                    });
+                if (mainServer) {
+                    // Use streamResponse (first API)
+                    const streamResponse = await apiConfig
+                        .get(
+                            `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
+                        )
+                        .catch((error) => {
+                            setTimeout(() => {
+                                setError(true);
+                            }, 1000);
+                        });
 
-                const streamingData =
-                    streamResponseTwo.data.results.streamingLink;
+                    const responseData = streamResponse.data.data;
 
-                const originalUrl = streamingData.link.file;
-                const proxyUrl = `https://m3u8-woad.vercel.app/m3u8-proxy?url=${encodeURIComponent(
-                    originalUrl
-                )}`;
+                    // Transform streamResponse to match streamResponseTwo format
+                    const originalUrl = responseData.sources?.[0]?.url;
+                    const proxyUrl = `https://m3u8-woad.vercel.app/m3u8-proxy?url=${encodeURIComponent(
+                        originalUrl
+                    )}`;
 
-                const validSubtitleTracks = (streamingData.tracks || []).filter(
-                    (track) => {
+                    // Transform tracks to match the expected format
+                    const validSubtitleTracks = (responseData.tracks || [])
+                        .filter((track) => {
+                            return (
+                                track?.url &&
+                                !track?.url.includes("thumbnails") &&
+                                track?.url.endsWith(".vtt")
+                            );
+                        })
+                        .map((track) => ({
+                            kind: "captions",
+                            file: track.url,
+                            label: track.lang,
+                        }));
+
+                    videoData = {
+                        sources: [
+                            {
+                                url: proxyUrl,
+                                quality: "auto",
+                            },
+                        ],
+                        tracks: validSubtitleTracks,
+                        intro: responseData.intro,
+                        outro: responseData.outro,
+                    };
+                } else {
+                    // Use streamResponseTwo (second API)
+                    const streamResponseTwo = await streamApi
+                        .get(
+                            `/api/stream?id=${id}&server=${activeSubTab}&type=${activeTab}`
+                        )
+                        .catch((error) => {
+                            setTimeout(() => {
+                                setError(true);
+                            }, 1000);
+                        });
+
+                    const streamingData =
+                        streamResponseTwo.data.results.streamingLink;
+
+                    const originalUrl = streamingData.link.file;
+                    const proxyUrl = `https://m3u8-woad.vercel.app/m3u8-proxy?url=${encodeURIComponent(
+                        originalUrl
+                    )}`;
+
+                    const validSubtitleTracks = (
+                        streamingData.tracks || []
+                    ).filter((track) => {
                         return (
                             track?.kind === "captions" &&
                             track?.file &&
                             !track?.file.includes("thumbnails") &&
                             track?.file.endsWith(".vtt")
                         );
-                    }
-                );
+                    });
 
-                const videoData = {
-                    sources: [
-                        {
-                            url: proxyUrl,
-                            quality: "auto",
-                        },
-                    ],
-                    tracks: validSubtitleTracks,
-                    intro: streamingData.intro,
-                    outro: streamingData.outro,
-                };
+                    videoData = {
+                        sources: [
+                            {
+                                url: proxyUrl,
+                                quality: "auto",
+                            },
+                        ],
+                        tracks: validSubtitleTracks,
+                        intro: streamingData.intro,
+                        outro: streamingData.outro,
+                    };
+                }
 
                 const episodeId = id.split("?ep=")[1];
                 setIdForWebview(episodeId);
-
-                // setVideoData(streamResponse.data.data);
                 setVideoData(videoData);
                 playerRef.current?.setPlaying(true);
                 setVideoLoading(false);
@@ -194,7 +234,7 @@ const SinglePage = () => {
                 // setVideoLoading(false);
             }
         },
-        [activeSubTab, activeTab]
+        [activeSubTab, activeTab, mainServer]
     );
 
     useEffect(() => {
@@ -206,7 +246,7 @@ const SinglePage = () => {
                 startStream(episode.episodeId, episode.number);
             }
         }
-    }, [activeSubTab, activeTab]);
+    }, [activeSubTab, activeTab, mainServer]);
 
     useEffect(() => {
         getEpisodes();
@@ -327,6 +367,10 @@ const SinglePage = () => {
         setWebviewOn(false);
     };
 
+    toggleMainServer = () => {
+        setMainServer(!mainServer);
+    };
+
     if (pageLoading) {
         return (
             <SafeAreaView
@@ -445,6 +489,39 @@ const SinglePage = () => {
                 >
                     {animeInfo?.anime?.info?.name}
                 </ThemedText>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: SIZE(10),
+                        alignSelf: "center",
+                        marginBottom: SIZE(10),
+                    }}
+                >
+                    <ThemedText
+                        type="title"
+                        style={{
+                            color: Colors.light.tabIconSelected,
+                            fontSize: SIZE(18),
+                        }}
+                    >
+                        Server 1
+                    </ThemedText>
+                    <CustomSwitch
+                        onValueChange={toggleMainServer}
+                        value={mainServer}
+                        videoLoading={videoLoading}
+                    />
+                    <ThemedText
+                        type="title"
+                        style={{
+                            color: Colors.light.tabIconSelected,
+                            fontSize: SIZE(18),
+                        }}
+                    >
+                        Server 2
+                    </ThemedText>
+                </View>
                 {!activeSubTab || !servers ? (
                     <SkeletonLoader
                         height={SIZE(110)}
@@ -471,6 +548,7 @@ const SinglePage = () => {
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
                             servers={servers}
+                            videoLoading={videoLoading}
                         />
                         {activeTab === "sub" && (
                             <View style={styles.subTabContainer}>
@@ -480,6 +558,7 @@ const SinglePage = () => {
                                         item={item}
                                         activeSubTab={activeSubTab}
                                         setActiveSubTab={setActiveSubTab}
+                                        videoLoading={videoLoading}
                                     />
                                 ))}
                             </View>
@@ -493,6 +572,7 @@ const SinglePage = () => {
                                         item={item}
                                         activeSubTab={activeSubTab}
                                         setActiveSubTab={setActiveSubTab}
+                                        videoLoading={videoLoading}
                                     />
                                 ))}
                             </View>
@@ -506,6 +586,7 @@ const SinglePage = () => {
                                         item={item}
                                         activeSubTab={activeSubTab}
                                         setActiveSubTab={setActiveSubTab}
+                                        videoLoading={videoLoading}
                                     />
                                 ))}
                             </View>
@@ -668,6 +749,7 @@ const SinglePage = () => {
                                 <CustomSwitch
                                     onValueChange={toggleSwitch}
                                     value={webviewOn}
+                                    videoLoading={videoLoading}
                                 />
                             </View>
                             <View>
@@ -691,6 +773,7 @@ const SinglePage = () => {
                                 <CustomSwitch
                                     onValueChange={toggleCast}
                                     value={castOn}
+                                    videoLoading={videoLoading}
                                 />
                             </View>
 
@@ -755,7 +838,10 @@ const SinglePage = () => {
                                 <TouchableRipple
                                     rippleColor={Colors.dark.backgroundPress}
                                     borderless={true}
-                                    disabled={selectedEpisode === item?.number}
+                                    disabled={
+                                        selectedEpisode === item?.number ||
+                                        videoLoading
+                                    }
                                     style={[
                                         styles.episodeButton,
                                         {

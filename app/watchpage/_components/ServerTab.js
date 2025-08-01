@@ -5,11 +5,12 @@ import { ThemedText } from "../../../components/ThemedText";
 import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
 
-const ServerTab = ({ activeTab, setActiveTab, servers }) => {
+const ServerTab = ({ activeTab, setActiveTab, servers, videoLoading }) => {
     return (
         <View style={styles.tabContainer}>
             {servers?.sub?.length > 0 && (
                 <TouchableRipple
+                    disabled={videoLoading}
                     rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={[
@@ -31,6 +32,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
             )}
             {servers?.dub?.length > 0 && (
                 <TouchableRipple
+                    disabled={videoLoading}
                     rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={[
@@ -52,6 +54,7 @@ const ServerTab = ({ activeTab, setActiveTab, servers }) => {
             )}
             {servers?.raw?.length > 0 && (
                 <TouchableRipple
+                    disabled={videoLoading}
                     rippleColor={Colors.dark.backgroundPress}
                     borderless={true}
                     style={[

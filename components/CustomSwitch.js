@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import Animated, {
     interpolateColor,
@@ -9,7 +9,7 @@ import Animated, {
 import { Colors } from "../constants/Colors";
 import { SIZE } from "../constants/Constants";
 
-const CustomSwitch = ({ value, onValueChange }) => {
+const CustomSwitch = ({ value, onValueChange, videoLoading }) => {
     const trackColor = {
         false: "#f44336",
         true: "#3AFF6F",
@@ -68,7 +68,10 @@ const CustomSwitch = ({ value, onValueChange }) => {
     });
 
     return (
-        <TouchableWithoutFeedback onPress={() => onValueChange(!value)}>
+        <TouchableWithoutFeedback
+            disabled={videoLoading}
+            onPress={() => onValueChange(!value)}
+        >
             <View
                 style={[
                     styles.container,
@@ -114,4 +117,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CustomSwitch;
+export default memo(CustomSwitch);

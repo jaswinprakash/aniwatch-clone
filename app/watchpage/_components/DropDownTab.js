@@ -5,10 +5,11 @@ import { Colors } from "../../../constants/Colors";
 import { SIZE } from "../../../constants/Constants";
 import { ThemedText } from "../../../components/ThemedText";
 
-const DropDownTab = ({ item, activeSubTab, setActiveSubTab }) => {
+const DropDownTab = ({ item, activeSubTab, setActiveSubTab, videoLoading }) => {
     return (
         <>
             <TouchableRipple
+                disabled={videoLoading}
                 rippleColor={Colors.dark.backgroundPress}
                 borderless={true}
                 style={[
@@ -32,7 +33,7 @@ const DropDownTab = ({ item, activeSubTab, setActiveSubTab }) => {
     );
 };
 
-export default  React.memo(DropDownTab);
+export default React.memo(DropDownTab);
 
 const styles = StyleSheet.create({
     subTabButton: {
