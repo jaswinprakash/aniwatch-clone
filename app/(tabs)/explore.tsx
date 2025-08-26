@@ -10,7 +10,6 @@ import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StoredVideos from "./_components/StoredVideos";
 import GoogleSignInButton from "../../components//GoogleSignInButton";
-import { useSelector } from "react-redux";
 
 const Profile = () => {
     const history = useAnimeHistory();
