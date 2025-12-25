@@ -132,25 +132,25 @@ const SinglePage = () => {
 
                 if (mainServer) {
                     // Use streamResponse (first API)
-                    const streamResponse = await apiConfig
-                        .get(
+                    let streamResponse;
+                    try {
+                        streamResponse = await apiConfig.get(
                             `/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=${activeSubTab}&category=${activeTab}`
-                        )
-                        .catch((error) => {
-                            setTimeout(() => {
-                                setError(true);
-                            }, 1000);
-                        });
+                        );
+                    } catch (error) {
+                        setTimeout(() => {
+                            setError(true);
+                        }, 1000);
+                        return; // Early exit if this fails critically
+                    }
 
                     const responseData = streamResponse.data.data;
 
-                    // Transform streamResponse to match streamResponseTwo format
                     const originalUrl = responseData.sources?.[0]?.url;
                     const proxyUrl = `https://m3u8-woad.vercel.app/m3u8-proxy?url=${encodeURIComponent(
                         originalUrl
                     )}`;
 
-                    // Transform tracks to match the expected format
                     const validSubtitleTracks = (responseData.tracks || [])
                         .filter((track) => {
                             return (
@@ -178,20 +178,22 @@ const SinglePage = () => {
                     };
                 } else {
                     // Use streamResponseTwo (second API)
-                    const streamResponseTwo = await streamApi
-                        .get(
+                    let streamResponseTwo;
+                    try {
+                        streamResponseTwo = await streamApi.get(
                             `/api/stream?id=${id}&server=${activeSubTab}&type=${activeTab}`
-                        )
-                        .catch((error) => {
-                            setTimeout(() => {
-                                setError(true);
-                            }, 1000);
-                        });
+                        );
+                    } catch (error) {
+                        setTimeout(() => {
+                            setError(true);
+                        }, 1000);
+                        return;
+                    }
 
                     const streamingData =
-                        streamResponseTwo.data.results.streamingLink;
+                        streamResponseTwo.data.results?.streamingLink;
 
-                    const originalUrl = streamingData.link.file;
+                    const originalUrl = streamingData?.link?.file;
                     const proxyUrl = `https://m3u8-woad.vercel.app/m3u8-proxy?url=${encodeURIComponent(
                         originalUrl
                     )}`;
@@ -215,8 +217,8 @@ const SinglePage = () => {
                             },
                         ],
                         tracks: validSubtitleTracks,
-                        intro: streamingData.intro,
-                        outro: streamingData.outro,
+                        intro: streamingData?.intro,
+                        outro: streamingData?.outro,
                     };
                 }
 
@@ -226,12 +228,13 @@ const SinglePage = () => {
                 playerRef.current?.setPlaying(true);
                 setVideoLoading(false);
             } catch (error) {
-                console.log(error, "axios error - stream");
-                // setTimeout(() => {
-                //     setError(true);
-                // }, 1000);
+                console.log("General catch error:", error);
+                console.log(
+                    "Error details:",
+                    error.response?.data || error.message
+                );
             } finally {
-                // setVideoLoading(false);
+                // setVideoLoading(false); // Already handled above
             }
         },
         [activeSubTab, activeTab, mainServer]
