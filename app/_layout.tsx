@@ -18,7 +18,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import LottieView from "lottie-react-native";
 import { useEffect } from "react";
-import { Platform, SafeAreaView, TouchableOpacity, View } from "react-native";
+import { Platform, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider as PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
@@ -143,7 +144,7 @@ export default function RootLayout() {
                         >
                             <PaperProvider>
                                 <SafeAreaProvider>
-                                    <StatusBar style="auto" />
+                                    <StatusBar style="light" />
                                     <View
                                         style={{
                                             backgroundColor:
@@ -154,6 +155,11 @@ export default function RootLayout() {
                                         <Stack
                                             screenOptions={{
                                                 headerShown: false,
+                                                contentStyle: {
+                                                    backgroundColor:
+                                                        "transparent",
+                                                },
+                                                animation: "slide_from_right",
                                             }}
                                         >
                                             <Stack.Screen

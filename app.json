@@ -4,25 +4,29 @@
         "slug": "AnimPlay",
         "version": "1.0.4",
         "orientation": "portrait",
-        "icon": "./assets/images/ap.png",
+        "icon": "./assets/images/icon.png",
         "scheme": "animplay",
         "userInterfaceStyle": "dark",
         "newArchEnabled": true,
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.animplay",
-            "requireFullScreen": true
+            "requireFullScreen": true,
+            "userInterfaceStyle": "dark"
         },
         "android": {
             "adaptiveIcon": {
+                "backgroundColor": "#FFFFFF",
                 "foregroundImage": "./assets/images/ap.png",
-                "backgroundColor": "#ffffff"
+                "backgroundImage": "./assets/images/ap.png",
+                "monochromeImage": "./assets/images/ap.png"
             },
             "edgeToEdgeEnabled": true,
-            "package": "com.animplay"
+            "predictiveBackGestureEnabled": false,
+            "package": "com.animplay",
+            "userInterfaceStyle": "dark"
         },
         "web": {
-            "bundler": "metro",
             "output": "static",
             "favicon": "./assets/images/favicon.png"
         },
@@ -34,7 +38,10 @@
                     "image": "./assets/images/splash.png",
                     "imageWidth": 400,
                     "resizeMode": "contain",
-                    "backgroundColor": "#0a1929"
+                    "backgroundColor": "#0a1929",
+                    "dark": {
+                        "backgroundColor": "#000000"
+                    }
                 }
             ],
             [
@@ -65,7 +72,8 @@
             ]
         ],
         "experiments": {
-            "typedRoutes": true
+            "typedRoutes": true,
+            "reactCompiler": true
         }
     }
 }

@@ -8,7 +8,7 @@ import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import Animated, { FadeInRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import RenderAnime from "../(tabs)/_components/RenderAnime";
+import RenderAnime from "../_components/RenderAnime";
 import { apiConfig } from "../../AxiosConfig";
 import { ThemedText } from "../../components/ThemedText";
 import { Colors } from "../../constants/Colors";
@@ -127,6 +127,7 @@ const InfoPage = () => {
                 nestedScrollEnabled
             >
                 <Spotlight animeInfo={animeInfo} qTip={qTip} />
+
                 <View
                     style={{
                         flexDirection: "row",
@@ -276,7 +277,11 @@ const InfoPage = () => {
                         )}
                     </View>
                 </View>
-                <AnimeDetails animeInfo={animeInfo} qTip={qTip} />
+                <AnimeDetails
+                    animeInfo={animeInfo}
+                    qTip={qTip}
+                    pageLoading={pageLoading}
+                />
                 {validVoiceActors?.length > 0 && (
                     <View style={styles.voiceActorsContainer}>
                         <ThemedText type="title" style={styles.sectionTitle}>

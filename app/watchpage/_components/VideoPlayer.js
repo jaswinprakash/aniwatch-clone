@@ -457,7 +457,7 @@ const VideoPlayer = ({
 
     return (
         <View style={[styles.container, isFullScreen && styles.fullScreen]}>
-            <StatusBar hidden={isFullScreen} style="auto" />
+            <StatusBar hidden={isFullScreen} style="light" />
             <TouchableWithoutFeedback
                 onPress={(event) => handleDoubleTap(event)}
                 onTouchStart={handleTouchStart}

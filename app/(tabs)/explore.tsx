@@ -7,13 +7,17 @@ import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { useAnimeHistory } from "@/store/AnimeHistoryContext";
 import LottieView from "lottie-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import StoredVideos from "./_components/StoredVideos";
+import {
+    SafeAreaView,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import StoredVideos from "../_components/StoredVideos";
 import GoogleSignInButton from "../../components//GoogleSignInButton";
 
 const Profile = () => {
     const history = useAnimeHistory();
-
+    const insets = useSafeAreaInsets();
+    const tabBarHeight = SIZE(50) + insets.bottom;
     const renderItem = ({ item }) => (
         <StoredVideos
             id={item?.animeId}
@@ -77,10 +81,10 @@ const Profile = () => {
                         keyExtractor={(item) =>
                             `${item?.animeId}-${item?.episodeNumber}`
                         }
-                        estimatedItemSize={SIZE(160)}
                         contentContainerStyle={{
                             paddingHorizontal: SIZE(16),
                             backgroundColor: Colors.dark.background,
+                            // paddingBottom: tabBarHeight,
                         }}
                         showsVerticalScrollIndicator={false}
                         ListFooterComponent={() => (

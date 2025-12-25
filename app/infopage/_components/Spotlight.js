@@ -57,7 +57,7 @@ const Spotlight = ({ animeInfo, qTip }) => {
                     </View>
                     <View style={styles.itemCommon}>
                         <AntDesign
-                            name="clockcircle"
+                            name="clock-circle"
                             size={SIZE(18)}
                             color={Colors.light.tabIconSelected}
                         />

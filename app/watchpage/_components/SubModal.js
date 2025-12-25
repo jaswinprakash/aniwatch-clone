@@ -14,6 +14,7 @@ const SubModal = ({ data, handleChange, handleSet, selectedItem, quality }) => {
     return (
         <View style={[styles.modalContainer]}>
             <FlatList
+                showsVerticalScrollIndicator={false}
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (

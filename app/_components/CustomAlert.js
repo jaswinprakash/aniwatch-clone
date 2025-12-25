@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
-import { SIZE } from "../../../constants/Constants";
+import { SIZE } from "../../constants/Constants";
 import { Colors } from "@/constants/Colors";
-import { ThemedText } from "../../../components/ThemedText";
+import { ThemedText } from "../../components/ThemedText";
 import { TouchableRipple } from "react-native-paper";
 
 const CustomAlert = ({

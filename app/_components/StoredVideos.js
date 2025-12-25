@@ -11,7 +11,7 @@ import { Image, ImageBackground, StyleSheet, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import Animated, { FadeInRight } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
-import CustomAlert from "./CustomAlert";
+import CustomAlert from "../_components/CustomAlert";
 const StoredVideos = ({ id, episode, time, name }) => {
     const [animeInfo, setAnimeInfo] = useState();
     const [pageLoading, setPageLoading] = useState(true);

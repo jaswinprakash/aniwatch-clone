@@ -5,7 +5,7 @@ import MarqueeText from "@react-native-oh-tpl/react-native-marquee";
 import { SIZE } from "../../../constants/Constants";
 import { Colors } from "../../../constants/Colors";
 import { ThemedText } from "../../../components/ThemedText";
-const AnimeDetails = ({ animeInfo, qTip }) => {
+const AnimeDetails = ({ animeInfo, qTip, pageLoading }) => {
     return (
         <View style={styles.infoContainer}>
             <View style={styles.titleContainer}>

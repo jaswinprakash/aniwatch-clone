@@ -367,7 +367,7 @@ const SinglePage = () => {
         setWebviewOn(false);
     };
 
-    toggleMainServer = () => {
+    const toggleMainServer = () => {
         setMainServer(!mainServer);
     };
 
@@ -830,6 +830,7 @@ const SinglePage = () => {
                             </View>
                         </View>
                         <FlashList
+                            showsVerticalScrollIndicator={false}
                             data={getEpisodesForCurrentRange()}
                             keyExtractor={(item, index) => index.toString()}
                             numColumns={8}

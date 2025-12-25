@@ -12,12 +12,15 @@ import { ScrollView } from "react-native-gesture-handler";
 import { TouchableRipple } from "react-native-paper";
 import Carousel from "react-native-reanimated-carousel";
 import { apiConfig } from "../../AxiosConfig";
-import RenderAnime from "./_components/RenderAnime";
+import RenderAnime from "../_components/RenderAnime";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const HomeScreen = () => {
     const [animeHomeList, setAnimeHomeList] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
     const [imageLoading, setImageLoading] = useState(true);
+    const insets = useSafeAreaInsets();
+    const tabBarHeight = SIZE(50) + insets.bottom;
 
     const getHomeList = async () => {
         setPageLoading(true);
@@ -76,6 +79,7 @@ export const HomeScreen = () => {
                         <View style={{ height: SIZE(50) }}></View>
                     </LinearGradient>
                     <ThemedText
+                        numberOfLines={2}
                         style={{
                             color: Colors.light.tabIconSelected,
                             fontSize: SIZE(30),
@@ -87,7 +91,7 @@ export const HomeScreen = () => {
                             textShadowRadius: SIZE(2),
                             padding: SIZE(5),
                             position: "absolute",
-                            top: Constants.statusBarHeight + 190,
+                            top: Constants.statusBarHeight + 170,
                             zIndex: 100,
                         }}
                         type="title"
@@ -232,7 +236,10 @@ export const HomeScreen = () => {
                     />
                 </View>
             ) : (
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView
+                    // contentContainerStyle={{ paddingBottom: tabBarHeight }}
+                    showsVerticalScrollIndicator={false}
+                >
                     <View style={styles.carouselContainer}>
                         <Carousel
                             loop
@@ -304,10 +311,6 @@ export const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-    reactLogo: {
-        width: "100%",
-        height: SIZE(300),
-    },
     animeInfo: {
         fontSize: SIZE(12),
         color: "#666",

@@ -17,7 +17,7 @@ import {
     AppState,
 } from "react-native";
 import WebView from "react-native-webview";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import { Colors } from "../../../constants/Colors";
 // import NetInfo from "@react-native-community/netinfo";
 import { SIZE } from "../../../constants/Constants";
 import { useFullscreen } from "../../../hooks/FullScreenContext";
@@ -520,7 +520,7 @@ const WebViewPlayer = ({
             style={isFullscreen ? styles.fullscreenContainer : styles.container}
             onTouchStart={handleUserInteraction}
         >
-            <StatusBar hidden={isFullscreen} style="auto" />
+            <StatusBar hidden={isFullscreen} style="light" />
             {videoLoading ? (
                 <PlayerLoader
                     uri={uri}

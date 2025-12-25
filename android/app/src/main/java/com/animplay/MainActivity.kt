@@ -1,6 +1,6 @@
 package com.animplay
-import com.reactnative.googlecast.api.RNGCCastContext
 import expo.modules.splashscreen.SplashScreenManager
+import com.reactnative.googlecast.api.RNGCCastContext
 
 import android.os.Build
 import android.os.Bundle

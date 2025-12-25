@@ -1,3 +1,68 @@
+// import { Tabs } from "expo-router";
+// import { BlurView } from "expo-blur";
+// import { StyleSheet } from "react-native";
+// import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+// import { useColorScheme } from "@/hooks/useColorScheme";
+// import { Colors } from "@/constants/Colors";
+// import { SIZE } from "@/constants/Constants";
+
+// export default function TabLayout() {
+//     const colorScheme = useColorScheme();
+
+//     return (
+//         <Tabs
+//             screenOptions={{
+//                 // animation:"fade",
+//                 headerShown: false,
+//                 tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+//                 tabBarStyle: {
+//                     position: "absolute",
+//                     backgroundColor: "transparent",
+//                     borderTopWidth: 0,
+//                     elevation: 0,
+//                     paddingTop: SIZE(5),
+//                 },
+//                 tabBarLabelStyle: {
+//                     fontFamily: "Exo2Bold",
+//                     fontSize: SIZE(14),
+//                 },
+
+//                 tabBarBackground: () => (
+//                     <BlurView
+//                         experimentalBlurMethod="dimezisBlurView"
+//                         intensity={20}
+//                         tint="dark"
+//                         style={StyleSheet.absoluteFill}
+//                     />
+//                 ),
+//             }}
+//         >
+//             <Tabs.Screen
+//                 name="index"
+//                 options={{
+//                     title: "Home",
+//                     tabBarIcon: ({ color, focused }) => (
+//                         <Ionicons name={"home"} size={SIZE(28)} color={color} />
+//                     ),
+//                 }}
+//             />
+//             <Tabs.Screen
+//                 name="explore"
+//                 options={{
+//                     title: "History",
+//                     tabBarIcon: ({ color, focused }) => (
+//                         <MaterialIcons
+//                             name="watch-later"
+//                             size={SIZE(28)}
+//                             color={color}
+//                         />
+//                     ),
+//                 }}
+//             />
+//         </Tabs>
+//     );
+// }
+
 import { Colors } from "@/constants/Colors";
 import { SIZE } from "@/constants/Constants";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -150,7 +215,7 @@ export default function TabLayout() {
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                animation: "shift",
+                // animation: "shift",
             }}
             tabBar={(props) => <CustomTabBar {...props} />}
         >
