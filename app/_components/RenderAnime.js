@@ -31,7 +31,7 @@ const AnimeItem = ({
                         setAnimeId(item.id);
                     } else {
                         router.navigate({
-                            pathname: "infopage",
+                            pathname: "/infopage",
                             params: {
                                 id: item.id,
                             },
@@ -90,7 +90,7 @@ const RenderAnime = ({ title, data, info, setAnimeId, type, home }) => {
                 <TouchableOpacity
                     onPress={() => {
                         router.navigate({
-                            pathname: "listpage",
+                            pathname: "/listpage",
                             params: {
                                 type: type,
                                 title: title,
@@ -107,7 +107,11 @@ const RenderAnime = ({ title, data, info, setAnimeId, type, home }) => {
             </View>
 
             <FlashList
-                data={data}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={4}
+                windowSize={5}
+                initialNumToRender={3}
+                data={data.slice(0, 5)}
                 keyExtractor={(item, index) => index.toString()}
                 estimatedItemSize={50}
                 horizontal

@@ -12,11 +12,12 @@ import { ScrollView } from "react-native-gesture-handler";
 import { TouchableRipple } from "react-native-paper";
 import Carousel from "react-native-reanimated-carousel";
 import { apiConfig } from "../../AxiosConfig";
+import { FlashList } from "@shopify/flash-list";
 import RenderAnime from "../_components/RenderAnime";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const HomeScreen = () => {
-    const [animeHomeList, setAnimeHomeList] = useState(null);
+    const [animeHomeList, setAnimeHomeList] = useState<any[] | null>(null);
     const [pageLoading, setPageLoading] = useState(true);
     const [imageLoading, setImageLoading] = useState(true);
     const insets = useSafeAreaInsets();
@@ -25,8 +26,9 @@ export const HomeScreen = () => {
     const getHomeList = async () => {
         setPageLoading(true);
         try {
-            const response = await apiConfig.get("/api/v2/hianime/home");
-            setAnimeHomeList(response.data.data);
+            // Older API call: const response = await apiConfig.get("/api/v2/hianime/home");
+            const response = await apiConfig.get("/home");
+            setAnimeHomeList(response.data.sections);
             setPageLoading(false);
         } catch (error) {
             console.log(error, "axios error - home");
@@ -38,16 +40,16 @@ export const HomeScreen = () => {
         getHomeList();
     }, []);
 
-    const CarouselItem = React.memo(({ item }) => {
+    const CarouselItem = React.memo(({ item }: { item: any }) => {
         return (
             <TouchableRipple
                 rippleColor={Colors.dark.backgroundPress}
                 borderless={true}
                 onPress={() => {
                     router.navigate({
-                        pathname: "infopage",
+                        pathname: "/infopage",
                         params: {
-                            id: item.id,
+                            id: item.slug, // Using slug as id
                         },
                     });
                 }}
@@ -55,7 +57,7 @@ export const HomeScreen = () => {
             >
                 <ImageBackground
                     style={[styles.carouselImage]}
-                    source={{ uri: item.poster }}
+                    source={{ uri: item.poster_url }} // Using poster_url
                     resizeMode="cover"
                 >
                     <LinearGradient
@@ -131,40 +133,35 @@ export const HomeScreen = () => {
                                     bottom: 0,
                                 }}
                             >
-                                {item?.otherInfo?.map((info, index) => {
-                                    return (
-                                        <View
-                                            key={index}
+                                {item?.badge && (
+                                    <View
+                                        style={{
+                                            borderRadius: SIZE(6),
+                                            backgroundColor:
+                                                Colors.light.tabIconSelected,
+                                            marginBottom: SIZE(5),
+                                            height: SIZE(24),
+                                        }}
+                                    >
+                                        <ThemedText
                                             style={{
-                                                borderRadius: SIZE(6),
-                                                backgroundColor:
-                                                    Colors.light
-                                                        .tabIconSelected,
-                                                marginBottom: SIZE(5),
-                                                height: SIZE(24),
+                                                color: Colors.light.white,
+                                                fontSize: SIZE(14),
+                                                textShadowColor: Colors.dark.black,
+                                                textShadowOffset: {
+                                                    width: 1,
+                                                    height: 1,
+                                                },
+                                                textShadowRadius: 2,
+                                                lineHeight: SIZE(14),
+                                                padding: SIZE(5),
                                             }}
+                                            type="title"
                                         >
-                                            <ThemedText
-                                                style={{
-                                                    color: Colors.light.white,
-                                                    fontSize: SIZE(14),
-                                                    textShadowColor:
-                                                        Colors.dark.black,
-                                                    textShadowOffset: {
-                                                        width: 1,
-                                                        height: 1,
-                                                    },
-                                                    textShadowRadius: 2,
-                                                    lineHeight: SIZE(14),
-                                                    padding: SIZE(5),
-                                                }}
-                                                type="title"
-                                            >
-                                                {info}
-                                            </ThemedText>
-                                        </View>
-                                    );
-                                })}
+                                            {item.badge}
+                                        </ThemedText>
+                                    </View>
+                                )}
                             </View>
                         </View>
                     </LinearGradient>
@@ -172,6 +169,13 @@ export const HomeScreen = () => {
             </TouchableRipple>
         );
     });
+
+    const bannerSection = animeHomeList?.find((sec: any) => sec.section === "Banner");
+    const otherSections = animeHomeList?.filter(
+        (sec: any) => sec.section !== "Banner"
+    );
+
+    const OptimizedFlashList = FlashList as any;
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.dark.background }}>
@@ -182,7 +186,7 @@ export const HomeScreen = () => {
                     borderless={true}
                     onPress={() => {
                         router.navigate({
-                            pathname: "searchpage",
+                            pathname: "/searchpage",
                         });
                     }}
                     style={{
@@ -236,73 +240,51 @@ export const HomeScreen = () => {
                     />
                 </View>
             ) : (
-                <ScrollView
-                    // contentContainerStyle={{ paddingBottom: tabBarHeight }}
+                <OptimizedFlashList
+                    removeClippedSubviews={true}
+                    maxToRenderPerBatch={4}
+                    windowSize={5}
+                    initialNumToRender={3}
+                    data={otherSections}
+                    keyExtractor={(item: any, index: number) => index.toString()}
+                    estimatedItemSize={SIZE(300)}
                     showsVerticalScrollIndicator={false}
-                >
-                    <View style={styles.carouselContainer}>
-                        <Carousel
-                            loop
-                            autoPlay
-                            autoPlayInterval={3000} // Slide every 3 seconds
-                            width={Dimensions.get("window").width}
-                            height={SIZE(350)} // Adjust height as needed
-                            data={animeHomeList?.spotlightAnimes}
-                            renderItem={({ item }) => (
-                                <CarouselItem item={item} />
-                            )}
-                        />
-                    </View>
-                    <View
-                        style={{
-                            backgroundColor: Colors.dark.background,
-                            overflow: "visible",
-                            paddingTop: SIZE(20),
-                        }}
-                    >
+                    contentContainerStyle={{ paddingBottom: tabBarHeight }}
+                    ListHeaderComponent={
+                        bannerSection && (
+                            <View style={styles.carouselContainer}>
+                                <Carousel
+                                    loop
+                                    autoPlay
+                                    autoPlayInterval={4000} // Slide every 3 seconds
+                                    width={Dimensions.get("window").width}
+                                    height={SIZE(350)} // Adjust height as needed
+                                    data={bannerSection.movies.slice(0, 5)}
+                                    renderItem={({ item }: { item: any }) => (
+                                        <CarouselItem item={item} />
+                                    )}
+                                />
+                            </View>
+                        )
+                    }
+                    ListHeaderComponentStyle={{
+                        marginBottom: SIZE(20),
+                    }}
+                    renderItem={({ item: section }: { item: any }) => (
                         <RenderAnime
-                            title="Latest Episode Animes"
-                            data={animeHomeList?.latestEpisodeAnimes}
-                            type="recently-updated"
+                            title={section.section}
+                            data={section.movies.map((movie: any) => ({
+                                ...movie,
+                                poster: movie.poster_url,
+                                id: movie.slug,
+                            }))}
+                            info={false}
+                            setAnimeId={() => { }}
+                            type={section.section.toLowerCase().replace(" ", "-")}
                             home
                         />
-                        <RenderAnime
-                            title="Most Popular Animes"
-                            data={animeHomeList?.mostPopularAnimes}
-                            type="most-popular"
-                            home
-                        />
-                        <RenderAnime
-                            title="Most Favorite Animes"
-                            data={animeHomeList?.mostFavoriteAnimes}
-                            type="most-favorite"
-                            home
-                        />
-                        <RenderAnime
-                            title="Top Airing Animes"
-                            data={animeHomeList?.topAiringAnimes}
-                            type="top-airing"
-                            home
-                        />
-                        <RenderAnime
-                            title="Top Upcoming Animes"
-                            data={animeHomeList?.topUpcomingAnimes}
-                            type="top-upcoming"
-                            home
-                        />
-                        {/* <RenderAnime
-                            title="Trending Animes"
-                            data={animeHomeList?.trendingAnimes}
-                            type="ona"
-                        /> */}
-                        <RenderAnime
-                            title="Completed Animes"
-                            data={animeHomeList?.latestCompletedAnimes}
-                            type="completed"
-                            home
-                        />
-                    </View>
-                </ScrollView>
+                    )}
+                />
             )}
         </View>
     );
