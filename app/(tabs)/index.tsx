@@ -259,7 +259,7 @@ export const HomeScreen = () => {
                                     autoPlayInterval={4000} // Slide every 3 seconds
                                     width={Dimensions.get("window").width}
                                     height={SIZE(350)} // Adjust height as needed
-                                    data={bannerSection.movies.slice(0, 5)}
+                                    data={bannerSection.movies.slice(0, 10)}
                                     renderItem={({ item }: { item: any }) => (
                                         <CarouselItem item={item} />
                                     )}

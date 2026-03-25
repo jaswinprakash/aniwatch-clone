@@ -111,7 +111,7 @@ const RenderAnime = ({ title, data, info, setAnimeId, type, home }) => {
                 maxToRenderPerBatch={4}
                 windowSize={5}
                 initialNumToRender={3}
-                data={data.slice(0, 5)}
+                data={data.slice(0, 10)}
                 keyExtractor={(item, index) => index.toString()}
                 estimatedItemSize={50}
                 horizontal
